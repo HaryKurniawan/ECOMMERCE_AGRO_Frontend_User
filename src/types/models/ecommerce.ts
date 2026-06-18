@@ -47,7 +47,7 @@ export interface VarianKemasan {
   ukuranKg: number;
   stokKemasan: number;
   harga: number;
-  hargaPerKemasan?: number;
+  biayaTambahan?: number;
   isActive: boolean;
   sku?: string;
 }

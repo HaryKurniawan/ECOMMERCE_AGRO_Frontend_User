@@ -87,7 +87,8 @@ const DetailProdukPage: React.FC = () => {
   const selectedVariant = variants.find((v: any) => v.id === selectedVarianId);
 
   const displayHarga = selectedVariant
-    ? selectedVariant.hargaPerKemasan || selectedVariant.harga || product.harga
+    ? product.harga * selectedVariant.ukuranKg +
+      (selectedVariant.biayaTambahan || 0)
     : product.harga;
   const displayStok = selectedVariant
     ? selectedVariant.stokKemasan

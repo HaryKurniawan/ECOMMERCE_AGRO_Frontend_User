@@ -114,7 +114,7 @@ export function createDefaultShipping(groups: StoreGroup[]): ApiShippingInfo[] {
   return groups.map((group) => ({
     tokoId: group.tokoId,
     namaToko: group.storeName,
-    ongkir: 15000,
+    ongkir: 0,
     isAvailable: true,
     distanceKm: 0,
     totalWeightKg: group.totalWeightGram / 1000,
@@ -135,15 +135,15 @@ export function calculateTotalShipping(
 
   shippingInfos.forEach((info) => {
     if (info.isAvailable) {
-      totalOngkir += info.ongkir || 15000;
+      totalOngkir += info.ongkir ?? 0;
     } else {
       allDeliverable = false;
     }
   });
 
-  // If no shipping info yet, use default 15000 per store
+  // If no shipping info yet, use default 0 per store
   if (shippingInfos.length === 0 && groupedByStore.length > 0) {
-    totalOngkir = groupedByStore.length * 15000;
+    totalOngkir = groupedByStore.length * 0;
   }
 
   return { totalOngkir, allDeliverable };

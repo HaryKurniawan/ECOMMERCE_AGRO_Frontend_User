@@ -102,6 +102,8 @@ export interface ApiOrderData {
   item?: ApiOrderItem[];
   shipping?: ApiOrderShipping;
   pengiriman?: Record<string, unknown>;
+  paymentUrl?: string;
+  paymentId?: string;
 }
 
 export interface ApiStoreData {

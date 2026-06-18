@@ -37,8 +37,7 @@ export function useCheckoutSubmit(
     try {
       const ordersPayload = groupedByStore.map((group) => {
         const info = shippingInfos.find((s) => s.tokoId === group.tokoId);
-        // Use 15000 as default if no shipping info available
-        const ongkir = info?.isAvailable ? info.ongkir || 15000 : 15000;
+        const ongkir = info?.isAvailable ? (info.ongkir ?? 0) : 0;
 
         return {
           tokoId: group.tokoId,
@@ -55,34 +54,41 @@ export function useCheckoutSubmit(
         };
       });
 
-      const res = await ordersApi.create({
+      let finalMobileNumber = undefined;
+      if (paymentMethod === "OVO") {
+        const hp = prompt(
+          "Masukkan No HP OVO Anda (awali dengan 08, contoh: 0812...):",
+        );
+        if (!hp) {
+          setLoading(false);
+          return;
+        }
+        finalMobileNumber = hp.startsWith("0") ? `+62${hp.substring(1)}` : hp;
+        if (!finalMobileNumber.startsWith("+62"))
+          finalMobileNumber = `+62${finalMobileNumber}`;
+      }
+
+      const payload = {
         metodeBayar: paymentMethod,
         alamatKirim: selectedAddressId,
+        jadwalKirim: undefined,
+        mobileNumber: finalMobileNumber,
         pesanan: ordersPayload,
-      });
+      };
+
+      const res = await ordersApi.create(payload);
 
       const orderData = res.data?.data || res.data;
       const orders = Array.isArray(orderData) ? orderData : [orderData];
 
-      // Cek apakah ada paymentUrl dari Xendit (online payment)
-      const firstPaymentUrl = orders[0]?.paymentUrl;
-      if (firstPaymentUrl) {
-        // Redirect ke halaman Xendit invoice
-        window.location.href = firstPaymentUrl;
+      if (orders.length > 0) {
+        // Ambil semua order ID untuk multi-checkout support di halaman pembayaran
+        const orderIdsParam = orders.map((o: any) => o.id).join(",");
+        router.push(`/pembayaran?orderIds=${orderIdsParam}`);
         return;
       }
 
-      // Fallback: tidak ada paymentUrl, artinya COD/MANUAL - redirect ke halaman pesanan
-      if (orders.length > 1) {
-        router.push("/pesanan");
-      } else {
-        const firstOrderId = orders[0]?.id;
-        if (firstOrderId) {
-          router.push(`/pesanan/${firstOrderId}`);
-        } else {
-          router.push("/pesanan");
-        }
-      }
+      router.push("/pesanan");
     } catch (err) {
       console.error("Checkout failed", err);
       alert("Terjadi kesalahan saat membuat pesanan");

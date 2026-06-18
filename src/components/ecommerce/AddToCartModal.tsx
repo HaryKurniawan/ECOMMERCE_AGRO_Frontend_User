@@ -73,7 +73,8 @@ const AddToCartModal: React.FC<AddToCartModalProps> = ({
   const hasVariants = variants.length > 0;
   const selectedVarian = variants.find((k) => k.id === selectedVarianId);
   const displayPrice = selectedVarian
-    ? selectedVarian.hargaPerKemasan || selectedVarian.harga || 0
+    ? product.harga * selectedVarian.ukuranKg +
+      (selectedVarian.biayaTambahan || 0)
     : product.harga;
   const displayStock = selectedVarian
     ? selectedVarian.stokKemasan

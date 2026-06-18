@@ -155,6 +155,15 @@ export function useAlamatForm() {
     setActionLoading(true);
     setError("");
 
+    if (!editId && !mapValue?.isPinMoved) {
+      setError(
+        "Silakan geser pin lokasi di peta atau gunakan fitur GPS/Pencarian untuk menentukan titik presisi alamat Anda terlebih dahulu.",
+      );
+      setActionLoading(false);
+      window.scrollTo({ top: 0, behavior: "smooth" });
+      return;
+    }
+
     const payload = {
       ...data,
       provinsi: data.provinsi || "",

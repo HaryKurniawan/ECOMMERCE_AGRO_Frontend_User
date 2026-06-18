@@ -17,7 +17,11 @@ export const usePembayaran = (
     minutes: 59,
     seconds: 59,
   });
-  const vaNumber = "8806 1234 5678 9012";
+
+  // Jika metodeBayar adalah VA, paymentUrl berisi nomor VA. Jika Invoice, paymentUrl adalah link http.
+  const isVaPayment = order?.metodeBayar?.endsWith("_VA") ?? false;
+  const vaNumber =
+    isVaPayment && order?.paymentUrl ? order.paymentUrl : "8806 1234 5678 9012";
 
   // Fetch primary order
   const orderQuery = useQuery({
@@ -120,6 +124,9 @@ export const usePembayaran = (
     totalGabungan,
     isMultiOrder,
     allOrderIds,
+    isVaPayment,
+    metodeBayar: order?.metodeBayar,
+    paymentUrl: order?.paymentUrl,
     handleCopy,
     handleSimulatePayment,
   };

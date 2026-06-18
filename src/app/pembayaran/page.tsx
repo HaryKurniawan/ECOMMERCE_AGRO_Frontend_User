@@ -39,6 +39,8 @@ const PembayaranContent: React.FC = () => {
     totalGabungan,
     isMultiOrder,
     allOrderIds,
+    isVaPayment,
+    metodeBayar,
     handleCopy,
     handleSimulatePayment,
   } = usePembayaran(primaryOrderId, orderIds);
@@ -128,6 +130,7 @@ const PembayaranContent: React.FC = () => {
           total={total}
           copied={copied}
           onCopy={handleCopy}
+          metodeBayar={metodeBayar}
         />
 
         {/* Instuctions */}
@@ -145,6 +148,9 @@ const PembayaranContent: React.FC = () => {
         <PaymentMockupAction
           isProcessing={isProcessing}
           onSimulatePayment={handleSimulatePayment}
+          paymentUrl={
+            !isVaPayment && order?.paymentUrl ? order.paymentUrl : undefined
+          }
         />
 
         {/* Order ID Footer */}

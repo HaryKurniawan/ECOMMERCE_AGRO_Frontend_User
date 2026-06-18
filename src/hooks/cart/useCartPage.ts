@@ -21,7 +21,7 @@ interface RawCartItem {
   varianKemasan?: {
     id: string;
     ukuranKg: number;
-    hargaPerKemasan?: number;
+    biayaTambahan?: number;
     harga?: number;
   };
   varianKemasanId?: string;
@@ -62,8 +62,10 @@ export const useCartPage = () => {
           let varianDeskripsi = undefined;
 
           if (varianData) {
+            const baseHarga = Number(productData?.harga || 0);
             displayPrice =
-              varianData.hargaPerKemasan || varianData.harga || displayPrice;
+              baseHarga * varianData.ukuranKg +
+              Number(varianData.biayaTambahan || 0);
             varianDeskripsi = `Kemasan ${varianData.ukuranKg} kg`;
           }
 

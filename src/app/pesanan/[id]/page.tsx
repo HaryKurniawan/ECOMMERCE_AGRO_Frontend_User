@@ -274,7 +274,9 @@ const OrderDetailPage = () => {
 
           {statusKey === "MENUNGGU_BAYAR" ? (
             <button
-              onClick={() => router.push(`/pembayaran?orderId=${order.id}`)}
+              onClick={() => {
+                router.push(`/pembayaran?orderId=${order.id}`);
+              }}
               className="flex-1 py-3 bg-primary-600 text-white rounded-2xl font-bold text-[13px] shadow-lg shadow-primary-600/20 hover:bg-primary-700 transition-all active:scale-[0.98] flex items-center justify-center gap-2"
             >
               <Wallet size={15} /> Bayar Sekarang

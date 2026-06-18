@@ -148,7 +148,8 @@ const PesananContent = () => {
     }
   };
 
-  const handlePay = (orderIds: string[]) => {
+  const handlePay = (ordersToPay: ApiOrderData[]) => {
+    const orderIds = ordersToPay.map((o) => o.id);
     if (orderIds.length === 1) {
       router.push(`/pembayaran?orderId=${orderIds[0]}`);
     } else {
@@ -250,7 +251,7 @@ const PesananContent = () => {
                   <GroupedOrderCard
                     key={item.map((o) => o.id).join("-")}
                     orders={item}
-                    onPay={() => handlePay(item.map((o) => o.id))}
+                    onPay={() => handlePay(item)}
                   />
                 );
               }
@@ -263,7 +264,7 @@ const PesananContent = () => {
                   order={order}
                   onPay={
                     order.status?.toUpperCase() === "MENUNGGU_BAYAR"
-                      ? () => handlePay([order.id])
+                      ? () => handlePay([order])
                       : undefined
                   }
                   onConfirmReceived={

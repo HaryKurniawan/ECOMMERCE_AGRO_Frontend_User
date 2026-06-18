@@ -22,7 +22,7 @@ export const useCheckout = () => {
   const { isAuthenticated, _hasHydrated } = useAuthStore();
 
   // State
-  const [paymentMethod, setPaymentMethod] = useState("bca");
+  const [paymentMethod, setPaymentMethod] = useState("BCA_VA");
   const [catatanPerStore, setCatatanPerStore] = useState<
     { tokoId: string; text: string }[]
   >([]);

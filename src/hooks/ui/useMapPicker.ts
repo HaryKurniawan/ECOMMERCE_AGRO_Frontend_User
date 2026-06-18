@@ -19,6 +19,7 @@ export interface MapPickerValue {
     town?: string;
     residential?: string;
   };
+  isPinMoved?: boolean;
 }
 
 const DEFAULT_CENTER: MapPickerValue = { lat: -6.9175, lng: 107.6191 }; // Bandung
@@ -168,6 +169,7 @@ export const useMapPicker = (
   const [searchLoading, setSearchLoading] = useState(false);
   const [geocoding, setGeocoding] = useState(false);
   const [displayName, setDisplayName] = useState(value?.displayName || "");
+  const [isPinMoved, setIsPinMoved] = useState(!!value?.isPinMoved || false);
 
   const getInitialPos = () => {
     if (value) return value;
@@ -196,14 +198,22 @@ export const useMapPicker = (
         const res = await reverseGeocode(lat, lng);
         setGeocoding(false);
         setDisplayName(res.name);
+        setIsPinMoved(true);
         onChangeRef.current({
           lat,
           lng,
           displayName: res.name,
           address: res.addr,
+          isPinMoved: true,
         });
       } else {
-        onChangeRef.current({ lat, lng, displayName: displayName });
+        setIsPinMoved(true);
+        onChangeRef.current({
+          lat,
+          lng,
+          displayName: displayName,
+          isPinMoved: true,
+        });
       }
     },
     [displayName],
@@ -275,11 +285,13 @@ export const useMapPicker = (
         const res = await reverseGeocode(pos.lat, pos.lng);
         setGeocoding(false);
         setDisplayName(res.name);
+        setIsPinMoved(true);
         onChangeRef.current({
           lat: pos.lat,
           lng: pos.lng,
           displayName: res.name,
           address: res.addr,
+          isPinMoved: true,
         });
       });
 
@@ -289,11 +301,13 @@ export const useMapPicker = (
         const res = await reverseGeocode(e.latlng.lat, e.latlng.lng);
         setGeocoding(false);
         setDisplayName(res.name);
+        setIsPinMoved(true);
         onChangeRef.current({
           lat: e.latlng.lat,
           lng: e.latlng.lng,
           displayName: res.name,
           address: res.addr,
+          isPinMoved: true,
         });
       });
 
@@ -358,6 +372,7 @@ export const useMapPicker = (
     setSearchResults([]);
     setSearchQuery("");
     setDisplayName(r.display_name);
+    setIsPinMoved(true);
     if (markerRef.current) markerRef.current.setLatLng([r.lat, r.lng]);
     if (leafletMapRef.current)
       leafletMapRef.current.setView([r.lat, r.lng], 16);
@@ -366,6 +381,7 @@ export const useMapPicker = (
       lng: r.lng,
       displayName: r.display_name,
       address: r.address,
+      isPinMoved: true,
     });
   };
 
