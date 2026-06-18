@@ -18,11 +18,6 @@ export const usePembayaran = (
     seconds: 59,
   });
 
-  // Jika metodeBayar adalah VA, paymentUrl berisi nomor VA. Jika Invoice, paymentUrl adalah link http.
-  const isVaPayment = order?.metodeBayar?.endsWith("_VA") ?? false;
-  const vaNumber =
-    isVaPayment && order?.paymentUrl ? order.paymentUrl : "8806 1234 5678 9012";
-
   // Fetch primary order
   const orderQuery = useQuery({
     queryKey: queryKeys.orders.detail(orderId ?? ""),
@@ -43,6 +38,11 @@ export const usePembayaran = (
   });
 
   const order = orderQuery.data ?? null;
+
+  // Jika metodeBayar adalah VA, paymentUrl berisi nomor VA. Jika Invoice, paymentUrl adalah link http.
+  const isVaPayment = order?.metodeBayar?.endsWith("_VA") ?? false;
+  const vaNumber =
+    isVaPayment && order?.paymentUrl ? order.paymentUrl : "8806 1234 5678 9012";
 
   // Sum totals from all orders in same checkout session
   const totalGabungan = useMemo(() => {
