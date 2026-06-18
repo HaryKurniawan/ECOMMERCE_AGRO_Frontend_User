@@ -26,7 +26,7 @@ pipeline {
                 docker run -d \
                 --name agro-frontend-user \
                 --network 1panel-network \
-                -p 3001:3003 \
+                -p 3001:3000 \
                 agro-frontend-user
                 '''
             }
