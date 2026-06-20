@@ -5,7 +5,9 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { ArrowLeft, KeyRound, CheckCircle } from "lucide-react";
+import { Modal, Button as AntdButton } from "antd";
 
 import { authApi } from "@/lib/ecommerce-api";
 import Button from "@/components/ui/Button";
@@ -28,13 +30,16 @@ type ForgotPasswordFormData = z.infer<typeof forgotPasswordSchema>;
  * ```
  */
 export default function ForgotPasswordForm() {
+  const router = useRouter();
+
   const [loading, setLoading] = useState(false);
-  const [sent, setSent] = useState(false);
+  const [sentModalOpen, setSentModalOpen] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
   const {
     register,
     handleSubmit,
+    getValues,
     formState: { errors },
   } = useForm<ForgotPasswordFormData>({
     resolver: zodResolver(forgotPasswordSchema),
@@ -45,7 +50,7 @@ export default function ForgotPasswordForm() {
     setErrorMessage(null);
     try {
       await authApi.forgotPassword(data.email);
-      setSent(true);
+      setSentModalOpen(true);
     } catch (err: unknown) {
       const error = err as { response?: { data?: { message?: string } } };
       setErrorMessage(
@@ -56,33 +61,50 @@ export default function ForgotPasswordForm() {
     }
   };
 
-  // Success State
-  if (sent) {
-    return (
-      <div className="text-center">
-        <div className="w-24 h-24 mb-6 mx-auto flex items-center justify-center bg-green-50 rounded-full border border-green-100">
-          <CheckCircle size={48} className="text-green-600" />
-        </div>
-        <h2 className="text-xl font-bold text-gray-900 mb-2">
-          Email Terkirim!
-        </h2>
-        <p className="text-gray-500 text-sm mb-6 px-4">
-          Jika email Anda terdaftar, instruksi reset password telah dikirim. Cek
-          inbox Anda.
-        </p>
-        <Link
-          href="/login"
-          className="text-sm font-semibold text-green-700 hover:underline"
-        >
-          Kembali ke Login
-        </Link>
-      </div>
-    );
-  }
+  const emailValue = getValues("email");
 
   // Form State
   return (
     <>
+      <Modal
+        title={
+          <div className="flex items-center gap-2 text-green-600">
+            <CheckCircle size={24} />
+            Reset Password Terkirim
+          </div>
+        }
+        open={sentModalOpen}
+        onCancel={() => setSentModalOpen(false)}
+        footer={null}
+        centered
+        closable={false}
+        maskClosable={false}
+      >
+        <p className="text-gray-600 mt-4 mb-6">
+          Jika email Anda terdaftar, instruksi reset password telah dikirim ke{" "}
+          <span className="font-semibold text-gray-900">{emailValue}</span>.
+          Silakan cek inbox atau folder spam Anda.
+        </p>
+        <div className="flex flex-col gap-3">
+          <AntdButton
+            type="primary"
+            size="large"
+            className="bg-green-600 hover:bg-green-700 w-full"
+            onClick={() => {
+              window.location.href = `mailto:${emailValue}`;
+            }}
+          >
+            Buka Email
+          </AntdButton>
+          <AntdButton
+            size="large"
+            className="w-full"
+            onClick={() => router.push("/login")}
+          >
+            Ke Halaman Login
+          </AntdButton>
+        </div>
+      </Modal>
       <div className="text-center mb-8">
         <div className="w-24 h-24 mb-6 mx-auto flex items-center justify-center bg-green-50 rounded-full border border-green-100">
           <KeyRound size={40} className="text-green-600" />

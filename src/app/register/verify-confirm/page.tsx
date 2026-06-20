@@ -67,42 +67,66 @@ function VerifyConfirmContent() {
   }, [token, router, setAuth]);
 
   return (
-    <div className="min-h-screen bg-white flex flex-col items-center justify-center p-5 max-w-sm mx-auto">
-      {status === "loading" && (
-        <div className="text-center">
-          <Loader2 className="w-16 h-16 text-green-600 animate-spin mx-auto mb-4" />
-          <h1 className="text-xl font-bold text-gray-900">
-            Memverifikasi Email...
-          </h1>
-        </div>
-      )}
-      {status === "success" && (
-        <div className="text-center">
-          <CheckCircle className="w-16 h-16 text-green-600 mx-auto mb-4" />
-          <h1 className="text-xl font-bold text-gray-900 mb-2">
-            Email Terverifikasi!
-          </h1>
-          <p className="text-gray-500 text-sm">{message}</p>
-          <p className="text-gray-400 text-xs mt-2">
-            Mengalihkan ke halaman utama...
-          </p>
-        </div>
-      )}
-      {status === "error" && (
-        <div className="text-center">
-          <XCircle className="w-16 h-16 text-red-500 mx-auto mb-4" />
-          <h1 className="text-xl font-bold text-gray-900 mb-2">
-            Verifikasi Gagal
-          </h1>
-          <p className="text-gray-500 text-sm mb-6">{message}</p>
-          <button
-            onClick={() => router.push("/register")}
-            className="px-6 py-3 bg-green-700 text-white rounded-xl font-semibold hover:bg-green-800 transition-colors"
-          >
-            Daftar Ulang
-          </button>
-        </div>
-      )}
+    <div className="min-h-screen relative flex flex-col items-center justify-center p-5 overflow-hidden">
+      {/* ── Decorative Background ── */}
+      <div className="pointer-events-none fixed inset-0 flex items-center justify-center -z-10 bg-gradient-to-b from-white via-emerald-50/30 to-white">
+        <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-emerald-100 rounded-full mix-blend-multiply filter blur-3xl opacity-30 animate-blob" />
+        <div className="absolute top-1/3 right-1/4 w-96 h-96 bg-green-100 rounded-full mix-blend-multiply filter blur-3xl opacity-30 animate-blob animation-delay-2000" />
+      </div>
+
+      <div className="w-full max-w-md bg-white/60 backdrop-blur-xl border border-white/80 rounded-3xl p-8 shadow-2xl shadow-emerald-900/5 text-center relative z-10">
+        {status === "loading" && (
+          <div className="flex flex-col items-center animate-in fade-in zoom-in duration-500">
+            <div className="relative mb-6">
+              <div className="w-24 h-24 bg-emerald-100 rounded-full flex items-center justify-center animate-pulse">
+                <Loader2 className="w-10 h-10 text-emerald-600 animate-spin" />
+              </div>
+              <div className="absolute inset-0 rounded-full border-4 border-emerald-500 border-t-transparent animate-spin opacity-50" />
+            </div>
+            <h1 className="text-2xl font-bold text-gray-900 mb-2">
+              Memverifikasi Akun
+            </h1>
+            <p className="text-gray-500">
+              Mohon tunggu sebentar, kami sedang memproses token Anda...
+            </p>
+          </div>
+        )}
+
+        {status === "success" && (
+          <div className="flex flex-col items-center animate-in fade-in slide-in-from-bottom-4 duration-500">
+            <div className="w-24 h-24 bg-gradient-to-br from-green-100 to-emerald-200 rounded-full flex items-center justify-center mb-6 shadow-inner relative overflow-hidden">
+              <CheckCircle className="w-12 h-12 text-emerald-600 relative z-10" />
+              <div className="absolute inset-0 bg-emerald-300 opacity-20 animate-ping" />
+            </div>
+            <h1 className="text-2xl font-bold text-gray-900 mb-2">
+              Verifikasi Berhasil!
+            </h1>
+            <p className="text-emerald-700 font-medium mb-1">{message}</p>
+            <div className="mt-8 flex flex-col items-center gap-3 w-full">
+              <Loader2 className="w-5 h-5 text-emerald-500 animate-spin" />
+              <p className="text-gray-400 text-sm">Mengarahkan ke beranda...</p>
+            </div>
+          </div>
+        )}
+
+        {status === "error" && (
+          <div className="flex flex-col items-center animate-in fade-in slide-in-from-bottom-4 duration-500">
+            <div className="w-24 h-24 bg-red-50 rounded-full flex items-center justify-center mb-6 border-4 border-red-100 shadow-sm">
+              <XCircle className="w-12 h-12 text-red-500" />
+            </div>
+            <h1 className="text-2xl font-bold text-gray-900 mb-2">
+              Verifikasi Gagal
+            </h1>
+            <p className="text-gray-500 mb-8">{message}</p>
+            <button
+              onClick={() => router.push("/register")}
+              className="w-full py-4 bg-gray-900 text-white rounded-2xl font-semibold hover:bg-gray-800 transition-colors shadow-lg shadow-gray-200"
+            >
+              Kembali ke Pendaftaran
+            </button>
+          </div>
+        )}
+      </div>
     </div>
   );
 }
