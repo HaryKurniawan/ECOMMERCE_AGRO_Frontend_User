@@ -104,6 +104,7 @@ export interface ApiOrderData {
   pengiriman?: Record<string, unknown>;
   paymentUrl?: string;
   paymentId?: string;
+  fotoSebelumKirimUrl?: string | null;
 }
 
 export interface ApiStoreData {
