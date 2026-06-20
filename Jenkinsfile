@@ -1,6 +1,13 @@
 pipeline {
     agent any
 
+    environment {
+        IMAGE_NAME = 'agro-frontend-user'
+        CONTAINER_NAME = 'agro-frontend-user'
+        HOST_PORT = '3001'
+        APP_PORT = '3000'
+    }
+
     stages {
 
         stage('OWASP Dependency-Check') {
@@ -10,25 +17,48 @@ pipeline {
                 ]) {
                     sh '''
                     if [ -n "$NVD_API_KEY" ]; then
-                      echo "API Key ditemukan"
+                      echo "NVD API Key ditemukan"
                     else
-                      echo "API Key kosong"
+                      echo "NVD API Key kosong"
                       exit 1
                     fi
-                    
+
                     echo "Running OWASP Dependency-Check for Frontend User..."
-                    docker run --rm \\
-                        -u \$(id -u):\$(id -g) \\
-                        -v "\$(pwd):/src" \\
-                        owasp/dependency-check:latest \\
-                        --project "Ecommerce Frontend User" \\
-                        --scan /src \\
-                        --nvdApiKey \$NVD_API_KEY \\
-                        --format "HTML" \\
-                        --format "JSON" \\
+
+                    docker run --rm \
+                        -u $(id -u):$(id -g) \
+                        -v "$(pwd):/src" \
+                        -v "/var/jenkins_home/dependency-check-data:/usr/share/dependency-check/data" \
+                        owasp/dependency-check:latest \
+                        --project "Ecommerce Frontend User" \
+                        --scan /src \
+                        --exclude "**/node_modules/**" \
+                        --exclude "**/.next/**" \
+                        --exclude "**/coverage/**" \
+                        --exclude "**/dependency-check-report/**" \
+                        --nvdApiKey "$NVD_API_KEY" \
+                        --format "HTML" \
+                        --format "JSON" \
                         --out /src/dependency-check-report || true
                     '''
                 }
+            }
+        }
+
+        stage('Gitleaks Secret Scan') {
+            steps {
+                sh '''
+                echo "Running Gitleaks Secret Scan..."
+
+                docker run --rm \
+                    -v "$WORKSPACE:/repo" \
+                    zricethezav/gitleaks:latest \
+                    detect \
+                    --source=/repo \
+                    --no-git \
+                    --redact \
+                    --exit-code=1
+                '''
             }
         }
 
@@ -38,9 +68,13 @@ pipeline {
                     file(credentialsId: 'frontend-user-env', variable: 'ENV_FILE')
                 ]) {
                     sh '''
-                    cp $ENV_FILE .env.local
+                    echo "Preparing frontend environment..."
 
-                    docker build -t agro-frontend-user .
+                    cp "$ENV_FILE" .env.local
+
+                    docker build \
+                        -t $IMAGE_NAME:latest \
+                        .
                     '''
                 }
             }
@@ -49,14 +83,17 @@ pipeline {
         stage('Deploy') {
             steps {
                 sh '''
-                docker stop agro-frontend-user || true
-                docker rm agro-frontend-user || true
+                echo "Deploying Frontend User..."
+
+                docker stop $CONTAINER_NAME || true
+                docker rm $CONTAINER_NAME || true
 
                 docker run -d \
-                --name agro-frontend-user \
-                --network 1panel-network \
-                -p 3001:3000 \
-                agro-frontend-user
+                    --name $CONTAINER_NAME \
+                    --restart unless-stopped \
+                    --network 1panel-network \
+                    -p $HOST_PORT:$APP_PORT \
+                    $IMAGE_NAME:latest
                 '''
             }
         }
@@ -64,12 +101,34 @@ pipeline {
         stage('Health Check') {
             steps {
                 sh '''
-                sleep 10
-                docker ps | grep agro-frontend-user
+                echo "Waiting Frontend User startup..."
+
+                for i in $(seq 1 20)
+                do
+                    if curl -sf http://localhost:$HOST_PORT > /dev/null; then
+                        echo "Frontend User is healthy!"
+                        exit 0
+                    fi
+
+                    echo "Attempt $i/20 - waiting..."
+                    sleep 3
+                done
+
+                echo "Frontend User failed health check"
+                docker logs $CONTAINER_NAME --tail 100
+                exit 1
                 '''
             }
         }
 
+        stage('Cleanup') {
+            steps {
+                sh '''
+                echo "Cleaning unused Docker images..."
+                docker image prune -f
+                '''
+            }
+        }
     }
 
     post {
