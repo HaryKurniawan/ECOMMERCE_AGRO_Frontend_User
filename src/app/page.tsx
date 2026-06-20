@@ -15,6 +15,7 @@ import BannerCarousel from "@/src/components/ecommerce/BannerCarousel";
 import FilterBottomSheet from "@/src/components/ecommerce/FilterBottomSheet";
 import CitySelectionModal from "@/src/components/ecommerce/CitySelectionModal";
 import AddressPromptModal from "@/src/components/ecommerce/AddressPromptModal";
+import { useBanners } from "@/hooks/banner/useBanners";
 
 // Sections
 import {
@@ -28,6 +29,7 @@ const HomePage: React.FC = () => {
   const router = useRouter();
 
   // Hooks
+  const { banners: apiBanners, loading: bannersLoading } = useBanners();
   const {
     stores,
     products,
@@ -118,6 +120,18 @@ const HomePage: React.FC = () => {
     },
   ];
 
+  const activeBanners =
+    apiBanners.length > 0
+      ? apiBanners.map((b) => ({
+          id: b.id,
+          title: b.judul,
+          subtitle: b.subjudul,
+          imageUrl: b.imageUrl,
+          gradient: b.gradient,
+          link: b.linkUrl,
+        }))
+      : demoBanners;
+
   if (loading) {
     return (
       <div className="min-h-screen flex flex-col items-center justify-center bg-gray-50">
@@ -153,7 +167,7 @@ const HomePage: React.FC = () => {
           />
 
           <div className="px-4 lg:px-6 mt-5 pb-4 space-y-6">
-            <BannerCarousel banners={demoBanners} />
+            {!bannersLoading && <BannerCarousel banners={activeBanners} />}
 
             <NearbyProductsSection
               products={allProducts}

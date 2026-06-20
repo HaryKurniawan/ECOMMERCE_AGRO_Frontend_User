@@ -7,7 +7,8 @@ interface Banner {
   id: string;
   title: string;
   subtitle?: string;
-  gradient: string;
+  gradient?: string;
+  imageUrl?: string;
   link?: string;
 }
 
@@ -110,31 +111,59 @@ const BannerCarousel: React.FC<BannerCarouselProps> = ({
         className="flex gap-4 overflow-x-auto snap-x snap-mandatory scroll-smooth [&::-webkit-scrollbar]:hidden"
         style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
       >
-        {infiniteBanners.map((banner, idx) => (
-          <div
-            key={`${banner.id}-${idx}`}
-            className="w-full md:w-[70%] lg:w-[55%] xl:w-[45%] flex-shrink-0 snap-center rounded-2xl md:rounded-3xl overflow-hidden shadow-sm hover:shadow-md hover:-translate-y-1 transition-all duration-300 relative border border-gray-100"
-          >
+        {infiniteBanners.map((banner, idx) => {
+          const content = (
             <div
-              className={`w-full h-32 md:h-40 lg:h-36 ${banner.gradient} flex flex-col justify-end items-start p-6 md:p-8 relative overflow-hidden group/banner`}
+              className={`w-full h-32 md:h-40 lg:h-48 ${banner.gradient || "bg-slate-100"} flex flex-col justify-end items-start relative overflow-hidden group/banner ${banner.link ? "cursor-pointer" : ""}`}
             >
-              <div className="relative z-10 max-w-[85%] md:max-w-[70%] text-left">
-                <h2 className="text-lg md:text-xl lg:text-2xl font-display font-semibold text-white mb-1.5 md:mb-2 leading-tight drop-shadow-md">
-                  {banner.title}
-                </h2>
-                {banner.subtitle && (
-                  <p className="text-xs md:text-sm lg:text-[15px] text-white/95 font-medium drop-shadow-sm max-w-[250px] md:max-w-md">
-                    {banner.subtitle}
-                  </p>
-                )}
-              </div>
+              {banner.imageUrl ? (
+                <img
+                  src={`/api/proxy${banner.imageUrl}`}
+                  alt={banner.title}
+                  className="absolute inset-0 w-full h-full object-cover group-hover/banner:scale-105 transition-transform duration-700"
+                />
+              ) : (
+                <>
+                  <div className="absolute top-0 right-0 w-36 h-36 md:w-64 md:h-64 bg-white/10 rounded-full blur-2xl -mr-10 md:-mr-16 -mt-10 md:-mt-16 group-hover/banner:scale-110 transition-transform duration-700" />
+                  <div className="absolute bottom-0 right-10 w-24 h-24 md:w-48 md:h-48 bg-black/10 rounded-full blur-xl group-hover/banner:-translate-y-4 transition-transform duration-700" />
+                </>
+              )}
 
-              {/* Decorative shapes */}
-              <div className="absolute top-0 right-0 w-36 h-36 md:w-64 md:h-64 bg-white/10 rounded-full blur-2xl -mr-10 md:-mr-16 -mt-10 md:-mt-16 group-hover/banner:scale-110 transition-transform duration-700" />
-              <div className="absolute bottom-0 right-10 w-24 h-24 md:w-48 md:h-48 bg-black/10 rounded-full blur-xl group-hover/banner:-translate-y-4 transition-transform duration-700" />
+              <div className="relative z-10 w-full p-6 md:p-8 bg-gradient-to-t from-black/70 via-black/30 to-transparent">
+                <div className="max-w-[90%] md:max-w-[70%] text-left">
+                  <h2 className="text-lg md:text-xl lg:text-2xl font-display font-semibold text-white mb-1.5 md:mb-2 leading-tight drop-shadow-md">
+                    {banner.title}
+                  </h2>
+                  {banner.subtitle && (
+                    <p className="text-xs md:text-sm lg:text-[15px] text-white/95 font-medium drop-shadow-sm max-w-[250px] md:max-w-md">
+                      {banner.subtitle}
+                    </p>
+                  )}
+                </div>
+              </div>
             </div>
-          </div>
-        ))}
+          );
+
+          return (
+            <div
+              key={`${banner.id}-${idx}`}
+              className="w-full md:w-[70%] lg:w-[55%] xl:w-[45%] flex-shrink-0 snap-center rounded-2xl md:rounded-3xl overflow-hidden shadow-sm hover:shadow-md hover:-translate-y-1 transition-all duration-300 border border-gray-100"
+            >
+              {banner.link ? (
+                <a
+                  href={banner.link}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="block w-full h-full"
+                >
+                  {content}
+                </a>
+              ) : (
+                content
+              )}
+            </div>
+          );
+        })}
       </div>
 
       {/* Navigation Arrows for Desktop */}

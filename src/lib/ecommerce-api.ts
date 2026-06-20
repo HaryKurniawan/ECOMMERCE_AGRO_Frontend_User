@@ -16,3 +16,4 @@ export * from "./api/users";
 export * from "./api/chat";
 export * from "./api/reviews";
 export * from "./api/admin";
+export * from "./api/banner";
