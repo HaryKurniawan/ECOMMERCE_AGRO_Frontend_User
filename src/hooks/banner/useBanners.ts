@@ -10,7 +10,7 @@ export function useBanners() {
     const fetchBanners = async () => {
       try {
         const res = await bannerApi.getBanners();
-        setBanners(res.data || []);
+        setBanners(res.data?.data || []);
       } catch (err) {
         console.error("Failed to fetch banners", err);
       } finally {
