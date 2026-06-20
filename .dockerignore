@@ -5,5 +5,3 @@ playwright-report
 test-results
 .git
 .vscode
-.env
-.env.local

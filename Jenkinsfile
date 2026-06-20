@@ -36,6 +36,24 @@ pipeline {
         //     }
         // }
 
+        stage('Gitleaks Secret Scan') {
+            steps {
+                sh '''
+                echo "Running Gitleaks Secret Scan..."
+
+                docker run --rm \
+                    -u $(id -u):$(id -g) \
+                    -v "$(pwd):/repo" \
+                    zricethezav/gitleaks:latest \
+                    detect \
+                    --source=/repo \
+                    --no-git \
+                    --redact \
+                    --exit-code=1
+                '''
+            }
+        }
+
         stage('Build Docker Image') {
             steps {
                 withCredentials([
@@ -59,6 +77,7 @@ pipeline {
                 docker run -d \
                 --name agro-frontend-user \
                 --network 1panel-network \
+                --env-file .env.local \
                 -p 3001:3000 \
                 agro-frontend-user
                 '''

@@ -11,8 +11,7 @@
  */
 export default function GoogleLoginButton() {
   const handleGoogleLogin = () => {
-    const backendUrl =
-      process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:4000/api";
+    const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL;
     window.location.href = `${backendUrl}/auth/google?origin=ecommerce`;
   };
 

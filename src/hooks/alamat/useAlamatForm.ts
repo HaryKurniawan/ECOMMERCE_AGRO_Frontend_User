@@ -242,7 +242,7 @@ export function useAlamatForm() {
         okText: "Oke",
         onOk: () => router.push(targetUrl),
       });
-    } catch (err: unknown) {
+    } catch (err: any) {
       const axiosError = err as { response?: { data?: { message?: string } } };
       setError(
         axiosError?.response?.data?.message || "Gagal menyimpan alamat.",

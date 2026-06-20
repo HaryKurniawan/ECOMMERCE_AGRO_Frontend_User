@@ -16,13 +16,13 @@ export const useRestoreAuth = () => {
 
     const validateAndRestoreAuth = async () => {
       try {
-        console.log("🔄 Validating auth token...");
+        console.warn("🔄 Validating auth token...");
         // Validate token by fetching profile
         const response = await authApi.getProfile();
         const profile = response?.data?.data || response?.data;
 
         if (profile) {
-          console.log("✅ Auth token is valid");
+          console.warn("✅ Auth token is valid");
           // Token is valid, update auth store with fresh data
           setAuth({
             id: profile.id,

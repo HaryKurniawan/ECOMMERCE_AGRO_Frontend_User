@@ -6,7 +6,7 @@
  * Extracts an array from a potentially wrapped or paginated API response.
  * Handles both { data: { data: [...] } } and { data: [...] } formats.
  */
-export const extractArray = <T>(resp: unknown): T[] => {
+export const extractArray = <T>(resp: any): T[] => {
   const body = (resp as { data?: any })?.data;
   const inner = body?.data;
   if (inner?.data && Array.isArray(inner.data)) return inner.data as T[];

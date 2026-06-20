@@ -7,7 +7,7 @@
 // =====================================================
 
 import { useRouter, usePathname } from "next/navigation";
-import { Home, CalendarCheck, User, Bell, MessageCircle } from "lucide-react";
+import { Home, User, Bell, MessageCircle } from "lucide-react";
 
 import { useAuthStore } from "@/src/store/auth-store";
 

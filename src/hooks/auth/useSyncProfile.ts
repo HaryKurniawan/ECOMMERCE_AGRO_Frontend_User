@@ -16,9 +16,9 @@ export const useSyncProfile = () => {
     if (user && profile && isAuthenticated) {
       // Check if there's a mismatch in name
       if (user.name !== profile.name) {
-        console.log("🔄 Syncing profile data with auth store");
-        console.log(`Auth store name: "${user.name}"`);
-        console.log(`Profile API name: "${profile.name}"`);
+        console.warn("🔄 Syncing profile data with auth store");
+        console.warn(`Auth store name: "${user.name}"`);
+        console.warn(`Profile API name: "${profile.name}"`);
 
         // Update auth store with latest profile data
         setAuth({

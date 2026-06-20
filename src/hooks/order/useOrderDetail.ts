@@ -3,7 +3,7 @@ import { useRouter } from "next/navigation";
 
 import { ordersApi, chatApi } from "@/lib/ecommerce-api";
 import { useAuthStore } from "@/src/store/auth-store";
-import type { ApiOrderData, ApiOrderItem, ApiOrderShipping } from "@/types";
+import type { ApiOrderData } from "@/types";
 
 export const useOrderDetail = (id: string) => {
   const router = useRouter();
@@ -56,7 +56,7 @@ export const useOrderDetail = (id: string) => {
       const items = (order as any).item || [];
       const tokoId = (order as any).tokoId || items[0]?.produk?.toko?.id;
 
-      console.log("Chat debug: starting chat with tokoId", tokoId);
+      console.warn("Chat debug: starting chat with tokoId", tokoId);
 
       if (!tokoId) {
         alert("Info toko tidak tersedia.");

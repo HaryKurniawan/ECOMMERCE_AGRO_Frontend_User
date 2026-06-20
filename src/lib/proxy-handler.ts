@@ -38,8 +38,8 @@ export async function handleProxyRequest(request: NextRequest, slug: string[]) {
 
   // Automatically attach the HttpOnly cookie's token into the Authorization header
   const tokenCookie = request.cookies.get("accessToken");
-  console.log("[PROXY] Path:", targetPath);
-  console.log("[PROXY] Extracted accessToken cookie:", !!tokenCookie?.value);
+  console.warn("[PROXY] Path:", targetPath);
+  console.warn("[PROXY] Extracted accessToken cookie:", !!tokenCookie?.value);
   if (tokenCookie?.value) {
     headers.set("Authorization", `Bearer ${tokenCookie.value}`);
   } else {
