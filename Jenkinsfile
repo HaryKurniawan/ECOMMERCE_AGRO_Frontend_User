@@ -51,7 +51,8 @@ pipeline {
                 echo "Running Gitleaks Secret Scan..."
 
                 docker run --rm \
-                    -v "$WORKSPACE:/repo" \
+                    -u $(id -u):$(id -g) \
+                    -v "$(pwd):/repo" \
                     zricethezav/gitleaks:latest \
                     detect \
                     --source=/repo \
