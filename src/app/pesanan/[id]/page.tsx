@@ -15,6 +15,7 @@ import {
   ShoppingBag,
   Wallet,
   ChevronRight,
+  Camera,
 } from "lucide-react";
 import Image from "next/image";
 
@@ -211,6 +212,32 @@ const OrderDetailPage = () => {
             </span>
           </div>
         </section>
+
+        {/* Foto Sebelum Kirim */}
+        {order.fotoSebelumKirimUrl && (
+          <section className="bg-white rounded-2xl border border-gray-100 p-5">
+            <div className="flex items-center gap-2 mb-3">
+              <div className="w-7 h-7 bg-blue-50 rounded-lg flex items-center justify-center">
+                <Camera size={13} className="text-blue-600" />
+              </div>
+              <h2 className="font-bold text-sm text-gray-800">
+                Foto Sebelum Kirim (Dari Seller)
+              </h2>
+            </div>
+            <p className="text-xs text-gray-500 mb-3 leading-relaxed">
+              Ini adalah kondisi pesanan Anda sebelum dikirimkan oleh Seller.
+            </p>
+            <div className="relative w-full h-48 rounded-xl overflow-hidden border border-gray-100">
+              <Image
+                src={order.fotoSebelumKirimUrl}
+                alt="Foto produk sebelum dikirim"
+                fill
+                className="object-cover"
+                unoptimized
+              />
+            </div>
+          </section>
+        )}
 
         {/* Payment */}
         <section className="bg-white rounded-2xl border border-gray-100 overflow-hidden">
