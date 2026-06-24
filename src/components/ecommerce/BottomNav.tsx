@@ -69,10 +69,10 @@ const BottomNav: React.FC = () => {
               <div
                 className={`p-1 rounded-lg transition-all duration-200 ${isActive ? "bg-primary-50" : ""}`}
               >
-                <item.icon size={20} strokeWidth={isActive ? 2.5 : 2} />
+                <item.icon size={24} strokeWidth={isActive ? 2.5 : 2} />
               </div>
               <span
-                className={`text-[10px] font-medium ${isActive ? "font-semibold" : ""}`}
+                className={`text-xs font-medium ${isActive ? "font-semibold" : ""}`}
               >
                 {item.label}
               </span>
