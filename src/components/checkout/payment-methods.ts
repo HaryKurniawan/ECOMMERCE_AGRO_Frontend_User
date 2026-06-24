@@ -17,7 +17,7 @@ export interface PaymentMethod {
 }
 
 // ID method harus sesuai dengan yang diterima backend (metodeBayar)
-// Xendit akan menangani routing ke virtual account/e-wallet yang sesuai berdasarkan ID ini
+// Midtrans Snap akan menangani routing ke virtual account/e-wallet/QRIS yang sesuai.
 export const PAYMENT_METHODS: PaymentMethod[] = [
   {
     id: "BCA_VA",

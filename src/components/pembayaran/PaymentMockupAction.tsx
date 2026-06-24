@@ -22,11 +22,11 @@ const PaymentMockupAction: React.FC<PaymentMockupActionProps> = ({
           className="w-full py-4 bg-primary-600 hover:bg-primary-700 text-white rounded-2xl font-bold text-sm shadow-lg transition-all active:scale-[0.98] flex items-center justify-center gap-2"
         >
           <ExternalLink size={18} />
-          Bayar via Xendit
+          Bayar via Midtrans
         </a>
       ) : (
         <div className="text-center p-3 text-sm text-gray-500 bg-gray-50 rounded-xl border border-dashed border-gray-200">
-          <p>Link pembayaran Xendit tidak tersedia</p>
+          <p>Link pembayaran Midtrans tidak tersedia</p>
         </div>
       )}
 
