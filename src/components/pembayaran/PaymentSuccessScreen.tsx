@@ -1,3 +1,4 @@
+import React from "react";
 import { CheckCircle2, ShoppingBag } from "lucide-react";
 import { useRouter } from "next/navigation";
 
@@ -15,6 +16,13 @@ const PaymentSuccessScreen: React.FC<PaymentSuccessScreenProps> = ({
   metode,
 }) => {
   const router = useRouter();
+
+  React.useEffect(() => {
+    const timer = setTimeout(() => {
+      router.replace("/pesanan");
+    }, 5000);
+    return () => clearTimeout(timer);
+  }, [router]);
 
   return (
     <div className="animate-fade-in min-h-screen flex flex-col items-center justify-center px-6 bg-gradient-to-b from-emerald-50 to-white">
@@ -69,17 +77,20 @@ const PaymentSuccessScreen: React.FC<PaymentSuccessScreenProps> = ({
       {/* Action Buttons */}
       <div className="w-full max-w-sm space-y-3">
         <button
-          onClick={() => router.push("/pesanan")}
+          onClick={() => router.replace("/pesanan")}
           className="w-full py-3.5 bg-primary-600 hover:bg-primary-700 text-white rounded-2xl font-bold text-sm flex items-center justify-center gap-2 transition-all shadow-lg shadow-primary-200"
         >
           <ShoppingBag size={18} /> Lihat Pesanan Saya
         </button>
         <button
-          onClick={() => router.push("/")}
+          onClick={() => router.replace("/")}
           className="w-full py-3 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-2xl font-semibold text-sm transition-all"
         >
           Kembali ke Beranda
         </button>
+        <p className="text-xs text-gray-400 text-center mt-4">
+          Kamu akan diarahkan otomatis dalam 5 detik...
+        </p>
       </div>
     </div>
   );

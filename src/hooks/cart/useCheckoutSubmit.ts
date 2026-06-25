@@ -84,11 +84,11 @@ export function useCheckoutSubmit(
       if (orders.length > 0) {
         // Ambil semua order ID untuk multi-checkout support di halaman pembayaran
         const orderIdsParam = orders.map((o: any) => o.id).join(",");
-        router.push(`/pembayaran?orderIds=${orderIdsParam}`);
+        router.replace(`/pembayaran?orderIds=${orderIdsParam}`);
         return;
       }
 
-      router.push("/pesanan");
+      router.replace("/pesanan");
     } catch (err: any) {
       console.error("Checkout failed", err);
       const errMsg =
