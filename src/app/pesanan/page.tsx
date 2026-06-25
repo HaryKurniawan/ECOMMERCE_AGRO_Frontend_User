@@ -190,7 +190,7 @@ const PesananContent = () => {
       <div className="bg-white sticky top-0 z-20 border-b border-gray-100">
         <div className="max-w-2xl mx-auto px-4 py-4 flex items-center justify-center relative">
           <button
-            onClick={() => router.back()}
+            onClick={() => router.push("/profil")}
             className="absolute left-4 p-1.5 hover:bg-gray-50 rounded-full transition-colors text-gray-500 lg:hidden"
           >
             <ArrowLeft size={20} />
@@ -232,7 +232,7 @@ const PesananContent = () => {
                       | "selesai",
                   )
                 }
-                className={`px-4 py-2 rounded-full text-xs font-bold whitespace-nowrap transition-all border-2 ${
+                className={`px-4 py-2 rounded-full text-sm font-bold whitespace-nowrap transition-all border-2 ${
                   activeTab === tab.id
                     ? "bg-primary-600 text-white border-primary-600 shadow-md"
                     : "bg-white text-gray-600 border-gray-200 hover:border-gray-300"
@@ -241,7 +241,7 @@ const PesananContent = () => {
                 {tab.label}
                 {count > 0 && (
                   <span
-                    className={`ml-1.5 text-[10px] font-bold ${
+                    className={`ml-1.5 text-xs font-bold ${
                       activeTab === tab.id
                         ? "bg-white/20 text-white"
                         : "bg-gray-100 text-gray-600"

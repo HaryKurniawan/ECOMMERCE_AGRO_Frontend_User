@@ -6,7 +6,7 @@
 import { useState, useCallback } from "react";
 import { useRouter } from "next/navigation";
 
-import { ordersApi } from "@/lib/ecommerce-api";
+import { ordersApi, cartApi } from "@/lib/ecommerce-api";
 import type { ApiShippingInfo } from "@/types";
 
 import type { StoreGroup } from "./checkout-helpers";
@@ -82,6 +82,20 @@ export function useCheckoutSubmit(
       const orders = Array.isArray(orderData) ? orderData : [orderData];
 
       if (orders.length > 0) {
+        // Hapus item cart yang sudah di-checkout
+        try {
+          const cartItemIds = groupedByStore.flatMap((g) =>
+            g.items.map((i) => i.id).filter(Boolean),
+          );
+          if (cartItemIds.length > 0) {
+            await Promise.allSettled(
+              cartItemIds.map((id) => cartApi.removeItem(id)),
+            );
+          }
+        } catch (clearErr) {
+          console.warn("Failed to clear cart items after checkout:", clearErr);
+        }
+
         // Ambil semua order ID untuk multi-checkout support di halaman pembayaran
         const orderIdsParam = orders.map((o: any) => o.id).join(",");
         router.replace(`/pembayaran?orderIds=${orderIdsParam}`);

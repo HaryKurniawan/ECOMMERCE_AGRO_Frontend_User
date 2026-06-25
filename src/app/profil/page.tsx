@@ -230,12 +230,12 @@ const ProfilPage: React.FC = () => {
                 <button
                   key={item.id}
                   onClick={() => router.push(`/pesanan?status=${item.id}`)}
-                  className="flex flex-col items-center gap-1.5 py-2.5 rounded-xl hover:bg-gray-50 transition-colors relative active:scale-95"
+                  className="flex flex-col items-center gap-2 py-3 rounded-xl hover:bg-gray-50 transition-colors relative active:scale-95"
                 >
-                  <div className="w-10 h-10 bg-primary-50 rounded-xl flex items-center justify-center text-primary-600">
-                    <item.icon size={20} strokeWidth={1.8} />
+                  <div className="w-12 h-12 bg-primary-50 rounded-xl flex items-center justify-center text-primary-600">
+                    <item.icon size={23} strokeWidth={1.8} />
                   </div>
-                  <span className="text-[10px] font-semibold text-gray-500 text-center leading-tight">
+                  <span className="text-xs font-semibold text-gray-500 text-center leading-tight">
                     {item.label}
                   </span>
                   {count > 0 && (
@@ -255,20 +255,20 @@ const ProfilPage: React.FC = () => {
             <button
               key={menu.id}
               onClick={() => router.push(menu.path)}
-              className={`w-full flex items-center gap-3.5 px-5 py-3.5 hover:bg-gray-50 transition-colors active:bg-gray-100 ${i !== menuUtama.length - 1 ? "border-b border-gray-50" : ""}`}
+              className={`w-full flex items-center gap-4 px-5 py-4 hover:bg-gray-50 transition-colors active:bg-gray-100 ${i !== menuUtama.length - 1 ? "border-b border-gray-50" : ""}`}
             >
-              <div className="w-9 h-9 bg-gray-50 rounded-xl flex items-center justify-center text-gray-500 flex-shrink-0">
-                <menu.icon size={18} />
+              <div className="w-10 h-10 bg-gray-50 rounded-xl flex items-center justify-center text-gray-500 flex-shrink-0">
+                <menu.icon size={20} />
               </div>
               <div className="flex-1 text-left min-w-0">
-                <p className="font-semibold text-gray-800 text-[13px]">
+                <p className="font-semibold text-gray-800 text-sm">
                   {menu.label}
                 </p>
-                <p className="text-[11px] text-gray-400 mt-0.5 truncate">
+                <p className="text-xs text-gray-400 mt-0.5 truncate">
                   {menu.desc}
                 </p>
               </div>
-              <ChevronRight size={16} className="text-gray-300 flex-shrink-0" />
+              <ChevronRight size={17} className="text-gray-300 flex-shrink-0" />
             </button>
           ))}
         </div>
@@ -279,24 +279,24 @@ const ProfilPage: React.FC = () => {
             <button
               key={menu.id}
               onClick={() => router.push(menu.path)}
-              className={`w-full flex items-center gap-3.5 px-5 py-3.5 hover:bg-gray-50 transition-colors active:bg-gray-100 ${i !== menuLainnya.length - 1 ? "border-b border-gray-50" : ""}`}
+              className={`w-full flex items-center gap-4 px-5 py-4 hover:bg-gray-50 transition-colors active:bg-gray-100 ${i !== menuLainnya.length - 1 ? "border-b border-gray-50" : ""}`}
             >
-              <menu.icon size={18} className="text-gray-400 flex-shrink-0" />
-              <p className="flex-1 text-left font-semibold text-gray-800 text-[13px]">
+              <menu.icon size={20} className="text-gray-400 flex-shrink-0" />
+              <p className="flex-1 text-left font-semibold text-gray-800 text-sm">
                 {menu.label}
               </p>
-              <ChevronRight size={16} className="text-gray-300 flex-shrink-0" />
+              <ChevronRight size={17} className="text-gray-300 flex-shrink-0" />
             </button>
           ))}
           <button
             onClick={handleLogoutClick}
-            className="w-full flex items-center gap-3.5 px-5 py-3.5 hover:bg-red-50 transition-colors border-t border-gray-50 group active:bg-red-100"
+            className="w-full flex items-center gap-4 px-5 py-4 hover:bg-red-50 transition-colors border-t border-gray-50 group active:bg-red-100"
           >
             <LogOut
-              size={18}
+              size={20}
               className="text-red-400 group-hover:text-red-500 flex-shrink-0"
             />
-            <p className="flex-1 text-left font-semibold text-red-500 group-hover:text-red-600 text-[13px]">
+            <p className="flex-1 text-left font-semibold text-red-500 group-hover:text-red-600 text-sm">
               Keluar Akun
             </p>
           </button>

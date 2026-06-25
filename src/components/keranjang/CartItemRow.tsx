@@ -193,6 +193,14 @@ const CartItemRow: React.FC<CartItemRowProps> = ({
               <p className="font-display font-bold text-base text-gray-900 tracking-tight">
                 {formatRupiah(item.harga * item.jumlah)}
               </p>
+              {/* Sisa Stok */}
+              {maxStock > 0 && (
+                <p
+                  className={`text-[10px] font-semibold leading-none ${isInvalidStock ? "text-orange-500" : isMaxStock ? "text-red-400" : "text-gray-400"}`}
+                >
+                  Sisa stok: {maxStock}
+                </p>
+              )}
             </div>
 
             {isOutOfStock ? (

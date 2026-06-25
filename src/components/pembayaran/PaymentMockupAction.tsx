@@ -1,3 +1,4 @@
+import Image from "next/image";
 import {
   Loader2,
   CheckCircle2,
@@ -26,13 +27,29 @@ const XenditAppMockup: React.FC<{
   const isQris = metodeBayar?.toUpperCase() === "QRIS";
 
   const appInfo = {
-    DANA: { color: "from-blue-500 to-blue-600", logo: "💙", name: "DANA" },
-    OVO: { color: "from-purple-600 to-purple-700", logo: "💜", name: "OVO" },
-    GOPAY: { color: "from-green-500 to-green-600", logo: "💚", name: "GoPay" },
-    LINKAJA: { color: "from-red-500 to-red-600", logo: "❤️", name: "LinkAja" },
+    DANA: {
+      color: "from-[#108BE3] to-[#0071BC]",
+      imgSrc: "/images/payment/DANA.png",
+      name: "DANA",
+    },
+    OVO: {
+      color: "from-[#4C3494] to-[#3D2878]",
+      imgSrc: "/images/payment/OVO.png",
+      name: "OVO",
+    },
+    GOPAY: {
+      color: "from-[#00AED6] to-[#0090B0]",
+      imgSrc: "/images/payment/GOPAY.png",
+      name: "GoPay",
+    },
+    LINKAJA: {
+      color: "from-red-500 to-red-600",
+      imgSrc: null,
+      name: "LinkAja",
+    },
     SHOPEEPAY: {
-      color: "from-orange-500 to-orange-600",
-      logo: "🛍️",
+      color: "from-[#EE4D2D] to-[#D23F22]",
+      imgSrc: "/images/payment/SPAY.png",
       name: "ShopeePay",
     },
   };
@@ -82,9 +99,22 @@ const XenditAppMockup: React.FC<{
       {/* App-specific mockup or generic */}
       {isEwallet && app ? (
         <div
-          className={`bg-gradient-to-br ${app.color} p-4 m-3 rounded-xl text-white text-center`}
+          className={`bg-gradient-to-br ${app.color} p-4 m-3 rounded-xl text-white text-center flex flex-col items-center`}
         >
-          <div className="text-3xl mb-1">{app.logo}</div>
+          {app.imgSrc ? (
+            <div className="w-14 h-14 bg-white/20 rounded-xl flex items-center justify-center mb-2 p-1.5">
+              <Image
+                src={app.imgSrc}
+                alt={app.name}
+                width={48}
+                height={48}
+                className="object-contain"
+                unoptimized
+              />
+            </div>
+          ) : (
+            <div className="text-3xl mb-1">💳</div>
+          )}
           <p className="text-xs font-bold">{app.name}</p>
           <p className="text-[10px] text-white/70 mt-1">
             Klik tombol di bawah untuk membuka aplikasi

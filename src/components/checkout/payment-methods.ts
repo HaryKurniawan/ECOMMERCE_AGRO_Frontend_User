@@ -1,80 +1,77 @@
-import {
-  Landmark,
-  Building2,
-  Building,
-  SmartphoneNfc,
-  Wallet,
-  Coins,
-  ShoppingBag,
-  type LucideIcon,
-} from "lucide-react";
+// Logo path dari /public/images/payment/
+// Gunakan string path agar bisa dipakai di file .ts biasa
 
 export interface PaymentMethod {
   id: string;
   label: string;
-  icon: LucideIcon;
+  logo?: string; // path ke /public/images/payment/...
+  badge?: string; // teks singkat fallback untuk bank (BCA, BRI, dst.)
+  bgColor: string; // warna background icon container
   sublabel: string;
-  iconColor?: string;
 }
 
-// ID method TIDAK harus sesuai dengan Xendit — Xendit Invoice akan menampilkan
-// semua metode yang tersedia dalam satu link. ID ini hanya untuk keperluan
-// pelacakan preferensi pengguna di sistem backend kita.
 export const PAYMENT_METHODS: PaymentMethod[] = [
   {
     id: "BCA_VA",
     label: "BCA Virtual Account",
-    icon: Landmark,
+    badge: "BCA",
+    bgColor: "bg-[#005BAB]",
     sublabel: "Transfer Bank",
-    iconColor: "text-blue-600",
   },
   {
     id: "BRI_VA",
     label: "BRI Virtual Account",
-    icon: Building2,
+    badge: "BRI",
+    bgColor: "bg-[#003F8A]",
     sublabel: "Transfer Bank",
-    iconColor: "text-blue-800",
+  },
+  {
+    id: "BNI_VA",
+    label: "BNI Virtual Account",
+    badge: "BNI",
+    bgColor: "bg-[#F37021]",
+    sublabel: "Transfer Bank",
   },
   {
     id: "MANDIRI_VA",
     label: "Mandiri Virtual Account",
-    icon: Building,
+    badge: "MDR",
+    bgColor: "bg-[#003D8F]",
     sublabel: "Transfer Bank",
-    iconColor: "text-yellow-600",
   },
   {
     id: "QRIS",
     label: "QRIS",
-    icon: SmartphoneNfc,
+    logo: "/images/payment/QRIS.png",
+    bgColor: "bg-white border border-gray-200",
     sublabel: "E-Wallet / QR Code",
-    iconColor: "text-primary-600",
   },
   {
     id: "OVO",
     label: "OVO",
-    icon: Wallet,
+    logo: "/images/payment/OVO.png",
+    bgColor: "bg-[#4C3494]",
     sublabel: "E-Wallet",
-    iconColor: "text-purple-600",
   },
   {
     id: "DANA",
     label: "DANA",
-    icon: Coins,
+    logo: "/images/payment/DANA.png",
+    bgColor: "bg-[#108BE3]",
     sublabel: "E-Wallet",
-    iconColor: "text-blue-400",
   },
   {
     id: "GOPAY",
     label: "GoPay",
-    icon: ShoppingBag,
+    logo: "/images/payment/GOPAY.png",
+    bgColor: "bg-[#00AED6]",
     sublabel: "E-Wallet",
-    iconColor: "text-green-500",
   },
   {
     id: "SHOPEEPAY",
     label: "ShopeePay",
-    icon: ShoppingBag,
+    logo: "/images/payment/SPAY.png",
+    bgColor: "bg-[#EE4D2D]",
     sublabel: "E-Wallet",
-    iconColor: "text-orange-500",
   },
 ];
