@@ -85,7 +85,7 @@ export function useCheckoutSubmit(
         // Hapus item cart yang sudah di-checkout
         try {
           const cartItemIds = groupedByStore.flatMap((g) =>
-            g.items.map((i) => i.id).filter(Boolean),
+            g.items.map((i) => i.id).filter((id): id is string => Boolean(id)),
           );
           if (cartItemIds.length > 0) {
             await Promise.allSettled(
