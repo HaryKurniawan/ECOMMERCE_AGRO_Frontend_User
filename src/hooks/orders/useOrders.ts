@@ -37,7 +37,8 @@ export const useOrders = (isAuthenticated: boolean, _hasHydrated: boolean) => {
     return () => {
       eventSource.close();
     };
-  }, [_hasHydrated, isAuthenticated, query]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [_hasHydrated, isAuthenticated]);
 
   return {
     orders: query.data ?? [],

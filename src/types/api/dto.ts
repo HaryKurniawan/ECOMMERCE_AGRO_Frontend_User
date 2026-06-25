@@ -158,18 +158,7 @@ export interface ApiOrderReviewStatusItem {
   } | null;
 }
 
-export type ApiNotifCategory = "Semua" | "Transaksi" | "Info";
-
-export interface ApiNotification {
-  id: string;
-  type: "transaksi" | "info";
-  title: string;
-  message: string;
-  time: string;
-  isRead: boolean;
-  icon?: unknown;
-  color?: string;
-}
+export type ApiNotifCategory = "Semua" | "Transaksi" | "Info" | "Tugas";
 
 export interface ApiCartItem extends CartItem {
   beratGram?: number | string;
@@ -239,4 +228,35 @@ export interface ApiShippingInfo {
   ongkir: number;
   isAvailable: boolean;
   keterangan: string;
+}
+
+export type TipeNotifikasi =
+  | "PESANAN"
+  | "PESANAN_BARU"
+  | "PEMBAYARAN"
+  | "ULASAN"
+  | "AKUN"
+  | "PROMO"
+  | "SISTEM"
+  | "STOK"
+  | "TOKO"
+  | "GROSIR"
+  | "LAPORAN"
+  | "BROADCAST"
+  | "TUGAS_BARU"
+  | "TUGAS"
+  | "CHAT"
+  | "ESKALASI"
+  | "VERIFIKASI_TOKO"
+  | "VERIFIKASI_B2B";
+
+export interface ApiNotification {
+  id: string;
+  penggunaId: string;
+  judul: string;
+  pesan: string;
+  tipe: TipeNotifikasi;
+  isRead: boolean;
+  data?: Record<string, unknown>;
+  createdAt: string;
 }

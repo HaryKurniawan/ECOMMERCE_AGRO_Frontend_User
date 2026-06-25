@@ -10,13 +10,13 @@ import { useRouter, usePathname } from "next/navigation";
 import { Home, User, Bell, MessageCircle } from "lucide-react";
 
 import { useAuthStore } from "@/src/store/auth-store";
+import { useNotifStore } from "@/src/store/notifikasi-store";
 
 const BottomNav: React.FC = () => {
   const router = useRouter();
   const pathname = usePathname();
-  const user = useAuthStore((s) => s.user);
-
   const isAuthenticated = useAuthStore((s) => s.isAuthenticated);
+  const unreadCount = useNotifStore((s) => s.unreadCount);
 
   const isAuth =
     pathname?.startsWith("/login") ||
@@ -60,16 +60,19 @@ const BottomNav: React.FC = () => {
                   router.push(item.path);
                 }
               }}
-              className={`flex flex-col items-center gap-0.5 py-1.5 px-3 rounded-xl transition-all duration-200 min-w-[56px] active:scale-95 ${
+              className={`flex flex-col items-center gap-0.5 py-1.5 px-3 rounded-xl transition-all duration-200 min-w-[56px] active:scale-95 relative ${
                 isActive
                   ? "text-primary-600"
                   : "text-gray-400 hover:text-gray-600"
               }`}
             >
               <div
-                className={`p-1 rounded-lg transition-all duration-200 ${isActive ? "bg-primary-50" : ""}`}
+                className={`p-1 rounded-lg transition-all duration-200 relative ${isActive ? "bg-primary-50" : ""}`}
               >
                 <item.icon size={24} strokeWidth={isActive ? 2.5 : 2} />
+                {item.path === "/notifikasi" && unreadCount > 0 && (
+                  <div className="absolute top-0 right-0 w-2.5 h-2.5 bg-red-500 rounded-full border-2 border-white" />
+                )}
               </div>
               <span
                 className={`text-xs font-medium ${isActive ? "font-semibold" : ""}`}

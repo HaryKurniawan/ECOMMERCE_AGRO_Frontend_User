@@ -60,6 +60,7 @@ export async function handleProxyRequest(request: NextRequest, slug: string[]) {
       method: request.method,
       headers,
       body,
+      signal: request.signal,
     });
 
     // Support for Server-Sent Events (SSE) streaming
