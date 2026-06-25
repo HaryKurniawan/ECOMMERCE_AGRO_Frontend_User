@@ -131,6 +131,7 @@ const PembayaranContent: React.FC = () => {
           copied={copied}
           onCopy={handleCopy}
           metodeBayar={metodeBayar}
+          paymentUrl={order?.paymentUrl || undefined}
         />
 
         {/* Instuctions */}
@@ -148,9 +149,8 @@ const PembayaranContent: React.FC = () => {
         <PaymentMockupAction
           isProcessing={isProcessing}
           onSimulatePayment={handleSimulatePayment}
-          paymentUrl={
-            !isVaPayment && order?.paymentUrl ? order.paymentUrl : undefined
-          }
+          paymentUrl={order?.paymentUrl || undefined}
+          metodeBayar={metodeBayar}
         />
 
         {/* Order ID Footer */}

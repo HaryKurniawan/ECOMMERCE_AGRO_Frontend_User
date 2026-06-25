@@ -72,21 +72,23 @@ const CartItemRow: React.FC<CartItemRowProps> = ({
         {/* Product Image */}
         <Link
           href={`/produk/${item.produkId}`}
-          className="w-[72px] h-[72px] bg-gray-50 rounded-2xl flex items-center justify-center text-2xl flex-shrink-0 border border-gray-100 overflow-hidden group relative"
+          className="relative w-[72px] h-[72px] bg-gray-50 rounded-2xl flex-shrink-0 border border-gray-100 overflow-hidden group block"
         >
-          {item.gambar.startsWith("http") ? (
-            <div className="relative w-full h-full">
-              <Image
-                src={item.gambar}
-                alt={item.produkNama}
-                fill
-                sizes="80px"
-                className="object-cover group-hover:scale-110 transition-transform duration-500"
-                unoptimized
-              />
-            </div>
+          {item.gambar && item.gambar.startsWith("http") ? (
+            <Image
+              src={item.gambar}
+              alt={item.produkNama}
+              fill
+              sizes="80px"
+              className="object-cover group-hover:scale-110 transition-transform duration-500"
+              unoptimized
+            />
           ) : (
-            item.gambar
+            <div className="w-full h-full flex items-center justify-center text-2xl">
+              {item.gambar && !item.gambar.startsWith("http")
+                ? item.gambar
+                : "📦"}
+            </div>
           )}
           <div className="absolute inset-0 bg-black/0 group-hover:bg-black/5 transition-colors" />
         </Link>

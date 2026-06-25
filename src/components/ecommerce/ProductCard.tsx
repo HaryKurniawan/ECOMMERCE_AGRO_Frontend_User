@@ -83,46 +83,48 @@ const ProductCard: React.FC<ProductCardProps> = ({
       </div>
 
       {/* Info */}
-      <div className="p-4 flex flex-col flex-1">
-        <h3 className="font-semibold text-sm text-gray-900 leading-tight group-hover:text-primary-700 transition-colors truncate">
-          {product.nama}
-        </h3>
-
-        {/* Label komoditas / kategori */}
-        {product.kategoriNama && (
-          <span className="inline-flex w-fit items-center mt-1 text-[9px] font-bold bg-emerald-50 text-emerald-700 px-1.5 py-0.5 rounded border border-emerald-100 uppercase tracking-wider">
-            {product.kategoriNama}
-          </span>
-        )}
-
-        {/* Lokasi Seller */}
-        {storeCity && (
-          <p className="flex items-center gap-1 text-[11px] text-gray-400 font-medium mt-1 truncate">
-            <MapPin size={11} className="text-primary-400 flex-shrink-0" />
-            <span className="truncate">{storeCity}</span>
-          </p>
-        )}
-
-        {/* Price */}
-        <div className="mt-1">
-          <p className="font-display font-bold text-primary-700 text-base">
+      <div className="p-3 flex flex-col flex-1">
+        {/* Price — PALING ATAS */}
+        <div className="mb-1.5">
+          <p className="font-display font-bold text-primary-700 text-base leading-tight">
             {formatRupiah(displayPrice)}
             <span className="text-[10px] text-gray-400 font-medium ml-1">
               /{product.satuan}
             </span>
           </p>
+          {hasMultipleGrades && (
+            <p className="text-[9px] text-gray-400 font-medium">mulai dari</p>
+          )}
         </div>
 
-        {/* Grade Tags Hidden */}
+        {/* Nama Produk — LEBIH BESAR */}
+        <h3 className="font-semibold text-sm text-gray-900 leading-snug group-hover:text-primary-700 transition-colors line-clamp-2 mb-1">
+          {product.nama}
+        </h3>
+
+        {/* Label komoditas / kategori */}
+        {product.kategoriNama && (
+          <span className="inline-flex w-fit items-center mt-0.5 text-[9px] font-bold bg-emerald-50 text-emerald-700 px-1.5 py-0.5 rounded border border-emerald-100 uppercase tracking-wider">
+            {product.kategoriNama}
+          </span>
+        )}
+
+        {/* Lokasi Seller — PALING BAWAH INFO */}
+        {storeCity && (
+          <p className="flex items-center gap-1 text-[10px] text-gray-400 font-medium mt-1.5 truncate">
+            <MapPin size={10} className="text-primary-400 flex-shrink-0" />
+            <span className="truncate">{storeCity}</span>
+          </p>
+        )}
 
         {/* Bottom Section (Pushed to bottom) */}
         <div className="mt-auto">
           {/* Meta */}
           {(!hideRating || !hideSold) && (
-            <div className="flex items-center justify-between pt-3 mt-3 border-t border-gray-50">
+            <div className="flex items-center justify-between pt-2 mt-2 border-t border-gray-50">
               <div className="flex items-center gap-2">
                 {!hideRating && (
-                  <span className="flex items-center gap-0.5 text-[11px] text-amber-600 font-bold">
+                  <span className="flex items-center gap-0.5 text-[10px] text-amber-600 font-bold">
                     <Star size={10} fill="currentColor" />{" "}
                     {product.rating?.toFixed(1) || "4.8"}
                   </span>
@@ -134,7 +136,7 @@ const ProductCard: React.FC<ProductCardProps> = ({
                 )}
               </div>
               {product.stok !== undefined && (
-                <span className="text-[10px] bg-green-50 text-green-600 font-bold px-1.5 py-0.5 rounded-md border border-green-100 whitespace-nowrap">
+                <span className="text-[9px] bg-green-50 text-green-600 font-bold px-1.5 py-0.5 rounded-md border border-green-100 whitespace-nowrap">
                   Sisa: {product.stok}
                 </span>
               )}
@@ -153,7 +155,7 @@ const ProductCard: React.FC<ProductCardProps> = ({
                 }
                 if (onAddToCart) onAddToCart(product);
               }}
-              className={`w-full mt-4 py-2 bg-white border border-gray-200 hover:border-primary-300 hover:bg-gray-50 text-primary-600 rounded-xl text-xs font-medium items-center justify-center gap-1.5 transition-all active:scale-95 ${hideCartOnMobile ? "hidden lg:flex" : "flex"}`}
+              className={`w-full mt-3 py-2 bg-white border border-gray-200 hover:border-primary-300 hover:bg-gray-50 text-primary-600 rounded-xl text-xs font-medium items-center justify-center gap-1.5 transition-all active:scale-95 ${hideCartOnMobile ? "hidden lg:flex" : "flex"}`}
               aria-label={`Tambah ${product.nama} ke keranjang`}
             >
               <Plus size={14} /> Keranjang

@@ -5,6 +5,7 @@ import {
   SmartphoneNfc,
   Wallet,
   Coins,
+  ShoppingBag,
   type LucideIcon,
 } from "lucide-react";
 
@@ -16,8 +17,9 @@ export interface PaymentMethod {
   iconColor?: string;
 }
 
-// ID method harus sesuai dengan yang diterima backend (metodeBayar)
-// Midtrans Snap akan menangani routing ke virtual account/e-wallet/QRIS yang sesuai.
+// ID method TIDAK harus sesuai dengan Xendit — Xendit Invoice akan menampilkan
+// semua metode yang tersedia dalam satu link. ID ini hanya untuk keperluan
+// pelacakan preferensi pengguna di sistem backend kita.
 export const PAYMENT_METHODS: PaymentMethod[] = [
   {
     id: "BCA_VA",
@@ -60,5 +62,19 @@ export const PAYMENT_METHODS: PaymentMethod[] = [
     icon: Coins,
     sublabel: "E-Wallet",
     iconColor: "text-blue-400",
+  },
+  {
+    id: "GOPAY",
+    label: "GoPay",
+    icon: ShoppingBag,
+    sublabel: "E-Wallet",
+    iconColor: "text-green-500",
+  },
+  {
+    id: "SHOPEEPAY",
+    label: "ShopeePay",
+    icon: ShoppingBag,
+    sublabel: "E-Wallet",
+    iconColor: "text-orange-500",
   },
 ];
