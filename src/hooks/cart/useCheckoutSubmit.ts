@@ -89,9 +89,13 @@ export function useCheckoutSubmit(
       }
 
       router.push("/pesanan");
-    } catch (err) {
+    } catch (err: any) {
       console.error("Checkout failed", err);
-      alert("Terjadi kesalahan saat membuat pesanan");
+      const errMsg =
+        err.response?.data?.message ||
+        err.message ||
+        "Terjadi kesalahan saat membuat pesanan";
+      alert(`Gagal Checkout: ${errMsg}`);
     } finally {
       setLoading(false);
     }

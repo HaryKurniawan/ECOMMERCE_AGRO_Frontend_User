@@ -1,6 +1,6 @@
 import React from "react";
 import Image from "next/image";
-import { Minus, Plus, ChevronDown } from "lucide-react";
+import { Minus, Plus, ChevronDown, Trash2 } from "lucide-react";
 import Link from "next/link";
 
 import { formatRupiah } from "@/lib/ecommerce-api";
@@ -41,7 +41,14 @@ const CartItemRow: React.FC<CartItemRowProps> = ({
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
-  const isMaxStock = false; // We don't have stock validation per item in cart anymore without grades, or maybe use max value
+  const selectedVariant = item.availableVariants?.find(
+    (v) => v.id === item.varianId,
+  );
+  const maxStock = selectedVariant?.stokKemasan ?? 0;
+  const isOutOfStock = maxStock === 0;
+  const isInvalidStock = maxStock > 0 && item.jumlah > maxStock;
+  const isDisabledCheckbox = isOutOfStock || isInvalidStock;
+  const isMaxStock = item.jumlah >= maxStock || isOutOfStock;
 
   const handleMinusClick = () => {
     if (item.jumlah <= 1) {
@@ -54,7 +61,13 @@ const CartItemRow: React.FC<CartItemRowProps> = ({
   return (
     <div
       className={`px-6 py-5 transition-all relative z-0 ${
-        isSelectMode && !isSelected ? "opacity-40 grayscale-[0.5]" : ""
+        isOutOfStock
+          ? "opacity-50 bg-gray-50/50"
+          : isInvalidStock
+            ? "bg-orange-50/30"
+            : isSelectMode && !isSelected
+              ? "opacity-40 grayscale-[0.5]"
+              : ""
       }`}
     >
       <div className="flex items-start gap-5">
@@ -62,9 +75,10 @@ const CartItemRow: React.FC<CartItemRowProps> = ({
           <div className="pt-2">
             <input
               type="checkbox"
-              checked={isSelected}
+              checked={isSelected && !isDisabledCheckbox}
               onChange={onToggleSelection}
-              className="w-5 h-5 rounded border-gray-300 text-primary-600 focus:ring-primary-500 transition-all cursor-pointer"
+              disabled={isDisabledCheckbox}
+              className="w-5 h-5 rounded border-gray-300 text-primary-600 focus:ring-primary-500 transition-all cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
             />
           </div>
         )}
@@ -74,7 +88,7 @@ const CartItemRow: React.FC<CartItemRowProps> = ({
           href={`/produk/${item.produkId}`}
           className="relative w-[72px] h-[72px] bg-gray-50 rounded-2xl flex-shrink-0 border border-gray-100 overflow-hidden group block"
         >
-          {item.gambar && item.gambar.startsWith("http") ? (
+          {item.gambar && item.gambar.length > 5 ? (
             <Image
               src={item.gambar}
               alt={item.produkNama}
@@ -85,9 +99,7 @@ const CartItemRow: React.FC<CartItemRowProps> = ({
             />
           ) : (
             <div className="w-full h-full flex items-center justify-center text-2xl">
-              {item.gambar && !item.gambar.startsWith("http")
-                ? item.gambar
-                : "📦"}
+              {item.gambar ? item.gambar : "📦"}
             </div>
           )}
           <div className="absolute inset-0 bg-black/0 group-hover:bg-black/5 transition-colors" />
@@ -98,9 +110,21 @@ const CartItemRow: React.FC<CartItemRowProps> = ({
           <div className="flex items-start justify-between gap-4">
             <div className="min-w-0 flex-1">
               <Link href={`/produk/${item.produkId}`}>
-                <p className="font-display font-semibold text-base text-gray-900 line-clamp-2 leading-tight hover:text-primary-600 transition-colors cursor-pointer">
-                  {item.produkNama}
-                </p>
+                <div className="flex items-center gap-2">
+                  <p className="font-display font-semibold text-base text-gray-900 line-clamp-2 leading-tight hover:text-primary-600 transition-colors cursor-pointer">
+                    {item.produkNama}
+                  </p>
+                  {isOutOfStock && (
+                    <span className="bg-red-100 text-red-600 text-[10px] font-bold px-2 py-0.5 rounded-full whitespace-nowrap">
+                      Habis
+                    </span>
+                  )}
+                  {isInvalidStock && (
+                    <span className="bg-orange-100 text-orange-700 text-[10px] font-bold px-2 py-0.5 rounded-full whitespace-nowrap">
+                      Kurangi Jumlah
+                    </span>
+                  )}
+                </div>
               </Link>
             </div>
           </div>
@@ -113,9 +137,8 @@ const CartItemRow: React.FC<CartItemRowProps> = ({
                   className="flex items-center gap-1.5 text-[10px] text-gray-600 font-medium bg-gray-100 hover:bg-gray-200 px-2.5 py-1.5 rounded-lg border-none focus:outline-none transition-colors"
                 >
                   <span>
-                    {item.availableVariants.find((v) => v.id === item.varianId)
-                      ?.ukuranKg
-                      ? `Kemasan ${item.availableVariants.find((v) => v.id === item.varianId)?.ukuranKg} kg`
+                    {selectedVariant?.ukuranKg
+                      ? `Kemasan ${selectedVariant.ukuranKg} kg (Sisa ${selectedVariant.stokKemasan})`
                       : item.varian || "Pilih Kemasan"}
                   </span>
                   <ChevronDown
@@ -172,33 +195,43 @@ const CartItemRow: React.FC<CartItemRowProps> = ({
               </p>
             </div>
 
-            <div className="flex items-center gap-2">
-              <div className="flex items-center bg-white rounded-xl border border-gray-200 overflow-hidden shadow-sm">
-                <button
-                  onClick={handleMinusClick}
-                  className="w-9 h-9 flex items-center justify-center transition-colors border-r border-gray-100 hover:bg-gray-50 active:bg-gray-100"
-                >
-                  <Minus size={14} className="text-gray-400" />
-                </button>
-                <span className="font-display text-sm font-semibold w-10 text-center text-gray-900 cursor-default">
-                  {item.jumlah}
-                </span>
-                <button
-                  onClick={() => onUpdateQuantity(1)}
-                  disabled={isMaxStock}
-                  className={`w-9 h-9 flex items-center justify-center transition-colors border-l border-gray-100 ${
-                    isMaxStock
-                      ? "bg-red-50 opacity-40 cursor-not-allowed border-l-red-100 text-red-400"
-                      : "hover:bg-gray-50 active:bg-gray-100"
-                  }`}
-                >
-                  <Plus
-                    size={14}
-                    className={isMaxStock ? "text-red-400" : "text-gray-400"}
-                  />
-                </button>
+            {isOutOfStock ? (
+              <button
+                onClick={() => onPromptDelete?.()}
+                className="text-red-500 hover:bg-red-50 p-2 rounded-lg flex items-center gap-1.5 text-xs font-bold transition-colors border border-red-100 bg-white"
+              >
+                <Trash2 size={16} />
+                Hapus
+              </button>
+            ) : (
+              <div className="flex items-center gap-2">
+                <div className="flex items-center bg-white rounded-xl border border-gray-200 overflow-hidden shadow-sm">
+                  <button
+                    onClick={handleMinusClick}
+                    className="w-9 h-9 flex items-center justify-center transition-colors border-r border-gray-100 hover:bg-gray-50 active:bg-gray-100"
+                  >
+                    <Minus size={14} className="text-gray-400" />
+                  </button>
+                  <span className="font-display text-sm font-semibold w-10 text-center text-gray-900 cursor-default">
+                    {item.jumlah}
+                  </span>
+                  <button
+                    onClick={() => onUpdateQuantity(1)}
+                    disabled={isMaxStock}
+                    className={`w-9 h-9 flex items-center justify-center transition-colors border-l border-gray-100 ${
+                      isMaxStock
+                        ? "bg-red-50 opacity-40 cursor-not-allowed border-l-red-100 text-red-400"
+                        : "hover:bg-gray-50 active:bg-gray-100"
+                    }`}
+                  >
+                    <Plus
+                      size={14}
+                      className={isMaxStock ? "text-red-400" : "text-gray-400"}
+                    />
+                  </button>
+                </div>
               </div>
-            </div>
+            )}
           </div>
         </div>
       </div>

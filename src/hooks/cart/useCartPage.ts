@@ -149,8 +149,14 @@ export const useCartPage = () => {
     try {
       await cartApi.updateItem(id, newJumlah, item.varianId);
       fetchCart();
-    } catch (error) {
+    } catch (error: any) {
       console.error("Error updating quantity:", error);
+      const errMsg =
+        error.response?.data?.message ||
+        error.message ||
+        "Gagal mengubah jumlah";
+      alert(`Gagal: ${errMsg}`);
+      fetchCart();
     }
   };
 
@@ -160,8 +166,14 @@ export const useCartPage = () => {
     try {
       await cartApi.updateItem(id, item.jumlah, newVarianId);
       fetchCart();
-    } catch (error) {
+    } catch (error: any) {
       console.error("Error updating variant:", error);
+      const errMsg =
+        error.response?.data?.message ||
+        error.message ||
+        "Gagal mengubah variasi";
+      alert(`Gagal: ${errMsg}`);
+      fetchCart();
     }
   };
 
