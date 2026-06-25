@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from "react";
 import { useParams, useRouter } from "next/navigation";
-import { ArrowLeft, AlertCircle } from "lucide-react";
+import { ArrowLeft, AlertCircle, CheckCircle2 } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 
 import { useProductDetail } from "@/src/hooks/produk/useProductDetail";
@@ -34,7 +34,8 @@ export default function BeliGrosirPage() {
     loading: productLoading,
     isOutOfArea,
   } = useProductDetail(id, isAuthenticated);
-  const { handleBulkOrderSubmit, bulkOrderLoading } = useBulkOrder(product);
+  const { handleBulkOrderSubmit, bulkOrderLoading, isSuccess } =
+    useBulkOrder(product);
 
   // Fetch addresses
   const { data: addresses = [], isLoading: addressesLoading } = useQuery<
@@ -215,6 +216,42 @@ export default function BeliGrosirPage() {
           </div>
         </div>
       </div>
+
+      {/* Success Modal */}
+      {isSuccess && (
+        <div className="fixed inset-0 z-[100] flex items-center justify-center px-4 bg-black/40 backdrop-blur-sm animate-fade-in">
+          <div className="bg-white rounded-3xl w-full max-w-sm overflow-hidden shadow-2xl animate-slide-up relative p-8 text-center border border-gray-100">
+            <div className="w-24 h-24 bg-emerald-50 rounded-full flex items-center justify-center mx-auto mb-6">
+              <div className="w-16 h-16 bg-emerald-500 rounded-full flex items-center justify-center shadow-lg shadow-emerald-200">
+                <CheckCircle2 size={36} className="text-white" />
+              </div>
+            </div>
+
+            <h2 className="font-display font-bold text-2xl text-gray-900 mb-2 tracking-tight">
+              Pengajuan Berhasil! 🎉
+            </h2>
+            <p className="text-gray-500 text-sm mb-8 leading-relaxed">
+              Pengajuan grosir kamu telah dikirim ke Penjual. Kamu bisa memantau
+              status pesanan di halaman pesanan.
+            </p>
+
+            <div className="space-y-3">
+              <button
+                onClick={() => router.replace("/pesanan")}
+                className="w-full py-3.5 bg-primary-600 hover:bg-primary-700 text-white rounded-2xl font-bold text-sm transition-all shadow-lg shadow-primary-200"
+              >
+                Lihat Status Pengajuan
+              </button>
+              <button
+                onClick={() => router.replace("/")}
+                className="w-full py-3.5 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-2xl font-semibold text-sm transition-all"
+              >
+                Kembali ke Beranda
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

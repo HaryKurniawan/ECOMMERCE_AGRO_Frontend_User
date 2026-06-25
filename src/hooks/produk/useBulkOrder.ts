@@ -1,13 +1,12 @@
 import { useState } from "react";
 import toast from "react-hot-toast";
-import { useRouter } from "next/navigation";
 
 import { ordersApi } from "@/lib/ecommerce-api";
 
 export const useBulkOrder = (product: any) => {
   const [showBulkOrderModal, setShowBulkOrderModal] = useState(false);
   const [loading, setLoading] = useState(false);
-  const router = useRouter();
+  const [isSuccess, setIsSuccess] = useState(false);
 
   const handleBulkOrderSubmit = async (data: {
     jumlah: number;
@@ -29,12 +28,11 @@ export const useBulkOrder = (product: any) => {
 
       if (response.data) {
         toast.success(
-          "Permintaan pesanan grosir berhasil dikirim ke Penjual. Menunggu konfirmasi.",
+          "Permintaan pesanan grosir berhasil dikirim ke Penjual.",
           { duration: 5000 },
         );
         setShowBulkOrderModal(false);
-        // Redirect to orders page
-        router.push("/pesanan");
+        setIsSuccess(true);
       }
     } catch (error: any) {
       console.error("Error submitting bulk order:", error);
@@ -51,5 +49,7 @@ export const useBulkOrder = (product: any) => {
     setShowBulkOrderModal,
     handleBulkOrderSubmit,
     bulkOrderLoading: loading,
+    isSuccess,
+    setIsSuccess,
   };
 };

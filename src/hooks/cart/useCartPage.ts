@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback, useMemo } from "react";
+import { useState, useEffect, useCallback, useMemo, useRef } from "react";
 import { useRouter } from "next/navigation";
 
 import { cartApi } from "@/lib/ecommerce-api";
@@ -139,25 +139,49 @@ export const useCartPage = () => {
     }
   };
 
+  const timeoutRefs = useRef<Record<string, NodeJS.Timeout>>({});
+
   const updateQuantity = async (id: string, delta: number) => {
     const item = cartItems.find((i) => i.id === id);
     if (!item) return;
 
+    const selectedVariant = item.availableVariants?.find(
+      (v) => v.id === item.varianId,
+    );
+    // fallback to item.stok if there are no variants, assuming it exists or default to 0 (unlimited if 0 but our UI treats 0 as out of stock, wait, let's just not block here if maxStock is 0 just in case)
+    const maxStock = selectedVariant?.stokKemasan ?? 0;
+
     const newJumlah = Math.max(1, item.jumlah + delta);
     if (newJumlah === item.jumlah) return;
 
-    try {
-      await cartApi.updateItem(id, newJumlah, item.varianId);
-      fetchCart();
-    } catch (error: any) {
-      console.error("Error updating quantity:", error);
-      const errMsg =
-        error.response?.data?.message ||
-        error.message ||
-        "Gagal mengubah jumlah";
-      alert(`Gagal: ${errMsg}`);
-      fetchCart();
+    if (maxStock > 0 && newJumlah > maxStock) {
+      return;
     }
+
+    // Optimistic UI update
+    setCartItems((prev) =>
+      prev.map((i) => (i.id === id ? { ...i, jumlah: newJumlah } : i)),
+    );
+
+    // Debounce API call
+    if (timeoutRefs.current[id]) {
+      clearTimeout(timeoutRefs.current[id]);
+    }
+
+    timeoutRefs.current[id] = setTimeout(async () => {
+      try {
+        await cartApi.updateItem(id, newJumlah, item.varianId);
+        fetchCart(false);
+      } catch (error: any) {
+        console.error("Error updating quantity:", error);
+        fetchCart(false); // Revert to server state
+        const errMsg =
+          error.response?.data?.message ||
+          error.message ||
+          "Gagal mengubah jumlah";
+        alert(`Gagal: ${errMsg}`);
+      }
+    }, 400);
   };
 
   const updateVariant = async (id: string, newVarianId: string) => {

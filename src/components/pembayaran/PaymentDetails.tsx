@@ -133,29 +133,20 @@ const PaymentDetails: React.FC<PaymentDetailsProps> = ({
             </p>
           </div>
         ) : hasXenditInvoice ? (
-          /* Xendit Invoice Link — Universal Payment */
+          /* Xendit Invoice — Info Only (tombol ada di bawah via PaymentMockupAction) */
           <div className="w-full text-center space-y-3">
             <div className="bg-gradient-to-r from-indigo-500 to-blue-500 rounded-xl p-4 text-white">
               <p className="text-xs font-bold opacity-80 mb-1">
                 Xendit Invoice
               </p>
               <p className="text-sm font-semibold">
-                Klik tombol di bawah untuk membayar
+                Klik tombol bayar di bawah untuk melanjutkan
               </p>
               <p className="text-[10px] opacity-70 mt-1">
                 Pilih metode bayar favorit: VA Bank, DANA, OVO, GoPay, QRIS,
                 dll.
               </p>
             </div>
-            <a
-              href={paymentUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="w-full py-3 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl font-bold text-sm flex items-center justify-center gap-2 transition-all active:scale-[0.98] shadow-md shadow-indigo-200"
-            >
-              <ExternalLink size={16} />
-              Buka Halaman Pembayaran
-            </a>
           </div>
         ) : (
           /* Fallback */

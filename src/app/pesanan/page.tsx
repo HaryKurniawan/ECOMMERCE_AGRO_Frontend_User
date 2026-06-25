@@ -60,19 +60,46 @@ const PesananContent = () => {
   const router = useRouter();
   const searchParams = useSearchParams();
   const { _hasHydrated, isAuthenticated } = useAuthStore();
-  const { orders, loading } = useOrders(isAuthenticated, _hasHydrated);
+  const { orders, loading, refetch } = useOrders(isAuthenticated, _hasHydrated);
+
+  const paymentParam = searchParams.get("payment"); // "success" or "failed" from Xendit redirect
 
   const initialTab =
-    (searchParams.get("status") as
-      | "menunggu_bayar"
-      | "diproses"
-      | "dikirim"
-      | "tiba"
-      | "selesai") || "menunggu_bayar";
+    paymentParam === "success"
+      ? "diproses" // Auto-switch ke tab Dikemas setelah bayar
+      : (searchParams.get("status") as
+          | "menunggu_bayar"
+          | "diproses"
+          | "dikirim"
+          | "tiba"
+          | "selesai") || "menunggu_bayar";
+
   const [activeTab, setActiveTab] = useState<
     "menunggu_bayar" | "diproses" | "dikirim" | "tiba" | "selesai"
   >(initialTab as any);
   const [confirmingId, setConfirmingId] = useState<string | null>(null);
+
+  // Handle redirect kembali dari Xendit (setelah bayar di sandbox)
+  useEffect(() => {
+    if (paymentParam === "success") {
+      toast.success(
+        "Pembayaran berhasil! Pesanan sedang diproses oleh penjual.",
+        { duration: 5000, icon: "🎉" },
+      );
+      setActiveTab("diproses");
+      // Poll beberapa kali untuk memastikan webhook sudah diproses backend
+      const delays = [1500, 4000, 8000];
+      delays.forEach((delay) => {
+        setTimeout(() => refetch(), delay);
+      });
+      // Bersihkan query param dari URL
+      router.replace("/pesanan?status=diproses");
+    } else if (paymentParam === "failed") {
+      toast.error("Pembayaran gagal atau dibatalkan.", { duration: 5000 });
+      router.replace("/pesanan");
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [paymentParam]);
 
   useEffect(() => {
     if (!_hasHydrated) return;
