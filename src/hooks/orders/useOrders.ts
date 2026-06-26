@@ -1,4 +1,4 @@
-import { useQuery } from "@tanstack/react-query";
+import { useInfiniteQuery } from "@tanstack/react-query";
 import { useEffect } from "react";
 
 import { ordersApi } from "@/lib/ecommerce-api";
@@ -6,16 +6,31 @@ import { queryKeys } from "@/src/hooks/query-keys";
 import type { ApiOrderData } from "@/types";
 
 export const useOrders = (isAuthenticated: boolean, _hasHydrated: boolean) => {
-  const query = useQuery({
+  const query = useInfiniteQuery({
     queryKey: queryKeys.orders.all,
-    queryFn: () => ordersApi.getMyOrders(),
-    select: (res): ApiOrderData[] => {
-      const data = res?.data?.data?.data || res?.data?.data || res?.data || [];
-      return Array.isArray(data) ? data : [];
+    queryFn: ({ pageParam = 1 }) =>
+      ordersApi.getMyOrders({ page: pageParam, limit: 10 }),
+    initialPageParam: 1,
+    getNextPageParam: (lastPage, allPages) => {
+      const data =
+        lastPage?.data?.data?.data ||
+        lastPage?.data?.data ||
+        lastPage?.data ||
+        [];
+      const dataArray = Array.isArray(data) ? data : [];
+      if (dataArray.length === 10) return allPages.length + 1;
+      return undefined;
     },
     enabled: _hasHydrated && isAuthenticated,
     staleTime: 2 * 60 * 1000,
   });
+
+  const orders =
+    query.data?.pages.flatMap((page) => {
+      const data =
+        page?.data?.data?.data || page?.data?.data || page?.data || [];
+      return Array.isArray(data) ? data : [];
+    }) ?? [];
 
   useEffect(() => {
     if (!_hasHydrated || !isAuthenticated) return;
@@ -41,9 +56,12 @@ export const useOrders = (isAuthenticated: boolean, _hasHydrated: boolean) => {
   }, [_hasHydrated, isAuthenticated]);
 
   return {
-    orders: query.data ?? [],
-    loading: query.isLoading,
+    orders,
+    loading: query.isLoading || query.isFetching,
     error: query.error,
     refetch: query.refetch,
+    fetchNextPage: query.fetchNextPage,
+    hasNextPage: query.hasNextPage,
+    isFetchingNextPage: query.isFetchingNextPage,
   };
 };

@@ -109,6 +109,10 @@ export function useAlamatForm() {
   const handleMapChange = (val: MapPickerValue) => {
     setMapValue(val);
 
+    if (val.displayName) {
+      setValue("alamat", val.displayName);
+    }
+
     const addr = val.address as any;
     if (addr) {
       // Kota/Kabupaten

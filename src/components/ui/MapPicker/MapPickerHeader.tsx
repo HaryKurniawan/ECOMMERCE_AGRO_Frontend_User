@@ -57,28 +57,17 @@ export const MapPickerHeader = ({
     </div>
     <button
       type="button"
-      onClick={() => handleSearch(searchQuery)}
-      disabled={searchLoading || !searchQuery.trim()}
-      className="px-4 py-2.5 bg-gray-50 border border-gray-200 text-gray-600 rounded-xl hover:bg-gray-100 disabled:opacity-50 transition-all flex items-center justify-center"
-    >
-      {searchLoading ? (
-        <Loader2 size={14} className="animate-spin" />
-      ) : (
-        <Search size={14} />
-      )}
-    </button>
-    <button
-      type="button"
       onClick={handleGps}
       disabled={gpsLoading}
       title="Gunakan Lokasi GPS Saya"
-      className="px-4 py-2.5 bg-primary-600 text-white rounded-xl hover:bg-primary-700 shadow-md shadow-primary-500/20 disabled:opacity-50 transition-all flex items-center justify-center"
+      className="px-4 py-2.5 bg-primary-600 text-white rounded-xl hover:bg-primary-700 shadow-md shadow-primary-500/20 disabled:opacity-50 transition-all flex items-center justify-center gap-2 whitespace-nowrap text-sm font-medium"
     >
       {gpsLoading ? (
         <Loader2 size={16} className="animate-spin" />
       ) : (
         <LocateFixed size={16} />
       )}
+      Lokasi Terkini
     </button>
   </div>
 );

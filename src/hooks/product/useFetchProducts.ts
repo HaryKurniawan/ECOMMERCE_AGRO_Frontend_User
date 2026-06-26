@@ -1,6 +1,6 @@
 "use client";
 
-import { useQuery } from "@tanstack/react-query";
+import { useInfiniteQuery } from "@tanstack/react-query";
 
 import { productsApi } from "@/lib/ecommerce-api";
 import { extractArray } from "@/lib/api-helpers";
@@ -18,7 +18,7 @@ interface UseFetchProductsParams {
 export function useFetchProducts(params: UseFetchProductsParams = {}) {
   const { search, kategoriId, tokoId, sortBy = "populer", limit = 50 } = params;
 
-  const query = useQuery({
+  const query = useInfiniteQuery({
     queryKey: queryKeys.products.list({
       search,
       kategoriId,
@@ -26,29 +26,38 @@ export function useFetchProducts(params: UseFetchProductsParams = {}) {
       sortBy,
       limit,
     }),
-    queryFn: () =>
+    queryFn: ({ pageParam = 1 }) =>
       productsApi.getAll({
         search,
         kategoriId: kategoriId,
         tokoId: tokoId,
         sortBy,
         limit,
+        page: pageParam as number,
       }),
-    select: (res) => {
-      const data = extractArray<EcomProduct>(res);
-      const rawRes = res.data;
-      const total = rawRes?.data?.total || rawRes?.total || data.length;
-      return { products: data, total };
+    initialPageParam: 1,
+    getNextPageParam: (lastPage, allPages) => {
+      const data = extractArray<EcomProduct>(lastPage);
+      if (data.length === limit) return allPages.length + 1;
+      return undefined;
     },
     staleTime: 5 * 60 * 1000,
-    placeholderData: (prev) => prev, // smooth transitions saat filter berubah
   });
 
+  const products =
+    query.data?.pages.flatMap((page) => extractArray<EcomProduct>(page)) ?? [];
+  const rawFirstPage = query.data?.pages[0]?.data;
+  const total =
+    rawFirstPage?.data?.total || rawFirstPage?.total || products.length;
+
   return {
-    products: query.data?.products ?? [],
-    total: query.data?.total ?? 0,
+    products,
+    total,
     loading: query.isLoading || query.isFetching,
     error: query.error ? "Gagal memuat produk. Silakan coba lagi." : null,
     refetch: query.refetch,
+    fetchNextPage: query.fetchNextPage,
+    hasNextPage: query.hasNextPage,
+    isFetchingNextPage: query.isFetchingNextPage,
   };
 }

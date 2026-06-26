@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useMemo } from "react";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useInfiniteQuery } from "@tanstack/react-query";
 
 import { useAuthStore } from "@/src/store/auth-store";
 import { useCityStore } from "@/src/store/city-store";
@@ -36,12 +36,18 @@ export const useHomeData = () => {
     staleTime: 10 * 60 * 1000,
   });
 
-  const productsQuery = useQuery({
-    queryKey: queryKeys.products.list({ limit: 1000 }),
-    queryFn: () =>
-      productsApi.getAll({ limit: 1000 }).catch(() => ({ data: { data: [] } })),
-    select: (res): EcomProduct[] => extractArray<EcomProduct>(res),
-    staleTime: 5 * 60 * 1000,
+  const productsQuery = useInfiniteQuery({
+    queryKey: queryKeys.products.list({ limit: 20 }),
+    queryFn: ({ pageParam = 1 }) =>
+      productsApi
+        .getAll({ limit: 20, page: pageParam })
+        .catch(() => ({ data: { data: [] } })),
+    getNextPageParam: (lastPage, allPages) => {
+      const data = extractArray<EcomProduct>(lastPage);
+      if (data.length === 20) return allPages.length + 1;
+      return undefined;
+    },
+    staleTime: 24 * 60 * 60 * 1000, // Cache for 24 hours
   });
 
   const categoriesQuery = useQuery({
@@ -63,7 +69,10 @@ export const useHomeData = () => {
 
   // Derived data
   const storesData = storesQuery.data ?? [];
-  const productsData = productsQuery.data ?? [];
+  const productsData =
+    productsQuery.data?.pages.flatMap((page) =>
+      extractArray<EcomProduct>(page),
+    ) ?? [];
 
   // Auto-detect city from default address (hanya jika user belum memilih manual)
   useEffect(() => {
@@ -132,5 +141,8 @@ export const useHomeData = () => {
     loading,
     isAuthenticated,
     isVerifiedB2B: user?.isVerifiedB2B === true,
+    fetchNextPage: productsQuery.fetchNextPage,
+    hasNextPage: productsQuery.hasNextPage,
+    isFetchingNextPage: productsQuery.isFetchingNextPage,
   };
 };

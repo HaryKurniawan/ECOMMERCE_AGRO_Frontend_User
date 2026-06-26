@@ -60,7 +60,14 @@ const PesananContent = () => {
   const router = useRouter();
   const searchParams = useSearchParams();
   const { _hasHydrated, isAuthenticated } = useAuthStore();
-  const { orders, loading, refetch } = useOrders(isAuthenticated, _hasHydrated);
+  const {
+    orders,
+    loading,
+    refetch,
+    fetchNextPage,
+    hasNextPage,
+    isFetchingNextPage,
+  } = useOrders(isAuthenticated, _hasHydrated);
 
   const paymentParam = searchParams.get("payment"); // "success" or "failed" from Xendit redirect
 
@@ -304,6 +311,20 @@ const PesananContent = () => {
                 />
               );
             })}
+
+            {hasNextPage && (
+              <div className="flex justify-center mt-6">
+                <button
+                  onClick={() => fetchNextPage && fetchNextPage()}
+                  disabled={isFetchingNextPage}
+                  className="w-full py-3.5 rounded-xl border border-primary-200 text-primary-600 font-medium text-sm hover:bg-primary-50 active:bg-primary-100 transition-colors flex items-center justify-center gap-2 disabled:opacity-50"
+                >
+                  {isFetchingNextPage
+                    ? "Memuat..."
+                    : "Muat Lebih Banyak Pesanan"}
+                </button>
+              </div>
+            )}
           </div>
         )}
       </div>

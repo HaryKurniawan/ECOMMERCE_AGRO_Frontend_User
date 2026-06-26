@@ -51,11 +51,19 @@ const KatalogContent: React.FC = () => {
     initialSort: (searchParams.get("sortBy") as SortOption) || "populer",
   });
 
-  const { products, total, loading } = useFetchProducts({
+  const {
+    products,
+    total,
+    loading,
+    fetchNextPage,
+    hasNextPage,
+    isFetchingNextPage,
+  } = useFetchProducts({
     search: filters.search,
     kategoriId: filters.selectedCategory,
     tokoId: filters.selectedStore,
     sortBy: filters.sortBy,
+    limit: 20,
   });
 
   const {
@@ -159,10 +167,10 @@ const KatalogContent: React.FC = () => {
             onReset={filters.resetFilters}
           />
 
-          <div>
-            {loading || initLoading ? (
-              <ProductGridSkeleton count={8} />
-            ) : displayProducts.length > 0 ? (
+          {loading || initLoading ? (
+            <ProductGridSkeleton count={8} />
+          ) : displayProducts.length > 0 ? (
+            <div className="flex flex-col gap-6">
               <div className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-3 lg:gap-5">
                 {displayProducts.map((product) => (
                   <ProductCard
@@ -173,16 +181,29 @@ const KatalogContent: React.FC = () => {
                   />
                 ))}
               </div>
-            ) : (
-              <EmptyState
-                illustration="/empty-search.svg"
-                title="Produk tidak ditemukan"
-                description="Coba kata kunci yang berbeda atau hapus filter aktif untuk melihat lebih banyak produk."
-                actionLabel="Reset Pencarian"
-                onAction={filters.resetFilters}
-              />
-            )}
-          </div>
+              {hasNextPage && (
+                <div className="flex justify-center mt-4">
+                  <button
+                    onClick={() => fetchNextPage && fetchNextPage()}
+                    disabled={isFetchingNextPage}
+                    className="w-full md:w-auto px-8 py-3.5 rounded-xl border border-primary-200 text-primary-600 font-medium text-sm hover:bg-primary-50 active:bg-primary-100 transition-colors flex items-center justify-center gap-2 disabled:opacity-50"
+                  >
+                    {isFetchingNextPage
+                      ? "Memuat..."
+                      : "Muat Lebih Banyak Produk"}
+                  </button>
+                </div>
+              )}
+            </div>
+          ) : (
+            <EmptyState
+              illustration="/empty-search.svg"
+              title="Produk tidak ditemukan"
+              description="Coba kata kunci yang berbeda atau hapus filter aktif untuk melihat lebih banyak produk."
+              actionLabel="Reset Pencarian"
+              onAction={filters.resetFilters}
+            />
+          )}
         </div>
       </div>
 

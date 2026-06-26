@@ -70,11 +70,11 @@ const ProfilPage: React.FC = () => {
       path: "/profil/detail",
     },
     {
-      id: "chat-cs",
-      label: "Chat Customer Service",
-      icon: MessageCircle,
-      desc: "Hubungi admin untuk bantuan",
-      path: "/chat",
+      id: "beri-nilai",
+      label: "Beri Nilai Pesanan",
+      icon: Star,
+      desc: "Berikan ulasan untuk pesanan selesai",
+      path: "/pesanan?status=selesai",
     },
     {
       id: "toko-favorit",
@@ -100,16 +100,10 @@ const ProfilPage: React.FC = () => {
       path: "/profil/pengaturan",
     },
     {
-      id: "keamanan",
-      label: "Keamanan & Privasi",
-      icon: Shield,
-      path: "/profil/keamanan",
-    },
-    {
       id: "bantuan",
       label: "Pusat Bantuan",
-      icon: HelpCircle,
-      path: "/bantuan",
+      icon: MessageCircle,
+      path: "/chat",
     },
   ];
 
@@ -124,7 +118,6 @@ const ProfilPage: React.FC = () => {
     { id: "diproses", label: "Dikemas", icon: Package },
     { id: "dikirim", label: "Dikirim", icon: Truck },
     { id: "tiba", label: "Tiba", icon: MapPin },
-    { id: "selesai", label: "Beri Nilai", icon: Star },
   ];
 
   return (

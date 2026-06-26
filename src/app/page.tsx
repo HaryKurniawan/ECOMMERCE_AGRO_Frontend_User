@@ -43,6 +43,9 @@ const HomePage: React.FC = () => {
     loading,
     isAuthenticated,
     isVerifiedB2B,
+    fetchNextPage,
+    hasNextPage,
+    isFetchingNextPage,
   } = useHomeData();
 
   const {
@@ -180,6 +183,9 @@ const HomePage: React.FC = () => {
               products={products}
               selectedCity={selectedCity}
               onAddToCart={handleAddToCart}
+              fetchNextPage={fetchNextPage}
+              hasNextPage={hasNextPage}
+              isFetchingNextPage={isFetchingNextPage}
             />
           </div>
 

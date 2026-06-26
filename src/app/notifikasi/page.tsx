@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { useInfiniteQuery, useQueryClient } from "@tanstack/react-query";
 import {
   ShoppingCart,
   PackageCheck,
@@ -31,14 +31,24 @@ export default function NotifikasiPage() {
     removeNotification,
   } = useNotifStore();
 
-  const { data, isLoading } = useQuery({
-    queryKey: ["notifications", "all"],
-    queryFn: () => notificationsApi.getAll({ limit: 50 }),
-  });
+  const { data, isLoading, fetchNextPage, hasNextPage, isFetchingNextPage } =
+    useInfiniteQuery({
+      queryKey: ["notifications", "all"],
+      queryFn: ({ pageParam = 1 }) =>
+        notificationsApi.getAll({ limit: 15, page: pageParam as number }),
+      initialPageParam: 1,
+      getNextPageParam: (lastPage, allPages) => {
+        const pageData = lastPage?.data?.data || [];
+        if (pageData.length === 15) return allPages.length + 1;
+        return undefined;
+      },
+    });
 
   useEffect(() => {
-    if (data?.data) {
-      setNotifications(data.data.data, data.data.unreadCount);
+    if (data?.pages) {
+      const allNotifs = data.pages.flatMap((page) => page.data?.data || []);
+      const unreadCount = data.pages[0]?.data?.unreadCount || 0;
+      setNotifications(allNotifs, unreadCount);
     }
   }, [data, setNotifications]);
 
@@ -216,6 +226,20 @@ export default function NotifikasiPage() {
             title="Semua sudah dibaca!"
             description="Kamu sudah up-to-date. Notifikasi tentang pesanan dan info penting akan muncul di sini."
           />
+        )}
+
+        {hasNextPage && (
+          <div className="flex justify-center mt-6">
+            <button
+              onClick={() => fetchNextPage()}
+              disabled={isFetchingNextPage}
+              className="w-full py-3.5 rounded-xl border border-primary-200 text-primary-600 font-medium text-sm hover:bg-primary-50 active:bg-primary-100 transition-colors flex items-center justify-center gap-2 disabled:opacity-50"
+            >
+              {isFetchingNextPage
+                ? "Memuat..."
+                : "Muat Lebih Banyak Notifikasi"}
+            </button>
+          </div>
         )}
       </div>
     </div>
