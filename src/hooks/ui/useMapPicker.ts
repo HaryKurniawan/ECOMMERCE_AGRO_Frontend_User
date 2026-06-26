@@ -94,12 +94,19 @@ async function geocodeSearch(query: string): Promise<
     );
     if (!res.ok) throw new Error("Nominatim failed");
     const data = await res.json();
-    return data.map((r: any) => ({
-      lat: parseFloat(r.lat),
-      lng: parseFloat(r.lon),
-      display_name: r.display_name,
-      address: r.address,
-    }));
+    return data.map(
+      (r: {
+        lat: string;
+        lon: string;
+        display_name: string;
+        address?: Record<string, string>;
+      }) => ({
+        lat: parseFloat(r.lat),
+        lng: parseFloat(r.lon),
+        display_name: r.display_name,
+        address: r.address,
+      }),
+    );
   } catch {
     // Fallback to ArcGIS Search
     try {
@@ -107,17 +114,23 @@ async function geocodeSearch(query: string): Promise<
         `https://geocode.arcgis.com/arcgis/rest/services/World/GeocodeServer/findAddressCandidates?SingleLine=${encodeURIComponent(query)}&f=json&maxLocations=5&outFields=*`,
       );
       const data = await res.json();
-      return (data.candidates || []).map((c: any) => ({
-        lat: c.location.y,
-        lng: c.location.x,
-        display_name: c.address,
-        address: {
-          state: c.attributes?.Region,
-          county: c.attributes?.Subregion || c.attributes?.City,
-          district: c.attributes?.District,
-          village: c.attributes?.Neighborhood,
-        },
-      }));
+      return (data.candidates || []).map(
+        (c: {
+          location: { x: number; y: number };
+          address: string;
+          attributes?: Record<string, string>;
+        }) => ({
+          lat: c.location.y,
+          lng: c.location.x,
+          display_name: c.address,
+          address: {
+            state: c.attributes?.Region,
+            county: c.attributes?.Subregion || c.attributes?.City,
+            district: c.attributes?.District,
+            village: c.attributes?.Neighborhood,
+          },
+        }),
+      );
     } catch (e) {
       console.error("ArcGIS search fallback failed:", e);
     }
@@ -173,8 +186,11 @@ export const useMapPicker = (
 
   const getInitialPos = () => {
     if (value) return value;
-    if (defaultCity && CITY_CENTERS[defaultCity]) {
-      return { ...CITY_CENTERS[defaultCity] };
+    if (
+      defaultCity &&
+      Object.prototype.hasOwnProperty.call(CITY_CENTERS, defaultCity)
+    ) {
+      return { ...CITY_CENTERS[defaultCity as keyof typeof CITY_CENTERS] };
     }
     return DEFAULT_CENTER;
   };
@@ -394,6 +410,7 @@ export const useMapPicker = (
     searchLoading,
     geocoding,
     displayName,
+    isPinMoved,
     handleGps,
     handleSearch,
     handleSelectResult,

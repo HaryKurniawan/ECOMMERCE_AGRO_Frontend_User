@@ -42,6 +42,7 @@ export const useHomeData = () => {
       productsApi
         .getAll({ limit: 20, page: pageParam })
         .catch(() => ({ data: { data: [] } })),
+    initialPageParam: 1,
     getNextPageParam: (lastPage, allPages) => {
       const data = extractArray<EcomProduct>(lastPage);
       if (data.length === 20) return allPages.length + 1;
