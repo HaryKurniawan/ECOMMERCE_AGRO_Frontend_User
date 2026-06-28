@@ -7,7 +7,7 @@ pipeline {
         IS_PRODUCTION = "${env.BRANCH_NAME == 'main' || env.BRANCH_NAME == 'master' || env.BRANCH_NAME == null}"
         
         // Atur port dan nama container sesuai target
-        APP_PORT = "${IS_PRODUCTION == 'true' ? '3001' : '3002'}"
+        APP_PORT = "${IS_PRODUCTION == 'true' ? '3001' : '3004'}"
         CONTAINER_NAME = "${IS_PRODUCTION == 'true' ? 'agro-frontend-user' : 'agro-frontend-staging'}"
         ENV_CRED_ID = "${IS_PRODUCTION == 'true' ? 'frontend-user-env' : 'frontend-user-env-staging'}"
         IMAGE_NAME = "${CONTAINER_NAME}-image"
@@ -38,10 +38,10 @@ pipeline {
                     file(credentialsId: "${ENV_CRED_ID}", variable: 'ENV_FILE')
                 ]) {
                     sh '''
+                    # Hapus sisa file lama (jika ada) untuk mencegah Permission Denied
+                    rm -f .env.local || true
                     # Ambil file environment dari Jenkins Credential sesuai branch
                     cp $ENV_FILE .env.local
-
-                    # Build image
                     docker build -t ${IMAGE_NAME} .
                     '''
                 }
