@@ -52,7 +52,7 @@ const PasswordInput = forwardRef<HTMLInputElement, PasswordInputProps>(
         : null;
 
     return (
-      <div className={className}>
+      <div className={className} suppressHydrationWarning>
         {label && (
           <label className="block text-sm font-medium text-gray-700 mb-1.5 ml-1">
             {label}
@@ -60,9 +60,10 @@ const PasswordInput = forwardRef<HTMLInputElement, PasswordInputProps>(
           </label>
         )}
 
-        <div className="relative">
+        <div className="relative" suppressHydrationWarning>
           <input
             ref={ref}
+            suppressHydrationWarning
             type={showPassword ? "text" : "password"}
             className={`w-full px-4 py-3 pr-12 rounded-xl border ${
               error ? "border-red-300" : "border-gray-200"

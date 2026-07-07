@@ -13,7 +13,7 @@ export const usePembayaran = (
   const [copied, setCopied] = useState(false);
   const [isProcessing, setIsProcessing] = useState(false);
   const [timeLeft, setTimeLeft] = useState({
-    hours: 23,
+    hours: 0,
     minutes: 59,
     seconds: 59,
   });
@@ -62,7 +62,7 @@ export const usePembayaran = (
     if (!order?.createdAt) return;
     const timer = setInterval(() => {
       const orderDate = new Date(order.createdAt).getTime();
-      const expiryDate = orderDate + 24 * 60 * 60 * 1000;
+      const expiryDate = orderDate + 1 * 60 * 60 * 1000;
       const now = new Date().getTime();
       const distance = expiryDate - now;
       if (distance < 0) {

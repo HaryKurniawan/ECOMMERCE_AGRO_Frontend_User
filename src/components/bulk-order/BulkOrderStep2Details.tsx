@@ -9,6 +9,7 @@ interface PackagingSpec {
 }
 
 interface BulkOrderStep2DetailsProps {
+  jumlah: number;
   packagingSpecs: PackagingSpec[];
   catatan: string;
   onPackagingSpecsChange: (specs: PackagingSpec[]) => void;
@@ -16,6 +17,7 @@ interface BulkOrderStep2DetailsProps {
 }
 
 export const BulkOrderStep2Details: React.FC<BulkOrderStep2DetailsProps> = ({
+  jumlah,
   packagingSpecs,
   catatan,
   onPackagingSpecsChange,
@@ -85,15 +87,20 @@ export const BulkOrderStep2Details: React.FC<BulkOrderStep2DetailsProps> = ({
                       type="number"
                       min="1"
                       max="50"
-                      value={spec.ukuranKg}
-                      onChange={(e) =>
+                      value={spec.ukuranKg || ""}
+                      onChange={(e) => {
+                        const val = e.target.value;
                         handleUpdateSpec(
                           idx,
                           "ukuranKg",
-                          parseInt(e.target.value) || 0,
-                        )
-                      }
-                      className="w-full h-10 bg-gray-50 border border-gray-100 rounded-lg px-3 text-sm font-semibold text-gray-900 focus:outline-none focus:ring-2 focus:ring-primary-400 focus:bg-white"
+                          val === "" ? 0 : parseInt(val) || 0,
+                        );
+                      }}
+                      onBlur={() => {
+                        if (spec.ukuranKg < 1)
+                          handleUpdateSpec(idx, "ukuranKg", 1);
+                      }}
+                      className="w-full h-10 bg-gray-50 border border-gray-100 rounded-lg px-3 text-sm font-semibold text-gray-900 focus:outline-none focus:ring-2 focus:ring-primary-400 focus:bg-white transition-all"
                     />
                   </div>
                   <div className="flex-1">
@@ -107,15 +114,20 @@ export const BulkOrderStep2Details: React.FC<BulkOrderStep2DetailsProps> = ({
                       id={`jumlah-${idx}`}
                       type="number"
                       min="1"
-                      value={spec.jumlahBungkus}
-                      onChange={(e) =>
+                      value={spec.jumlahBungkus || ""}
+                      onChange={(e) => {
+                        const val = e.target.value;
                         handleUpdateSpec(
                           idx,
                           "jumlahBungkus",
-                          parseInt(e.target.value) || 0,
-                        )
-                      }
-                      className="w-full h-10 bg-gray-50 border border-gray-100 rounded-lg px-3 text-sm font-semibold text-gray-900 focus:outline-none focus:ring-2 focus:ring-primary-400 focus:bg-white"
+                          val === "" ? 0 : parseInt(val) || 0,
+                        );
+                      }}
+                      onBlur={() => {
+                        if (spec.jumlahBungkus < 1)
+                          handleUpdateSpec(idx, "jumlahBungkus", 1);
+                      }}
+                      className="w-full h-10 bg-gray-50 border border-gray-100 rounded-lg px-3 text-sm font-semibold text-gray-900 focus:outline-none focus:ring-2 focus:ring-primary-400 focus:bg-white transition-all"
                     />
                   </div>
                   <button
@@ -141,10 +153,20 @@ export const BulkOrderStep2Details: React.FC<BulkOrderStep2DetailsProps> = ({
             )}
 
             {packagingSpecs.length > 0 && (
-              <div className="mt-3 p-3 bg-blue-50 rounded-lg border border-blue-100">
-                <p className="text-xs text-blue-700 font-medium">
-                  Total: {totalKg} kg
+              <div
+                className={`mt-3 p-3 rounded-lg border ${totalKg === jumlah ? "bg-blue-50 border-blue-100" : "bg-red-50 border-red-100"}`}
+              >
+                <p
+                  className={`text-xs font-medium ${totalKg === jumlah ? "text-blue-700" : "text-red-600"}`}
+                >
+                  Total Kemasan: {totalKg} kg
                 </p>
+                {totalKg !== jumlah && (
+                  <p className="text-[10px] text-red-500 mt-1">
+                    *Total kemasan ({totalKg} kg) harus sama dengan total
+                    pesanan ({jumlah} kg).
+                  </p>
+                )}
               </div>
             )}
           </div>

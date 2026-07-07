@@ -75,8 +75,8 @@ const ProductInfo: React.FC<ProductInfoProps> = ({
         </div>
       ) : null}
 
-      {/* Product name, Price, Rating, Sold */}
-      <div>
+      {/* Product name, Price, Rating, Sold - only on mobile */}
+      <div className="lg:hidden">
         <div className="flex items-start justify-between gap-4 mb-1">
           <div className="flex-1 min-w-0">
             <h1 className="font-semibold text-xl lg:text-2xl text-gray-900 leading-snug">
@@ -94,9 +94,10 @@ const ProductInfo: React.FC<ProductInfoProps> = ({
           </span>
         </div>
 
+        {/* Price + Rating */}
         <div className="flex items-end justify-between gap-4">
           <div className="flex items-baseline gap-1.5">
-            <span className="font-bold text-2xl text-primary-700 tracking-tight">
+            <span className="font-semibold text-2xl text-primary-700 tracking-tight">
               {formatRupiah(displayHarga)}
             </span>
             <span className="text-sm text-gray-400">/ {product.satuan}</span>
@@ -106,6 +107,9 @@ const ProductInfo: React.FC<ProductInfoProps> = ({
             <span className="text-xs font-bold text-primary-700">
               {product.rating?.toFixed(1) || "4.8"}
             </span>
+            <span className="text-[10px] text-primary-600 font-medium ml-0.5 border-l border-primary-200 pl-1.5">
+              {(product.terjual || 0).toLocaleString()} terjual
+            </span>
           </div>
         </div>
 
@@ -114,7 +118,7 @@ const ProductInfo: React.FC<ProductInfoProps> = ({
             Stok Tersedia:
           </span>
           <span className="text-sm font-bold text-green-600 bg-green-50 px-2.5 py-0.5 rounded-lg border border-green-100">
-            {totalStok} kg
+            {totalStok} {product.satuan}
           </span>
         </div>
       </div>

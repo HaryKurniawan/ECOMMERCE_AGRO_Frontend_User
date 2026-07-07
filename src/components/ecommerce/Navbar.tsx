@@ -148,25 +148,31 @@ const NavbarContent: React.FC = () => {
             </h1>
           </button>
 
-          {/* Location Selector */}
-          <div className="hidden md:block flex-shrink-0 border-l border-gray-200 pl-4">
-            <LocationSelector
-              selectedCity={selectedCity}
-              availableCities={availableCities}
-              onSelectCity={setCity}
-              variant="light"
-            />
-          </div>
-
           {/* Search */}
-          <div className="flex-1 max-w-sm lg:max-w-md mr-auto hidden md:block">
+          <div className="flex-1 max-w-sm hidden md:block">
             <div className="flex w-full h-10 border border-gray-300 hover:border-gray-400 focus-within:border-primary-400 focus-within:ring-2 focus-within:ring-primary-50 rounded-full overflow-visible transition-all bg-gray-50/50 relative">
+              <div className="flex items-center justify-center pl-4 pr-2 text-gray-400 flex-shrink-0">
+                <Search size={18} />
+              </div>
+              <input
+                type="text"
+                placeholder="Cari sayur, buah, atau toko..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter" && searchQuery.trim())
+                    router.push(
+                      `/katalog?q=${encodeURIComponent(searchQuery.trim())}`,
+                    );
+                }}
+                className="flex-1 px-2 py-2 outline-none text-sm text-gray-700 bg-transparent w-full"
+              />
               <div className="relative h-full" ref={categoryDropdownRef}>
                 <button
                   onClick={() =>
                     setIsCategoryDropdownOpen(!isCategoryDropdownOpen)
                   }
-                  className="flex h-full items-center justify-center gap-2 px-5 min-w-[100px] border-r border-gray-200 text-sm font-medium text-gray-600 hover:bg-gray-100 flex-shrink-0 rounded-l-full"
+                  className="flex h-full items-center justify-center gap-2 px-5 min-w-[100px] border-l border-gray-200 text-sm font-medium text-gray-600 hover:bg-gray-100 flex-shrink-0 rounded-r-full"
                 >
                   Filter{" "}
                   <ChevronDown
@@ -175,7 +181,7 @@ const NavbarContent: React.FC = () => {
                   />
                 </button>
                 {isCategoryDropdownOpen && (
-                  <div className="absolute top-full left-0 mt-3 w-48 bg-white border border-gray-100 shadow-xl rounded-2xl z-[60] overflow-hidden py-2">
+                  <div className="absolute top-full right-0 mt-3 w-48 bg-white border border-gray-100 shadow-xl rounded-2xl z-[60] overflow-hidden py-2">
                     {[
                       "Semua Kategori",
                       "Sayur Segar",
@@ -197,31 +203,17 @@ const NavbarContent: React.FC = () => {
                   </div>
                 )}
               </div>
-              <input
-                type="text"
-                placeholder="Cari sayur, buah, atau toko..."
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                onKeyDown={(e) => {
-                  if (e.key === "Enter" && searchQuery.trim())
-                    router.push(
-                      `/katalog?q=${encodeURIComponent(searchQuery.trim())}`,
-                    );
-                }}
-                className="flex-1 px-4 py-2 outline-none text-sm text-gray-700 bg-transparent w-full"
-              />
-              <button
-                onClick={() => {
-                  if (searchQuery.trim())
-                    router.push(
-                      `/katalog?q=${encodeURIComponent(searchQuery.trim())}`,
-                    );
-                }}
-                className="w-12 flex items-center justify-center text-gray-400 hover:text-primary-600 transition-colors flex-shrink-0"
-              >
-                <Search size={18} />
-              </button>
             </div>
+          </div>
+
+          {/* Location Selector */}
+          <div className="hidden md:block flex-shrink-0 border-r border-gray-200 pr-4 ml-auto">
+            <LocationSelector
+              selectedCity={selectedCity}
+              availableCities={availableCities}
+              onSelectCity={setCity}
+              variant="light"
+            />
           </div>
 
           {/* Actions */}
@@ -255,16 +247,13 @@ const NavbarContent: React.FC = () => {
                 <div className="relative" ref={dropdownRef}>
                   <button
                     onClick={() => setIsDropdownOpen(!isDropdownOpen)}
-                    className="flex items-center gap-2 pl-2 pr-1 py-1.5 hover:bg-gray-50 rounded-xl transition-colors border border-transparent"
+                    className="flex items-center gap-1.5 p-1.5 hover:bg-gray-50 rounded-xl transition-colors border border-transparent"
                   >
                     <div className="w-8 h-8 bg-primary-100 rounded-full flex items-center justify-center border border-primary-200">
                       <User size={16} className="text-primary-700" />
                     </div>
-                    <span className="text-sm font-medium text-gray-700 max-w-[100px] truncate">
-                      {displayName}
-                    </span>
                     <ChevronDown
-                      size={16}
+                      size={14}
                       className={`text-gray-400 transition-transform ${isDropdownOpen ? "rotate-180" : ""}`}
                     />
                   </button>
@@ -370,7 +359,13 @@ const NavbarContent: React.FC = () => {
               ) : (
                 <nav className="flex items-center h-12">
                   <button
-                    onClick={() => router.back()}
+                    onClick={() => {
+                      if (pathname.startsWith("/chat")) {
+                        router.push("/");
+                      } else {
+                        router.back();
+                      }
+                    }}
                     className="flex items-center gap-2 text-[15px] font-medium text-gray-600 hover:text-primary-600 transition-all py-3 -ml-1 group"
                   >
                     <ArrowLeft

@@ -114,7 +114,7 @@ const BannerCarousel: React.FC<BannerCarouselProps> = ({
         {infiniteBanners.map((banner, idx) => {
           const content = (
             <div
-              className={`w-full h-32 md:h-40 lg:h-48 ${banner.gradient || "bg-slate-100"} flex flex-col justify-end items-start relative overflow-hidden group/banner ${banner.link ? "cursor-pointer" : ""}`}
+              className={`w-full h-32 md:h-36 lg:h-40 ${banner.gradient || "bg-slate-100"} flex flex-col justify-end items-start relative overflow-hidden group/banner ${banner.link ? "cursor-pointer" : ""}`}
             >
               {banner.imageUrl ? (
                 <img
@@ -130,12 +130,12 @@ const BannerCarousel: React.FC<BannerCarouselProps> = ({
               )}
 
               <div className="relative z-10 w-full p-6 md:p-8 bg-gradient-to-t from-black/70 via-black/30 to-transparent">
-                <div className="max-w-[90%] md:max-w-[70%] text-left">
-                  <h2 className="text-lg md:text-xl lg:text-2xl font-display font-semibold text-white mb-1.5 md:mb-2 leading-tight drop-shadow-md">
+                <div className="max-w-[90%] md:max-w-[80%] text-left">
+                  <h2 className="text-sm md:text-base lg:text-lg font-display font-semibold text-white mb-1 md:mb-1.5 leading-tight drop-shadow-md">
                     {banner.title}
                   </h2>
                   {banner.subtitle && (
-                    <p className="text-xs md:text-sm lg:text-[15px] text-white/95 font-medium drop-shadow-sm max-w-[250px] md:max-w-md">
+                    <p className="text-[9px] md:text-[10px] lg:text-xs text-white/95 font-medium drop-shadow-sm max-w-[250px] md:max-w-md line-clamp-2">
                       {banner.subtitle}
                     </p>
                   )}
@@ -147,7 +147,7 @@ const BannerCarousel: React.FC<BannerCarouselProps> = ({
           return (
             <div
               key={`${banner.id}-${idx}`}
-              className="w-full md:w-[70%] lg:w-[55%] xl:w-[45%] flex-shrink-0 snap-center rounded-2xl md:rounded-3xl overflow-hidden shadow-sm hover:shadow-md hover:-translate-y-1 transition-all duration-300 border border-gray-100"
+              className="w-full md:w-[65%] lg:w-[45%] xl:w-[38%] flex-shrink-0 snap-center rounded-2xl md:rounded-3xl overflow-hidden shadow-sm hover:shadow-md hover:-translate-y-1 transition-all duration-300 border border-gray-100"
             >
               {banner.link ? (
                 <a

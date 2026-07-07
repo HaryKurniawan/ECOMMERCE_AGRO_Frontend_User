@@ -5,7 +5,6 @@ import { Leaf, MessageCircle } from "lucide-react";
 import { useRouter } from "next/navigation";
 
 import CartCountButton from "@/src/components/ecommerce/CartCountButton";
-import NotifBell from "@/src/components/notifikasi/NotifBell";
 import SearchBar from "@/src/components/ecommerce/SearchBar";
 import LocationSelector from "@/src/components/ecommerce/LocationSelector";
 import type { AvailableCity } from "@/lib/location";
@@ -46,7 +45,6 @@ const HomeMobileHeader: React.FC<HomeMobileHeaderProps> = ({
           </h1>
         </div>
         <div className="flex items-center gap-2">
-          <NotifBell variant="dark" />
           <CartCountButton variant="dark" size="sm" />
         </div>
       </div>

@@ -48,11 +48,18 @@ export const BulkOrderSummary: React.FC<BulkOrderSummaryProps> = ({
   const harga = product.harga || 0;
   const totalEstimate = harga * jumlah;
 
+  const totalPackagingKg = packagingSpecs.reduce(
+    (sum, spec) => sum + spec.ukuranKg * spec.jumlahBungkus,
+    0,
+  );
+
   const isStepValid =
     currentStep === 1
       ? jumlah >= 300
       : currentStep === 2
-        ? jumlah >= 300 && packagingSpecs.length > 0
+        ? jumlah >= 300 &&
+          packagingSpecs.length > 0 &&
+          totalPackagingKg === jumlah
         : isFormValid;
 
   const handleMainAction = () => {

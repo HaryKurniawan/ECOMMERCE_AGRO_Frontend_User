@@ -35,8 +35,8 @@ const KeranjangPage: React.FC = () => {
 
   if (loading && cartItems.length === 0) {
     return (
-      <div className="min-h-screen flex flex-col bg-white">
-        <div className="bg-white/90 backdrop-blur-xl border-b-2 border-gray-100 px-4 py-3 sticky top-0 lg:top-16 z-40">
+      <div className="min-h-screen lg:min-h-[calc(100vh-140px)] flex flex-col bg-white lg:bg-transparent">
+        <div className="bg-white/90 lg:bg-transparent lg:backdrop-blur-none backdrop-blur-xl border-b-2 border-gray-100 lg:border-none px-4 py-3 sticky top-0 lg:top-16 z-40">
           <div className="flex items-center gap-4 max-w-7xl mx-auto px-2">
             <div className="w-10 h-10 bg-gray-100 animate-pulse rounded-full" />
             <div className="w-32 h-5 bg-gray-100 animate-pulse rounded-xl" />
@@ -51,9 +51,9 @@ const KeranjangPage: React.FC = () => {
   }
 
   return (
-    <div className="min-h-screen flex flex-col bg-white">
+    <div className="min-h-screen lg:min-h-[calc(100vh-140px)] flex flex-col bg-white lg:bg-transparent">
       {/* Header */}
-      <div className="bg-white/90 backdrop-blur-xl border-b-2 border-gray-100 px-4 py-3 sticky top-0 lg:top-16 z-40">
+      <div className="bg-white/90 lg:bg-transparent lg:backdrop-blur-none backdrop-blur-xl border-b-2 border-gray-100 lg:border-none px-4 py-3 sticky top-0 lg:top-16 z-40">
         <div className="flex items-center justify-between max-w-7xl mx-auto px-2">
           <div className="flex items-center gap-4">
             <button
@@ -62,22 +62,7 @@ const KeranjangPage: React.FC = () => {
             >
               <ArrowLeft size={18} className="text-gray-600" />
             </button>
-            <h1 className="font-display font-semibold text-xl text-gray-900 tracking-tight">
-              Keranjang
-            </h1>
           </div>
-          {cartItems.length > 0 && (
-            <button
-              onClick={toggleSelectMode}
-              className={`text-sm font-semibold px-4 py-2 rounded-full transition-all ${
-                isSelectMode
-                  ? "bg-primary-50 text-primary-600 border border-primary-100"
-                  : "text-gray-500 hover:text-gray-900 hover:bg-gray-50 border border-transparent"
-              }`}
-            >
-              {isSelectMode ? "Selesai" : "Pilih Item"}
-            </button>
-          )}
         </div>
       </div>
 
@@ -93,9 +78,26 @@ const KeranjangPage: React.FC = () => {
         </div>
       ) : (
         <>
-          <div className="flex-1 overflow-y-auto px-4 lg:px-6 py-4 space-y-4 pb-52 lg:pb-10">
-            <div className="lg:flex lg:gap-6 max-w-7xl mx-auto">
+          <div className="flex-1 px-4 lg:px-6 py-4 pb-52 lg:pb-10">
+            <div className="lg:flex lg:gap-6 max-w-7xl mx-auto items-start">
               <div className="flex-1 space-y-4">
+                {cartItems.length > 0 && (
+                  <div className="flex justify-end lg:justify-between items-center mb-2">
+                    <h2 className="font-display font-semibold text-lg text-gray-900 hidden lg:block">
+                      Daftar Produk
+                    </h2>
+                    <button
+                      onClick={toggleSelectMode}
+                      className={`text-sm font-semibold px-4 py-2 rounded-xl transition-all border ${
+                        isSelectMode
+                          ? "bg-primary-50 text-primary-600 border-primary-100"
+                          : "text-gray-500 hover:text-gray-900 hover:bg-gray-50 border-gray-200 bg-white shadow-sm"
+                      }`}
+                    >
+                      {isSelectMode ? "Selesai" : "Pilih Item"}
+                    </button>
+                  </div>
+                )}
                 {Object.entries(groupedByStore).map(
                   ([tokoId, { storeName, items }]) => (
                     <CartStoreGroup

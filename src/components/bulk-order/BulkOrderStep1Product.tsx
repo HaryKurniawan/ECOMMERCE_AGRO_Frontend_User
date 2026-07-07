@@ -75,11 +75,23 @@ export const BulkOrderStep1Product: React.FC<BulkOrderStep1ProductProps> = ({
               type="number"
               min="300"
               required
-              value={jumlah}
-              onChange={(e) => onJumlahChange(parseInt(e.target.value) || 0)}
+              value={jumlah || ""}
+              onChange={(e) => {
+                const val = e.target.value;
+                if (val === "") {
+                  onJumlahChange(0);
+                } else {
+                  onJumlahChange(parseInt(val) || 0);
+                }
+              }}
+              onBlur={() => {
+                if (jumlah < 300) {
+                  onJumlahChange(300);
+                }
+              }}
               className="w-full h-14 bg-gray-50 border border-gray-100 rounded-2xl px-5 pr-20 text-xl font-bold text-gray-900 focus:outline-none focus:ring-2 focus:ring-primary-400 focus:bg-white focus:border-transparent transition-all"
             />
-            <div className="absolute right-5 top-1/2 -translate-y-1/2 text-sm font-semibold text-gray-400">
+            <div className="absolute right-5 top-1/2 -translate-y-1/2 text-sm font-semibold text-gray-400 pointer-events-none">
               {product.satuan}
             </div>
           </div>

@@ -11,7 +11,7 @@ export const useCountdown = (startTime: string | undefined) => {
     if (!startTime) return;
 
     const timer = setInterval(() => {
-      const expiry = new Date(startTime).getTime() + 24 * 60 * 60 * 1000;
+      const expiry = new Date(startTime).getTime() + 1 * 60 * 60 * 1000;
       const dist = expiry - Date.now();
 
       if (dist < 0) {

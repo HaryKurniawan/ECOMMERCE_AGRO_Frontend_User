@@ -35,7 +35,15 @@ type LoginFormData = z.infer<typeof loginSchema>;
 export default function LoginForm() {
   const router = useRouter();
   const setAuth = useAuthStore((state) => state.setAuth);
+  const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
+  const _hasHydrated = useAuthStore((state) => state._hasHydrated);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [mounted, setMounted] = useState(false);
+
+  // Handle mounted state
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   // Check for error in URL params
   useEffect(() => {
@@ -52,6 +60,13 @@ export default function LoginForm() {
       }
     }
   }, []);
+
+  // Redirect if already authenticated
+  useEffect(() => {
+    if (_hasHydrated && isAuthenticated) {
+      router.push("/");
+    }
+  }, [_hasHydrated, isAuthenticated, router]);
 
   const {
     register,
@@ -94,6 +109,23 @@ export default function LoginForm() {
     mutation.mutate(data);
   };
 
+  if (!mounted) {
+    return (
+      <div className="space-y-4 animate-pulse">
+        <div className="space-y-2">
+          <div className="h-4 bg-gray-100 rounded w-16 ml-1" />
+          <div className="h-12 bg-gray-100 rounded-xl w-full" />
+        </div>
+        <div className="space-y-2">
+          <div className="h-4 bg-gray-100 rounded w-20 ml-1" />
+          <div className="h-12 bg-gray-100 rounded-xl w-full" />
+        </div>
+        <div className="h-6 bg-gray-100 rounded w-24 ml-auto" />
+        <div className="h-12 bg-gray-100 rounded-xl w-full pt-4" />
+      </div>
+    );
+  }
+
   return (
     <>
       {errorMessage && (
@@ -104,9 +136,13 @@ export default function LoginForm() {
         />
       )}
 
-      <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+      <form
+        onSubmit={handleSubmit(onSubmit)}
+        className="space-y-4"
+        suppressHydrationWarning
+      >
         {/* Email Input */}
-        <div>
+        <div suppressHydrationWarning>
           <label
             htmlFor="email"
             className="block text-sm font-medium text-gray-700 mb-1.5 ml-1"
@@ -116,6 +152,7 @@ export default function LoginForm() {
           <input
             id="email"
             type="email"
+            suppressHydrationWarning
             placeholder="Contoh: user@email.com"
             className={`w-full px-4 py-3 rounded-xl border ${
               errors.email ? "border-red-300" : "border-gray-200"
@@ -152,10 +189,10 @@ export default function LoginForm() {
           <Button
             type="submit"
             variant="primary"
-            size="lg"
+            size="md"
             fullWidth
             loading={mutation.isPending}
-            className="bg-green-700 hover:bg-green-800 shadow-sm shadow-green-200"
+            className="bg-green-700 hover:bg-green-800 shadow-sm shadow-green-200 py-3 text-sm font-medium"
           >
             Masuk Sekarang
           </Button>

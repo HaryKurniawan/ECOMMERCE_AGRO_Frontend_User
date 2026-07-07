@@ -38,16 +38,24 @@ export default function NotifikasiPage() {
         notificationsApi.getAll({ limit: 15, page: pageParam as number }),
       initialPageParam: 1,
       getNextPageParam: (lastPage, allPages) => {
-        const pageData = lastPage?.data?.data || [];
-        if (pageData.length === 15) return allPages.length + 1;
+        const pageData =
+          lastPage?.data?.data?.data || lastPage?.data?.data || [];
+        const arr = Array.isArray(pageData) ? pageData : [];
+        if (arr.length === 15) return allPages.length + 1;
         return undefined;
       },
     });
 
   useEffect(() => {
     if (data?.pages) {
-      const allNotifs = data.pages.flatMap((page) => page.data?.data || []);
-      const unreadCount = data.pages[0]?.data?.unreadCount || 0;
+      const allNotifs = data.pages.flatMap((page) => {
+        const pData = page.data?.data?.data || page.data?.data || [];
+        return Array.isArray(pData) ? pData : [];
+      });
+      const unreadCount =
+        data.pages[0]?.data?.data?.unreadCount ||
+        data.pages[0]?.data?.unreadCount ||
+        0;
       setNotifications(allNotifs, unreadCount);
     }
   }, [data, setNotifications]);

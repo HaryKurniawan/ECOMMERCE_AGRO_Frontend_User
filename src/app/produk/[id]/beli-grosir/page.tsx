@@ -177,6 +177,7 @@ export default function BeliGrosirPage() {
             {/* Step 2: Order Details */}
             {currentStep === 2 && (
               <BulkOrderStep2Details
+                jumlah={jumlah}
                 packagingSpecs={packagingSpecs}
                 catatan={catatan}
                 onPackagingSpecsChange={setPackagingSpecs}

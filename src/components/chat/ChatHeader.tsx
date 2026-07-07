@@ -26,7 +26,7 @@ export default function ChatHeader({
     <div className="bg-white px-4 py-3 flex items-center gap-3 shadow-sm z-20 border-b border-gray-100 flex-shrink-0">
       <button
         onClick={onBack}
-        className="p-2 hover:bg-gray-100 rounded-full transition-colors text-gray-600"
+        className="p-2 hover:bg-gray-100 rounded-full transition-colors text-gray-600 lg:hidden"
       >
         <ArrowLeft size={20} />
       </button>

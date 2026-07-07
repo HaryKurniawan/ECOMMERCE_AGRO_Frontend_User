@@ -82,7 +82,9 @@ export async function loginOperasional(
   return mapAuthResponse(resData);
 }
 
-export async function register(data: RegisterRequest): Promise<AuthResponse> {
+export async function register(
+  data: RegisterRequest,
+): Promise<{ message: string; email: string }> {
   // Transform frontend field names to backend Indonesian field names
   const response = await authApi.register({
     email: data.email,
@@ -90,8 +92,7 @@ export async function register(data: RegisterRequest): Promise<AuthResponse> {
     nama: data.name, // name → nama
     peran: data.role, // role → peran (if needed)
   });
-  const resData = response.data?.data || response.data;
-  return mapAuthResponse(resData);
+  return response.data?.data || response.data;
 }
 
 export async function getProfile() {

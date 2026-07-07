@@ -126,35 +126,35 @@ const PesananContent = () => {
   const getStatusFromTab = (tab: string) => {
     switch (tab) {
       case "menunggu_bayar":
-        return "MENUNGGU_BAYAR";
+        return ["MENUNGGU_BAYAR", "MENUNGGU_KONFIRMASI_SELLER"];
       case "diproses":
-        return "DIPROSES";
+        return ["DIPROSES"];
       case "dikirim":
-        return "DIKIRIM";
+        return ["DIKIRIM"];
       case "tiba":
-        return "ARRIVED";
+        return ["ARRIVED"];
       case "selesai":
-        return "SELESAI";
+        return ["SELESAI"];
       default:
-        return "";
+        return [];
     }
   };
 
   const filteredOrders = orders.filter((o) => {
-    const tabKey = getStatusFromTab(activeTab);
-    if (tabKey === "ARRIVED") {
+    const tabKeys = getStatusFromTab(activeTab);
+    if (activeTab === "tiba") {
       return (
         o.status?.toUpperCase() === "DIKIRIM" &&
         (o as any).pengiriman?.status === "ARRIVED"
       );
     }
-    if (tabKey === "DIKIRIM") {
+    if (activeTab === "dikirim") {
       return (
         o.status?.toUpperCase() === "DIKIRIM" &&
         (o as any).pengiriman?.status !== "ARRIVED"
       );
     }
-    return o.status && o.status.toUpperCase() === tabKey.toUpperCase();
+    return o.status && tabKeys.includes(o.status.toUpperCase());
   });
 
   // Group multi-store checkout orders for MENUNGGU_BAYAR tab
@@ -211,20 +211,20 @@ const PesananContent = () => {
         <div className="max-w-2xl mx-auto px-4 flex gap-2 overflow-x-auto scrollbar-none pb-3 pt-2 lg:justify-center">
           {tabs.map((tab) => {
             const count = orders.filter((o: any) => {
-              const tabKey = getStatusFromTab(tab.id);
-              if (tabKey === "ARRIVED") {
+              const tabKeys = getStatusFromTab(tab.id);
+              if (tab.id === "tiba") {
                 return (
                   o.status?.toUpperCase() === "DIKIRIM" &&
                   o.pengiriman?.status === "ARRIVED"
                 );
               }
-              if (tabKey === "DIKIRIM") {
+              if (tab.id === "dikirim") {
                 return (
                   o.status?.toUpperCase() === "DIKIRIM" &&
                   o.pengiriman?.status !== "ARRIVED"
                 );
               }
-              return o.status?.toUpperCase() === tabKey.toUpperCase();
+              return o.status && tabKeys.includes(o.status.toUpperCase());
             }).length;
             return (
               <button

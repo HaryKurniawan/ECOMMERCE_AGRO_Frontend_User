@@ -420,7 +420,7 @@ const ChatRoomContent: React.FC = () => {
   const groupedMessages = groupMessagesByDate(messages);
 
   return (
-    <div className="fixed inset-0 z-50 flex flex-col bg-slate-50">
+    <div className="fixed inset-0 z-50 lg:static lg:z-auto lg:h-full flex flex-col bg-slate-50">
       <ChatHeader
         name={headerInfo.name}
         icon={headerInfo.icon}

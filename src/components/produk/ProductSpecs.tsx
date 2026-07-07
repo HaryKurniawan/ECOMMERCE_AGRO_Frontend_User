@@ -16,91 +16,103 @@ interface ProductSpecsProps {
   setQuantity: (qty: number) => void;
 }
 
-const ProductSpecs: React.FC<ProductSpecsProps> = ({
-  product,
-  setQuantity,
-}) => {
-  const specs = [];
+const specConfig = [
+  {
+    key: "estimasiSegarHari" as const,
+    Icon: Clock,
+    label: "Segar s/d",
+    color: "text-emerald-600",
+    bgColor: "bg-emerald-50",
+    borderColor: "border-emerald-100",
+    getValue: (p: ProductSpecsProps["product"]) =>
+      p.estimasiSegarHari
+        ? `${p.estimasiSegarHari}–${p.estimasiSegarHari + 1} hari`
+        : null,
+  },
+  {
+    key: "nutrisi" as const,
+    Icon: Leaf,
+    label: "Nutrisi",
+    color: "text-sky-600",
+    bgColor: "bg-sky-50",
+    borderColor: "border-sky-100",
+    getValue: (p: ProductSpecsProps["product"]) => p.nutrisi || null,
+  },
+  {
+    key: "asalKebun" as const,
+    Icon: MapPin,
+    label: "Asal Kebun",
+    color: "text-amber-600",
+    bgColor: "bg-amber-50",
+    borderColor: "border-amber-100",
+    getValue: (p: ProductSpecsProps["product"]) => p.asalKebun || null,
+  },
+  {
+    key: "kategoriNama" as const,
+    Icon: Tag,
+    label: "Kategori",
+    color: "text-violet-600",
+    bgColor: "bg-violet-50",
+    borderColor: "border-violet-100",
+    getValue: (p: ProductSpecsProps["product"]) => p.kategoriNama || null,
+  },
+];
 
-  if (product.estimasiSegarHari) {
-    specs.push({
-      icon: <Clock size={15} className="text-emerald-500" />,
-      bg: "bg-emerald-50",
-      label: "Segar s/d",
-      value: `${product.estimasiSegarHari}–${product.estimasiSegarHari + 1} hari`,
-    });
-  }
-
-  if (product.nutrisi) {
-    specs.push({
-      icon: <Leaf size={15} className="text-blue-500" />,
-      bg: "bg-blue-50",
-      label: "Nutrisi",
-      value: product.nutrisi,
-    });
-  }
-
-  if (product.asalKebun) {
-    specs.push({
-      icon: <MapPin size={15} className="text-amber-500" />,
-      bg: "bg-amber-50",
-      label: "Asal",
-      value: product.asalKebun,
-    });
-  }
-
-  if (product.kategoriNama) {
-    specs.push({
-      icon: <Tag size={15} className="text-purple-500" />,
-      bg: "bg-purple-50",
-      label: "Kategori",
-      value: product.kategoriNama,
-    });
-  }
+const ProductSpecs: React.FC<ProductSpecsProps> = ({ product }) => {
+  const activeSpecs = specConfig.filter((s) => s.getValue(product) !== null);
 
   return (
-    <div className="pt-6">
-      {/* Description & Specs */}
-      <div className="px-4 lg:px-0">
-        <div className="bg-white rounded-2xl border border-gray-100 overflow-hidden">
-          <div className="px-5 py-4 border-b border-gray-50">
-            <h3 className="text-sm font-semibold text-gray-700">
-              Detail Produk
-            </h3>
-          </div>
-          <div className="px-5 py-4">
-            <p className="text-sm text-gray-500 leading-relaxed whitespace-pre-line">
-              {product.deskripsi || "-"}
-            </p>
+    <div className="px-4 lg:px-0">
+      <div className="bg-white rounded-2xl border border-gray-100 overflow-hidden">
+        {/* Header */}
+        <div className="px-5 pt-5 pb-4">
+          <h3 className="text-sm font-semibold text-gray-800 tracking-tight">
+            Detail Produk
+          </h3>
+        </div>
 
-            {specs.length > 0 && (
-              <div className="mt-7 pt-5 border-t border-gray-200">
-                <h4 className="text-xs font-bold text-gray-900 mb-3">
-                  Informasi Tambahan
-                </h4>
-                <div className="space-y-4">
-                  {specs.map((s, i) => (
-                    <div key={i} className="flex items-start gap-3">
+        {/* Description */}
+        <div className="px-5 pb-5">
+          <p className="text-sm text-gray-500 leading-relaxed whitespace-pre-line">
+            {product.deskripsi || "Tidak ada deskripsi."}
+          </p>
+        </div>
+
+        {/* Specs grid */}
+        {activeSpecs.length > 0 && (
+          <div className="border-t border-gray-50 px-5 py-5">
+            <p className="text-[10px] font-bold text-gray-400 uppercase tracking-[0.12em] mb-4">
+              Informasi Tambahan
+            </p>
+            <div className="grid grid-cols-2 gap-3">
+              {activeSpecs.map(
+                ({ Icon, label, color, bgColor, borderColor, getValue }, i) => {
+                  const value = getValue(product);
+                  return (
+                    <div
+                      key={i}
+                      className={`flex items-center gap-3 p-3 rounded-xl border ${borderColor} ${bgColor}`}
+                    >
                       <div
-                        className={`w-8 h-8 ${s.bg} rounded-lg flex items-center justify-center flex-shrink-0 mt-0.5`}
+                        className={`w-8 h-8 rounded-lg bg-white/70 flex items-center justify-center flex-shrink-0 shadow-sm`}
                       >
-                        {s.icon}
+                        <Icon size={15} className={color} />
                       </div>
-                      <div>
-                        <p className="text-[10px] text-gray-400 font-bold uppercase tracking-wider">
-                          {s.label}
+                      <div className="min-w-0">
+                        <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wider leading-none mb-0.5">
+                          {label}
                         </p>
-                        <p className="text-xs font-medium text-gray-800 mt-0.5">
-                          {s.value}
+                        <p className="text-xs font-semibold text-gray-800 truncate">
+                          {value}
                         </p>
                       </div>
                     </div>
-                  ))}
-                </div>
-              </div>
-            )}
+                  );
+                },
+              )}
+            </div>
           </div>
-        </div>
+        )}
       </div>
     </div>
   );

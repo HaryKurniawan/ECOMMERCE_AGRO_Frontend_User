@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from "react";
 import { useParams, useRouter } from "next/navigation";
-import { ArrowLeft, Share2 } from "lucide-react";
+import { ArrowLeft } from "lucide-react";
 
 import { useProductDetail } from "@/src/hooks/produk/useProductDetail";
 import { useProductReviews } from "@/src/hooks/produk/useProductReviews";
@@ -104,6 +104,7 @@ const DetailProdukPage: React.FC = () => {
   const onSetAddress = () => {
     router.push(`/profil/alamat/form?redirect=/produk/${id}`);
   };
+
   const handleOpenModal = (mode: "beli" | "cart" | "grosir") => {
     if (!_hasHydrated) return;
     if (!isAuthenticated) {
@@ -125,7 +126,9 @@ const DetailProdukPage: React.FC = () => {
     <div className="animate-fade-in relative min-h-screen bg-gray-50 pb-20 lg:pb-10">
       {/* Mobile Header */}
       <div
-        className={`bg-white/80 backdrop-blur-md sticky top-0 lg:top-16 z-40 px-4 py-3 lg:hidden flex items-center justify-between transition-all duration-300 ${isScrolled ? "border-b border-gray-100 shadow-sm" : ""}`}
+        className={`bg-white/80 backdrop-blur-md sticky top-0 lg:top-16 z-40 px-4 py-3 lg:hidden flex items-center justify-between transition-all duration-300 ${
+          isScrolled ? "border-b border-gray-100 shadow-sm" : ""
+        }`}
       >
         <button
           onClick={() => router.back()}
@@ -133,7 +136,7 @@ const DetailProdukPage: React.FC = () => {
         >
           <ArrowLeft size={22} className="text-gray-700" />
         </button>
-        <span className="font-display font-semibold text-sm text-gray-900 tracking-tight">
+        <span className="font-display font-medium text-sm text-gray-900 tracking-tight">
           Detail Produk
         </span>
         <div className="flex items-center gap-1">
@@ -144,13 +147,13 @@ const DetailProdukPage: React.FC = () => {
       <div className="max-w-7xl mx-auto lg:px-6 lg:pt-6">
         <div className="lg:flex lg:gap-8 items-start">
           <div className="flex-1 min-w-0 space-y-6">
-            <div className="lg:flex lg:gap-8">
+            <div className="space-y-6">
               <ProductGallery
                 product={product}
                 activeImage={activeImage}
                 setActiveImage={setActiveImage}
               />
-              <div className="lg:flex-1">
+              <div className="space-y-6">
                 <ProductInfo
                   product={product}
                   displayHarga={displayHarga}
@@ -168,7 +171,9 @@ const DetailProdukPage: React.FC = () => {
               </div>
             </div>
 
-            <ProductStoreCard store={store} />
+            <div className="lg:hidden">
+              <ProductStoreCard store={store} />
+            </div>
             <ProductReviewsPreview
               produkId={id}
               reviews={reviews}
@@ -193,6 +198,7 @@ const DetailProdukPage: React.FC = () => {
             actionLoading={actionLoading}
             isOutOfArea={isOutOfArea}
             isAuthenticated={isAuthenticated}
+            store={store}
           />
         </div>
       </div>

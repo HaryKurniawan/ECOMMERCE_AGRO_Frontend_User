@@ -111,6 +111,11 @@ const OrderDetailPage = () => {
       </div>
 
       <div className="max-w-2xl mx-auto px-4 pt-5 space-y-4">
+        {/* Countdown for pending payment (Paling Atas) */}
+        {statusKey === "MENUNGGU_BAYAR" && (
+          <PaymentCountdown timeLeft={timeLeft} />
+        )}
+
         {/* Shipping Tracking */}
         {(order as any).pengiriman && (
           <ShippingTrackingSection shipping={(order as any).pengiriman} />
@@ -181,11 +186,6 @@ const OrderDetailPage = () => {
             ))}
           </div>
         </section>
-
-        {/* Countdown for pending payment */}
-        {statusKey === "MENUNGGU_BAYAR" && (
-          <PaymentCountdown timeLeft={timeLeft} />
-        )}
 
         {/* Address */}
         <section className="bg-white rounded-2xl border border-gray-100 p-5">

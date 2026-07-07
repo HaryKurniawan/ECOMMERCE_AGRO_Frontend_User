@@ -13,9 +13,15 @@ import {
 
 import { formatRupiah } from "@/lib/ecommerce-api";
 
+import ProductStoreCard from "./ProductStoreCard";
+
 interface ProductSidebarProps {
   product: {
     satuan?: string;
+    nama?: string;
+    namaEtalase?: string;
+    masterProdukId?: string;
+    terjual?: number;
   };
   quantity: number;
   setQuantity: (qty: number) => void;
@@ -30,6 +36,13 @@ interface ProductSidebarProps {
   actionLoading: boolean;
   isOutOfArea?: boolean;
   isAuthenticated?: boolean;
+  store: {
+    id: string;
+    nama?: string;
+    foto?: string;
+    kabupaten?: string;
+    rating?: number;
+  } | null;
 }
 
 const ProductSidebar: React.FC<ProductSidebarProps> = ({
@@ -38,6 +51,7 @@ const ProductSidebar: React.FC<ProductSidebarProps> = ({
   setQuantity,
   displayHarga,
   displayStok,
+  totalStok,
   onBuyNow,
   onAddToCart,
   onChatSeller,
@@ -46,56 +60,38 @@ const ProductSidebar: React.FC<ProductSidebarProps> = ({
   actionLoading,
   isOutOfArea = false,
   isAuthenticated = false,
+  store,
 }) => {
   const isShoppingDisabled = isAuthenticated && isOutOfArea;
 
   return (
-    <aside className="hidden lg:block w-[300px] xl:w-[330px] flex-shrink-0 font-normal">
+    <aside className="hidden lg:block w-[330px] xl:w-[360px] flex-shrink-0 font-normal">
       <div
-        className="fixed top-40 z-30 w-[300px] xl:w-[330px]"
+        className="fixed top-40 z-30 w-[330px] xl:w-[360px] space-y-4"
         style={{ right: "max(1.5rem, calc((100vw - 1280px) / 2 + 1.5rem))" }}
       >
         <div className="bg-white border border-gray-100 rounded-3xl p-6 shadow-[0_8px_30px_rgb(0,0,0,0.04)] font-normal text-gray-700">
-          <div className="mb-5">
-            <p className="text-2xl font-bold text-primary-700">
+          {/* Product Name */}
+          <div className="mb-1.5">
+            <h1 className="font-semibold text-xl lg:text-2xl text-gray-900 leading-snug">
+              {product.namaEtalase || product.nama}
+            </h1>
+          </div>
+
+          <div className="mb-5 border-b border-gray-100 pb-5">
+            <p className="text-3xl font-semibold text-primary-700">
               {formatRupiah(displayHarga)}
               <span className="text-sm font-normal text-gray-400 ml-1">
                 / {product.satuan}
               </span>
             </p>
-          </div>
-
-          {/* Quantity */}
-          <div className="mb-5">
-            <p className="text-[10px] font-normal text-gray-400 uppercase tracking-widest mb-2.5">
-              Jumlah
-            </p>
-            <div className="flex items-center gap-3">
-              <div className="flex items-center gap-2 bg-gray-50 p-1 rounded-xl border border-gray-100 flex-1">
-                <button
-                  onClick={() => setQuantity(Math.max(1, quantity - 1))}
-                  className="w-9 h-9 bg-white rounded-lg flex items-center justify-center hover:bg-gray-50 transition-colors shadow-sm disabled:opacity-30"
-                  disabled={
-                    quantity <= 1 || actionLoading || isShoppingDisabled
-                  }
-                >
-                  <Minus size={13} strokeWidth={3} className="text-gray-600" />
-                </button>
-                <span className="flex-1 text-center font-normal text-sm text-gray-900">
-                  {quantity}
-                </span>
-                <button
-                  onClick={() => setQuantity(quantity + 1)}
-                  className="w-9 h-9 bg-primary-600 rounded-lg flex items-center justify-center hover:bg-primary-700 transition-all active:scale-90"
-                  disabled={
-                    quantity >= displayStok ||
-                    actionLoading ||
-                    isShoppingDisabled
-                  }
-                >
-                  <Plus size={13} strokeWidth={3} className="text-white" />
-                </button>
-              </div>
+            <div className="flex items-center gap-2 mt-3">
+              <span className="text-sm text-gray-600 font-medium">
+                Stok Tersedia:
+              </span>
+              <span className="text-sm font-bold text-green-600 bg-green-50 px-2.5 py-0.5 rounded-lg border border-green-100">
+                {totalStok} {product.satuan}
+              </span>
             </div>
           </div>
 
@@ -123,16 +119,6 @@ const ProductSidebar: React.FC<ProductSidebarProps> = ({
             </button>
           </div>
 
-          {/* Subtotal */}
-          <div className="py-4 border-t border-b border-gray-50 mb-5">
-            <div className="flex items-center justify-between">
-              <span className="text-xs text-gray-400">Subtotal</span>
-              <span className="font-normal text-xl text-gray-900 tracking-tight">
-                {formatRupiah(displayHarga * quantity)}
-              </span>
-            </div>
-          </div>
-
           {/* Actions */}
           <div className="space-y-2.5 font-normal">
             <button
@@ -150,27 +136,37 @@ const ProductSidebar: React.FC<ProductSidebarProps> = ({
               )}
             </button>
 
-            <button
-              onClick={onAddToCart}
-              disabled={actionLoading || isShoppingDisabled}
-              className="w-full h-12 bg-white border border-primary-200 text-primary-700 rounded-2xl font-normal hover:bg-primary-50 transition-all flex items-center justify-center gap-2 active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed text-sm"
-            >
-              <ShoppingCart size={16} strokeWidth={2} />
-              Tambah ke Keranjang
-            </button>
+            <div className="flex gap-2">
+              <button
+                onClick={onChatSeller}
+                disabled={chatLoading || actionLoading}
+                className="w-11 h-11 bg-white border border-gray-200 text-gray-700 rounded-2xl font-normal hover:bg-gray-50 hover:border-gray-300 transition-all flex items-center justify-center active:scale-[0.98] disabled:opacity-50 shrink-0"
+                title="Tanya Penjual"
+              >
+                {chatLoading ? (
+                  <Loader2 size={15} className="animate-spin text-gray-500" />
+                ) : (
+                  <MessageCircle
+                    size={15}
+                    strokeWidth={2}
+                    className="text-gray-500"
+                  />
+                )}
+              </button>
 
-            <button
-              onClick={onChatSeller}
-              disabled={chatLoading || actionLoading}
-              className="w-full h-11 bg-white border border-gray-100 text-gray-500 rounded-2xl font-normal hover:bg-gray-50 transition-all flex items-center justify-center gap-2 active:scale-[0.98] disabled:opacity-50 text-sm"
-            >
-              {chatLoading ? (
-                <Loader2 size={16} className="animate-spin" />
-              ) : (
-                <MessageCircle size={16} strokeWidth={2} />
-              )}
-              Tanya Penjual
-            </button>
+              <button
+                onClick={onAddToCart}
+                disabled={actionLoading || isShoppingDisabled}
+                className="flex-1 h-11 bg-white border border-gray-200 text-gray-700 rounded-2xl font-normal hover:bg-gray-50 hover:border-gray-300 transition-all flex items-center justify-center gap-2 active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed text-sm whitespace-nowrap"
+              >
+                <ShoppingCart
+                  size={15}
+                  strokeWidth={2}
+                  className="text-gray-500"
+                />
+                Tambah ke Keranjang
+              </button>
+            </div>
 
             {isShoppingDisabled && (
               <div className="text-center text-xs text-red-500 mt-3 p-2 bg-red-50/50 rounded-2xl border border-red-100 font-normal">
@@ -179,6 +175,9 @@ const ProductSidebar: React.FC<ProductSidebarProps> = ({
             )}
           </div>
         </div>
+
+        {/* Store Card section below */}
+        {store && <ProductStoreCard store={store} />}
       </div>
     </aside>
   );

@@ -63,7 +63,7 @@ export default function ProductGallery({
   };
 
   return (
-    <div className="space-y-4 px-4 lg:px-0 lg:w-[360px] xl:w-[420px] shrink-0">
+    <div className="space-y-4 px-4 lg:px-0 w-full shrink-0">
       {/* Main Photo + Thumbnails Container */}
       <div className="flex flex-col gap-3">
         {/* Main Photo */}
@@ -72,7 +72,7 @@ export default function ProductGallery({
             src={currentPhoto}
             alt={`${product.nama} - Foto ${currentPhotoIndex + 1}`}
             fill
-            className="object-cover"
+            className="object-contain"
             priority
           />
 
@@ -116,7 +116,7 @@ export default function ProductGallery({
                     src={photo}
                     alt={`Thumbnail ${index + 1}`}
                     fill
-                    className="object-cover"
+                    className="object-contain"
                   />
                 </button>
               ))}

@@ -125,7 +125,7 @@ const KatalogContent: React.FC = () => {
   }, [q_param, filters]);
 
   return (
-    <div className="min-h-screen bg-gray-50 pb-20 lg:pb-10">
+    <div className="w-full">
       <KatalogHeader
         total={total}
         search={filters.search}

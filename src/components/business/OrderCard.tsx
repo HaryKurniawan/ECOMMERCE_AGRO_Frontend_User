@@ -18,6 +18,12 @@ const STATUS_CONFIG: Record<
   string,
   { label: string; bg: string; text: string; dot: string }
 > = {
+  MENUNGGU_KONFIRMASI_SELLER: {
+    label: "Menunggu Konfirmasi",
+    bg: "bg-orange-50",
+    text: "text-orange-600",
+    dot: "bg-orange-400",
+  },
   MENUNGGU_BAYAR: {
     label: "Menunggu Bayar",
     bg: "bg-amber-50",
