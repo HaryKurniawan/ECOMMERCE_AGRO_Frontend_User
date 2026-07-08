@@ -7,6 +7,7 @@ import { z } from "zod";
 import { useMutation } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+import { ShieldAlert } from "lucide-react";
 
 import { login } from "@/lib/auth";
 import { useAuthStore } from "@/store/auth-store";
@@ -37,6 +38,7 @@ export default function LoginForm() {
   const setAuth = useAuthStore((state) => state.setAuth);
   const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
   const _hasHydrated = useAuthStore((state) => state._hasHydrated);
+  const [showUnauthorizedModal, setShowUnauthorizedModal] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [mounted, setMounted] = useState(false);
 
@@ -52,8 +54,12 @@ export default function LoginForm() {
       const error = params.get("error");
 
       if (error === "unauthorized_role") {
-        setErrorMessage(
-          "Akses Ditolak! Hanya pengguna dengan role KONSUMEN yang dapat login ke aplikasi ini. Silakan gunakan aplikasi yang sesuai dengan role Anda.",
+        setShowUnauthorizedModal(true);
+        // Clear param so it doesn't stay in URL
+        window.history.replaceState(
+          {},
+          document.title,
+          window.location.pathname,
         );
       } else if (error === "session_expired") {
         setErrorMessage("Sesi Anda telah berakhir. Silakan login kembali.");
@@ -82,9 +88,7 @@ export default function LoginForm() {
       // STRICT: Only KONSUMEN role allowed
       const ALLOWED_ROLE = "KONSUMEN";
       if (data.user?.role !== ALLOWED_ROLE) {
-        setErrorMessage(
-          `Akses Ditolak!\n\nHanya pengguna dengan role KONSUMEN yang dapat login ke aplikasi ini.\n\nRole Anda: ${data.user?.role || "Unknown"}\n\nSilakan gunakan aplikasi yang sesuai dengan role Anda.`,
-        );
+        setShowUnauthorizedModal(true);
         return;
       }
       setAuth(data.user);
@@ -94,8 +98,20 @@ export default function LoginForm() {
       const axiosError = error as {
         response?: { data?: { message?: string } };
       };
-      if (axiosError?.response?.data?.message) {
-        setErrorMessage(axiosError.response.data.message);
+
+      const errorMsg = axiosError?.response?.data?.message;
+
+      if (errorMsg) {
+        // Jika error dari backend berkaitan dengan role/aplikasi lain, tampilkan modal Akses Ditolak
+        if (
+          errorMsg.toLowerCase().includes("aplikasi agro lain") ||
+          errorMsg.toLowerCase().includes("tidak memiliki akses") ||
+          errorMsg.toLowerCase().includes("role")
+        ) {
+          setShowUnauthorizedModal(true);
+        } else {
+          setErrorMessage(errorMsg);
+        }
       } else if (error instanceof Error) {
         setErrorMessage(error.message);
       } else {
@@ -128,6 +144,32 @@ export default function LoginForm() {
 
   return (
     <>
+      {showUnauthorizedModal && (
+        <div className="fixed inset-0 bg-black/20 backdrop-blur-sm flex items-center justify-center z-[9999] p-4">
+          <div className="bg-white rounded-[24px] shadow-[0_8px_40px_rgb(0,0,0,0.08)] border border-gray-100 max-w-[340px] w-full p-8 text-center flex flex-col items-center animate-in fade-in zoom-in-95 duration-300">
+            <div className="w-14 h-14 bg-red-50/80 rounded-2xl flex items-center justify-center mb-5 text-red-500">
+              <ShieldAlert size={28} strokeWidth={1.5} />
+            </div>
+            <h2 className="text-xl font-semibold text-gray-900 mb-2 tracking-tight">
+              Akses Ditolak
+            </h2>
+            <p className="text-sm text-gray-500 leading-relaxed mb-8">
+              Maaf, hanya pengguna dengan role{" "}
+              <span className="font-semibold text-gray-900">KONSUMEN</span> yang
+              diizinkan masuk.
+            </p>
+            <Button
+              type="button"
+              variant="primary"
+              onClick={() => setShowUnauthorizedModal(false)}
+              className="w-full bg-red-600 hover:bg-red-700 shadow-sm shadow-red-200"
+            >
+              Tutup
+            </Button>
+          </div>
+        </div>
+      )}
+
       {errorMessage && (
         <AlertMessage
           message={errorMessage}

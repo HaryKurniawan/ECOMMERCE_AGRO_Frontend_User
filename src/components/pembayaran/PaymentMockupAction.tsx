@@ -27,135 +27,102 @@ const XenditAppMockup: React.FC<{
   const isQris = metodeBayar?.toUpperCase() === "QRIS";
 
   const appInfo = {
-    DANA: {
-      color: "from-[#108BE3] to-[#0071BC]",
-      imgSrc: "/images/payment/DANA.png",
-      name: "DANA",
-    },
-    OVO: {
-      color: "from-[#4C3494] to-[#3D2878]",
-      imgSrc: "/images/payment/OVO.png",
-      name: "OVO",
-    },
-    GOPAY: {
-      color: "from-[#00AED6] to-[#0090B0]",
-      imgSrc: "/images/payment/GOPAY.png",
-      name: "GoPay",
-    },
-    LINKAJA: {
-      color: "from-red-500 to-red-600",
-      imgSrc: null,
-      name: "LinkAja",
-    },
-    SHOPEEPAY: {
-      color: "from-[#EE4D2D] to-[#D23F22]",
-      imgSrc: "/images/payment/SPAY.png",
-      name: "ShopeePay",
-    },
+    DANA: { imgSrc: "/images/payment/DANA.png", name: "DANA" },
+    OVO: { imgSrc: "/images/payment/OVO.png", name: "OVO" },
+    GOPAY: { imgSrc: "/images/payment/GOPAY.png", name: "GoPay" },
+    LINKAJA: { imgSrc: null, name: "LinkAja" },
+    SHOPEEPAY: { imgSrc: "/images/payment/SPAY.png", name: "ShopeePay" },
   };
 
   const app =
     appInfo[metodeBayar?.toUpperCase() as keyof typeof appInfo] || null;
 
+  // Baca nama bank untuk VA
+  const bankName = (() => {
+    const m = (metodeBayar || "").toUpperCase();
+    if (m === "BCA_VA") return "BCA";
+    if (m === "MANDIRI_VA") return "Mandiri";
+    if (m === "BRI_VA") return "BRI";
+    if (m === "BNI_VA") return "BNI";
+    if (m === "PERMATA_VA") return "Permata";
+    if (m.endsWith("_VA")) return m.replace("_VA", "");
+    return null;
+  })();
+  const isVA = bankName !== null;
+
+  // Jika metode adalah VA, tidak perlu menampilkan mockup app ini sama sekali
+  // karena info VA sudah ada di PaymentDetails
+  if (isVA) return null;
+
   return (
-    <div className="mt-4 rounded-2xl overflow-hidden border border-gray-200 shadow-md bg-white">
-      {/* Xendit WRIS Header */}
-      <div className="bg-gradient-to-r from-indigo-600 to-blue-500 px-4 py-3 flex items-center justify-between">
+    <div className="rounded-2xl overflow-hidden border border-gray-200 bg-white">
+      {/* Header */}
+      <div className="bg-primary-600 px-4 py-3 flex items-center justify-between">
         <div className="flex items-center gap-2">
-          <div className="w-6 h-6 bg-white/20 rounded-md flex items-center justify-center">
+          <div className="w-6 h-6 bg-white/10 rounded-md flex items-center justify-center">
             <CreditCard size={14} className="text-white" />
           </div>
-          <span className="text-white text-xs font-bold">Xendit Invoice</span>
+          <span className="text-white text-xs font-semibold">
+            {isEwallet && app
+              ? app.name
+              : isQris
+                ? "QRIS"
+                : "Invoice Pembayaran"}
+          </span>
         </div>
-        <span className="text-white/70 text-[10px]">Secure Payment</span>
+        <span className="text-primary-100 text-[10px]">Secure Payment</span>
       </div>
 
-      {/* Available payment method logos */}
-      <div className="px-4 py-2 border-b border-gray-100">
-        <p className="text-[9px] text-gray-400 font-bold uppercase tracking-wider mb-2">
-          Metode yang tersedia
-        </p>
-        <div className="flex items-center gap-2 flex-wrap">
-          {[
-            { bg: "bg-blue-100", text: "text-blue-700", label: "BCA" },
-            { bg: "bg-orange-100", text: "text-orange-700", label: "Mandiri" },
-            { bg: "bg-blue-100", text: "text-blue-900", label: "BRI" },
-            { bg: "bg-blue-50", text: "text-blue-600", label: "BNI" },
-            { bg: "bg-blue-100", text: "text-blue-500", label: "DANA" },
-            { bg: "bg-purple-100", text: "text-purple-700", label: "OVO" },
-            { bg: "bg-green-100", text: "text-green-600", label: "GoPay" },
-            { bg: "bg-gray-100", text: "text-gray-600", label: "QRIS" },
-          ].map((m) => (
-            <span
-              key={m.label}
-              className={`text-[9px] font-bold px-1.5 py-0.5 rounded ${m.bg} ${m.text}`}
-            >
-              {m.label}
-            </span>
-          ))}
-        </div>
-      </div>
-
-      {/* App-specific mockup or generic */}
-      {isEwallet && app ? (
-        <div
-          className={`bg-gradient-to-br ${app.color} p-4 m-3 rounded-xl text-white text-center flex flex-col items-center`}
-        >
-          {app.imgSrc ? (
-            <div className="w-14 h-14 bg-white/20 rounded-xl flex items-center justify-center mb-2 p-1.5">
-              <Image
-                src={app.imgSrc}
-                alt={app.name}
-                width={48}
-                height={48}
-                className="object-contain"
-                unoptimized
-              />
+      {/* Content sesuai metode yang dipilih */}
+      <div className="p-4">
+        {isEwallet && app ? (
+          /* E-Wallet spesifik */
+          <div className="bg-gray-50 p-4 rounded-xl text-center flex flex-col items-center">
+            {app.imgSrc ? (
+              <div className="w-14 h-14 bg-white rounded-xl flex items-center justify-center mb-2 p-1.5 border border-gray-100 shadow-sm">
+                <Image
+                  src={app.imgSrc}
+                  alt={app.name}
+                  width={48}
+                  height={48}
+                  className="object-contain"
+                  unoptimized
+                />
+              </div>
+            ) : (
+              <div className="text-3xl mb-1">💳</div>
+            )}
+            <p className="text-xs font-semibold text-gray-700">{app.name}</p>
+            <p className="text-[10px] text-gray-400 mt-1">
+              Klik tombol di bawah untuk membuka aplikasi
+            </p>
+          </div>
+        ) : isQris ? (
+          /* QRIS */
+          <div className="flex flex-col items-center py-3">
+            <div className="w-24 h-24 bg-gray-100 rounded-xl flex items-center justify-center">
+              <QrCode size={48} className="text-gray-400" />
             </div>
-          ) : (
-            <div className="text-3xl mb-1">💳</div>
-          )}
-          <p className="text-xs font-bold">{app.name}</p>
-          <p className="text-[10px] text-white/70 mt-1">
-            Klik tombol di bawah untuk membuka aplikasi
-          </p>
-        </div>
-      ) : isQris ? (
-        <div className="flex flex-col items-center py-4">
-          <div className="w-24 h-24 bg-gray-100 rounded-xl flex items-center justify-center">
-            <QrCode size={48} className="text-gray-500" />
-          </div>
-          <p className="text-[10px] text-gray-400 mt-2">
-            Scan QR via aplikasi apapun
-          </p>
-        </div>
-      ) : (
-        <div className="flex items-center gap-3 p-3 m-3 bg-gray-50 rounded-xl border border-gray-100">
-          <div className="w-10 h-10 bg-indigo-50 rounded-lg flex items-center justify-center flex-shrink-0">
-            <Smartphone size={20} className="text-indigo-500" />
-          </div>
-          <div>
-            <p className="text-xs font-semibold text-gray-800">
-              Buka Xendit Invoice
-            </p>
-            <p className="text-[10px] text-gray-400">
-              Pilih metode bayar favoritmu
+            <p className="text-[10px] text-gray-400 mt-2">
+              Scan QR via aplikasi apapun
             </p>
           </div>
-        </div>
-      )}
-
-      {/* CTA Button */}
-      <div className="px-3 pb-3">
-        <a
-          href={paymentUrl}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="w-full py-3 bg-gradient-to-r from-indigo-600 to-blue-500 hover:from-indigo-700 hover:to-blue-600 text-white rounded-xl font-bold text-sm shadow-lg shadow-indigo-200 transition-all active:scale-[0.98] flex items-center justify-center gap-2"
-        >
-          <ExternalLink size={16} />
-          Bayar Sekarang via Xendit
-        </a>
+        ) : (
+          /* Fallback generic */
+          <div className="flex items-center gap-3 bg-gray-50 rounded-xl p-3 border border-gray-100">
+            <div className="w-10 h-10 bg-gray-100 rounded-lg flex items-center justify-center flex-shrink-0">
+              <Smartphone size={20} className="text-gray-500" />
+            </div>
+            <div>
+              <p className="text-xs font-semibold text-gray-800">
+                Buka Invoice Pembayaran
+              </p>
+              <p className="text-[10px] text-gray-400">
+                Selesaikan pembayaran melalui link di bawah
+              </p>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );
@@ -168,42 +135,53 @@ const PaymentMockupAction: React.FC<PaymentMockupActionProps> = ({
   metodeBayar,
 }) => {
   return (
-    <div className="space-y-4">
+    <div className="space-y-3">
       {/* Real Xendit Payment Action */}
       {paymentUrl ? (
         <XenditAppMockup paymentUrl={paymentUrl} metodeBayar={metodeBayar} />
       ) : (
-        <div className="rounded-2xl overflow-hidden border border-dashed border-indigo-200 bg-indigo-50 p-4">
-          <div className="flex items-center gap-2 mb-2">
-            <Wallet size={16} className="text-indigo-400" />
-            <p className="text-xs text-indigo-600 font-semibold">
-              Link pembayaran Xendit
-            </p>
+        <div className="rounded-2xl border border-gray-200 bg-gray-50 p-4">
+          <div className="flex items-center gap-2 mb-1.5">
+            <Wallet size={15} className="text-gray-400" />
+            <p className="text-xs text-gray-600 font-medium">Link pembayaran</p>
           </div>
-          <p className="text-[11px] text-indigo-400">
+          <p className="text-[11px] text-gray-400">
             Link akan tersedia setelah pesanan dikonfirmasi. Periksa halaman
             pesanan Anda.
           </p>
         </div>
       )}
 
-      {/* Mockup/Demo Button */}
-      <div className="bg-gradient-to-r from-emerald-50 to-teal-50 border-2 border-dashed border-emerald-300 rounded-2xl p-4 text-center">
-        <p className="text-xs text-emerald-700 font-semibold mb-2">
-          🧪 Tombol Mockup (Demo Bypass Payment)
+      {/* Mockup/Demo Buttons Container */}
+      <div className="bg-gray-50 border border-dashed border-gray-300 rounded-2xl p-4 text-center">
+        <p className="text-xs text-gray-500 font-medium mb-3">
+          Mode Development
         </p>
-        <button
-          onClick={onSimulatePayment}
-          disabled={isProcessing}
-          className="w-full py-3.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-2xl font-bold text-sm shadow-lg shadow-emerald-200 transition-all active:scale-[0.98] flex items-center justify-center gap-2 disabled:opacity-50"
-        >
-          {isProcessing ? (
-            <Loader2 size={16} className="animate-spin" />
-          ) : (
-            <CheckCircle2 size={18} />
+
+        <div className="space-y-3">
+          {/* Real Xendit CTA */}
+          {paymentUrl && (
+            <a
+              href={paymentUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="w-full py-3 bg-primary-600 hover:bg-primary-700 shadow-sm shadow-primary-200 text-white rounded-xl font-semibold text-sm transition-all active:scale-[0.98] flex items-center justify-center gap-2"
+            >
+              <ExternalLink size={16} />
+              Bayar Sekarang via Xendit
+            </a>
           )}
-          {isProcessing ? "Memproses..." : "Simulasi: Berhasil Dibayar"}
-        </button>
+
+          {/* Simulation CTA */}
+          <button
+            onClick={onSimulatePayment}
+            disabled={isProcessing}
+            className="w-full py-3 bg-transparent border border-primary-600 text-primary-600 hover:bg-primary-50 rounded-xl font-semibold text-sm transition-all active:scale-[0.98] flex items-center justify-center gap-2 disabled:opacity-50"
+          >
+            {isProcessing && <Loader2 size={16} className="animate-spin" />}
+            {isProcessing ? "Memproses..." : "Simulasi: Berhasil Dibayar"}
+          </button>
+        </div>
       </div>
     </div>
   );

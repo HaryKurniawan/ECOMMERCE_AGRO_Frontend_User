@@ -62,7 +62,24 @@ const KeranjangPage: React.FC = () => {
             >
               <ArrowLeft size={18} className="text-gray-600" />
             </button>
+            <h1 className="font-display font-medium text-lg text-gray-800 lg:hidden">
+              Keranjang
+            </h1>
           </div>
+
+          {/* Pilih Item di Header (Khusus Mobile) */}
+          {cartItems.length > 0 && (
+            <button
+              onClick={toggleSelectMode}
+              className={`text-[15px] font-semibold transition-all lg:hidden ${
+                isSelectMode
+                  ? "text-primary-600"
+                  : "text-gray-500 hover:text-gray-900"
+              }`}
+            >
+              {isSelectMode ? "Selesai" : "Pilih Item"}
+            </button>
+          )}
         </div>
       </div>
 
@@ -82,8 +99,8 @@ const KeranjangPage: React.FC = () => {
             <div className="lg:flex lg:gap-6 max-w-7xl mx-auto items-start">
               <div className="flex-1 space-y-4">
                 {cartItems.length > 0 && (
-                  <div className="flex justify-end lg:justify-between items-center mb-2">
-                    <h2 className="font-display font-semibold text-lg text-gray-900 hidden lg:block">
+                  <div className="hidden lg:flex justify-between items-center mb-2">
+                    <h2 className="font-display font-semibold text-lg text-gray-900">
                       Daftar Produk
                     </h2>
                     <button

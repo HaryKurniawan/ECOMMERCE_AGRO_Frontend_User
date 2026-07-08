@@ -115,20 +115,12 @@ const NavbarContent: React.FC = () => {
   const isPublicRoute =
     pathname === "/" ||
     pathname?.startsWith("/katalog") ||
-    pathname?.startsWith("/produk") ||
-    pathname?.startsWith("/toko");
+    pathname?.startsWith("/produk");
 
   // Tolak render navbar:
   // 1. Sedang di halaman login/register/admin portal
   // 2. ATAU Pengunjung (guest) mengakses URL yang bukan public (seperti 404 atau maksa ke URL restricted)
   if (isAuth || (!isAuthenticated && !isPublicRoute)) return null;
-
-  // Booking link hanya tampil untuk verified B2B
-  const navLinks = [
-    { label: "Home", path: "/" },
-    { label: "Toko", path: "/toko" },
-    { label: "Katalog", path: "/katalog" },
-  ];
 
   return (
     <header className="hidden lg:block fixed top-0 left-0 right-0 bg-white border-b border-gray-200 z-50">
@@ -140,7 +132,7 @@ const NavbarContent: React.FC = () => {
             onClick={() => router.push("/")}
             className="flex items-center gap-2 hover:opacity-80 transition-opacity flex-shrink-0"
           >
-            <div className="w-9 h-9 bg-gradient-to-br from-primary-500 to-primary-700 rounded-xl flex items-center justify-center shadow-md">
+            <div className="w-9 h-9 bg-gradient-to-br from-primary-500 to-primary-700 rounded-full flex items-center justify-center shadow-md">
               <Leaf size={20} className="text-white" />
             </div>
             <h1 className="font-display font-semibold text-2xl text-gray-900 leading-tight tracking-tight">
@@ -206,18 +198,10 @@ const NavbarContent: React.FC = () => {
             </div>
           </div>
 
-          {/* Location Selector */}
-          <div className="hidden md:block flex-shrink-0 border-r border-gray-200 pr-4 ml-auto">
-            <LocationSelector
-              selectedCity={selectedCity}
-              availableCities={availableCities}
-              onSelectCity={setCity}
-              variant="light"
-            />
-          </div>
+          {/* Location Selector dipindah ke bawah */}
 
           {/* Actions */}
-          <div className="flex items-center gap-4 flex-shrink-0">
+          <div className="flex items-center gap-4 flex-shrink-0 ml-auto">
             {isAuthenticated ? (
               <div className="flex items-center gap-2">
                 {/* Chat */}
@@ -314,7 +298,7 @@ const NavbarContent: React.FC = () => {
 
       {/* Nav Links (Bottom Bar) — show links on main pages, back button on others */}
       {(() => {
-        const mainNavPaths = ["/", "/toko", "/katalog"];
+        const mainNavPaths = ["/", "/katalog"];
         const isMainPage = mainNavPaths.some(
           (p) => pathname === p || (p !== "/" && pathname.startsWith(p)),
         );
@@ -323,39 +307,14 @@ const NavbarContent: React.FC = () => {
           <div className="border-t border-gray-200 hidden lg:block bg-white">
             <div className="desktop-container px-6">
               {isMainPage ? (
-                <nav className="flex items-center gap-8 h-12">
-                  {navLinks.map((link) => {
-                    const isActive =
-                      pathname === link.path ||
-                      (link.path !== "/" && pathname.startsWith(link.path));
-                    return (
-                      <button
-                        key={link.path}
-                        onClick={(e) => {
-                          e.preventDefault();
-                          if (
-                            link.path !== "/" &&
-                            !useAuthStore.getState().isAuthenticated
-                          ) {
-                            useAuthStore.getState().openLoginModal();
-                          } else {
-                            router.push(link.path);
-                          }
-                        }}
-                        className={`text-[15px] font-medium transition-all py-3 relative ${
-                          isActive
-                            ? "text-primary-700 font-semibold"
-                            : "text-gray-600 hover:text-primary-600"
-                        }`}
-                      >
-                        {link.label}
-                        {isActive && (
-                          <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-primary-600 rounded-t-full" />
-                        )}
-                      </button>
-                    );
-                  })}
-                </nav>
+                <div className="flex items-center h-12 -ml-2">
+                  <LocationSelector
+                    selectedCity={selectedCity}
+                    availableCities={availableCities}
+                    onSelectCity={setCity}
+                    variant="light"
+                  />
+                </div>
               ) : (
                 <nav className="flex items-center h-12">
                   <button

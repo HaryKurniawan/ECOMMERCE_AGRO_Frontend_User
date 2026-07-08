@@ -62,7 +62,7 @@ export default function RootLayout({
               <div className="min-h-screen bg-gray-50">
                 <Navbar />
                 <main
-                  className={`lg:pt-32 ${showBottomNav ? "pb-20 lg:pb-6" : "pb-6"}`}
+                  className={`lg:pt-32 ${showBottomNav ? "pb-20" : ""} ${pathname?.startsWith("/chat") ? "lg:pb-0" : "lg:pb-6"}`}
                 >
                   <div className="desktop-container">{children}</div>
                 </main>

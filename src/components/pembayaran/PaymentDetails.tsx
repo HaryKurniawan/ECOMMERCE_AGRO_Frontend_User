@@ -76,19 +76,18 @@ const PaymentDetails: React.FC<PaymentDetailsProps> = ({
       {/* Metode */}
       <div className="p-4 border-b border-gray-100">
         <p className="text-xs text-gray-400 mb-1">Metode Pembayaran</p>
-        <div className="flex items-center gap-2">
-          <span className="text-2xl">{metode.icon}</span>
-          <span className="font-bold text-gray-800">{metode.label}</span>
+        <div className="flex items-center">
+          <span className="font-semibold text-gray-800">{metode.label}</span>
         </div>
       </div>
 
       {/* Payment Information Area */}
-      <div className="p-4 bg-primary-50/50 flex flex-col items-center justify-center">
+      <div className="p-4 bg-gray-50 flex flex-col items-center justify-center">
         {isQRIS && !hasXenditInvoice ? (
           /* Legacy QRIS QR Code */
           <div className="bg-white p-4 rounded-xl border border-gray-200 shadow-sm">
             <QRCodeSVG value={vaNumber} size={200} />
-            <p className="text-xs text-center text-gray-500 mt-3 font-semibold">
+            <p className="text-xs text-center text-gray-500 mt-3 font-medium">
               Scan QR Code ini untuk membayar
             </p>
           </div>
@@ -96,16 +95,16 @@ const PaymentDetails: React.FC<PaymentDetailsProps> = ({
           /* Legacy VA Number display */
           <div className="w-full">
             <p className="text-xs text-gray-400 mb-2">Nomor Virtual Account</p>
-            <div className="flex items-center justify-between bg-white rounded-xl p-3 border border-primary-200">
-              <span className="font-mono font-bold text-lg text-gray-900 tracking-wider">
+            <div className="flex items-center justify-between gap-2 bg-white rounded-xl p-3 border border-gray-200 w-full overflow-hidden">
+              <span className="font-mono font-bold text-sm text-gray-900 tracking-wider truncate flex-1">
                 {vaNumber}
               </span>
               <button
                 onClick={onCopy}
-                className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all flex items-center gap-1 ${
+                className={`flex-shrink-0 px-3 py-1.5 rounded-lg text-xs font-semibold transition-all flex items-center gap-1 ${
                   copied
-                    ? "bg-emerald-100 text-emerald-700"
-                    : "bg-primary-100 text-primary-700 hover:bg-primary-200"
+                    ? "bg-gray-100 text-gray-600"
+                    : "bg-gray-100 text-gray-700 hover:bg-gray-200"
                 }`}
               >
                 {copied ? (
@@ -122,46 +121,58 @@ const PaymentDetails: React.FC<PaymentDetailsProps> = ({
           </div>
         ) : isEWallet && currentEwallet && !hasXenditInvoice ? (
           /* Legacy E-wallet info */
-          <div
-            className={`w-full rounded-xl ${currentEwallet.bg} p-4 text-center`}
-          >
+          <div className="w-full rounded-xl bg-gray-100 p-4 text-center">
             <div className="text-4xl mb-2">{currentEwallet.logo}</div>
-            <p className={`text-sm font-semibold ${currentEwallet.text}`}>
+            <p className="text-sm font-medium text-gray-600">
               {metodeBayar === "OVO"
                 ? "Cek aplikasi OVO Anda untuk konfirmasi pembayaran."
                 : `Gunakan link di bawah untuk membuka ${metode.label}.`}
             </p>
           </div>
         ) : hasXenditInvoice ? (
-          /* Xendit Invoice — Info Only (tombol ada di bawah via PaymentMockupAction) */
-          <div className="w-full text-center space-y-3">
-            <div className="bg-gradient-to-r from-indigo-500 to-blue-500 rounded-xl p-4 text-white">
-              <p className="text-xs font-bold opacity-80 mb-1">
-                Xendit Invoice
-              </p>
-              <p className="text-sm font-semibold">
-                Klik tombol bayar di bawah untuk melanjutkan
-              </p>
-              <p className="text-[10px] opacity-70 mt-1">
-                Pilih metode bayar favorit: VA Bank, DANA, OVO, GoPay, QRIS,
-                dll.
-              </p>
+          /* Xendit Invoice Dummy VA */
+          <div className="w-full">
+            <p className="text-xs text-gray-400 mb-2">
+              Nomor Pembayaran (Demo)
+            </p>
+            <div className="flex items-center justify-between gap-2 bg-white rounded-xl p-3 border border-gray-200 w-full overflow-hidden">
+              <span className="font-mono font-bold text-sm text-gray-900 tracking-wider truncate flex-1">
+                {vaNumber || "0000000000"}
+              </span>
+              <button
+                onClick={onCopy}
+                className={`flex-shrink-0 px-3 py-1.5 rounded-lg text-xs font-semibold transition-all flex items-center gap-1 ${
+                  copied
+                    ? "bg-gray-100 text-gray-600"
+                    : "bg-gray-100 text-gray-700 hover:bg-gray-200"
+                }`}
+              >
+                {copied ? (
+                  <>
+                    <CheckCircle2 size={12} /> Tersalin
+                  </>
+                ) : (
+                  <>
+                    <Copy size={12} /> Salin
+                  </>
+                )}
+              </button>
             </div>
           </div>
         ) : (
           /* Fallback */
           <div className="w-full">
             <p className="text-xs text-gray-400 mb-2">Nomor Virtual Account</p>
-            <div className="flex items-center justify-between bg-white rounded-xl p-3 border border-primary-200">
-              <span className="font-mono font-bold text-lg text-gray-900 tracking-wider">
+            <div className="flex items-center justify-between gap-2 bg-white rounded-xl p-3 border border-gray-200 w-full overflow-hidden">
+              <span className="font-mono font-bold text-sm text-gray-900 tracking-wider truncate flex-1">
                 {vaNumber}
               </span>
               <button
                 onClick={onCopy}
-                className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all flex items-center gap-1 ${
+                className={`flex-shrink-0 px-3 py-1.5 rounded-lg text-xs font-semibold transition-all flex items-center gap-1 ${
                   copied
-                    ? "bg-emerald-100 text-emerald-700"
-                    : "bg-primary-100 text-primary-700 hover:bg-primary-200"
+                    ? "bg-gray-100 text-gray-600"
+                    : "bg-gray-100 text-gray-700 hover:bg-gray-200"
                 }`}
               >
                 {copied ? (
@@ -182,12 +193,12 @@ const PaymentDetails: React.FC<PaymentDetailsProps> = ({
       {/* Amount */}
       <div className="p-4 border-t border-gray-100">
         <p className="text-xs text-gray-400 mb-1">Total Pembayaran</p>
-        <p className="font-display font-bold text-2xl text-primary-700">
+        <p className="font-display font-bold text-2xl text-gray-900">
           {formatRupiah(Number(total))}
         </p>
         <p className="text-[10px] text-gray-400 mt-1">
           {hasXenditInvoice
-            ? "Bayar via link Xendit Invoice di atas"
+            ? "Bayar via link Invoice di atas"
             : isQRIS || isEWallet
               ? "Lakukan pembayaran sesuai instruksi di atas"
               : "Transfer sesuai jumlah di atas agar pembayaran terverifikasi otomatis"}

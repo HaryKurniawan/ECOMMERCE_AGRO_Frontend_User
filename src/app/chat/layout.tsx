@@ -17,7 +17,7 @@ export default function ChatLayout({
   const isIndex = pathname === "/chat";
 
   return (
-    <div className="lg:flex lg:h-[calc(100vh-150px)] lg:mt-0 w-full lg:border lg:border-gray-200 lg:rounded-2xl overflow-hidden lg:shadow-sm bg-white">
+    <div className="lg:flex lg:h-[calc(100vh-128px)] lg:mt-0 w-full lg:border-x lg:border-gray-200 overflow-hidden bg-white">
       <div
         className={`lg:w-[380px] flex-shrink-0 h-full ${!isIndex ? "hidden lg:block" : "block"}`}
       >

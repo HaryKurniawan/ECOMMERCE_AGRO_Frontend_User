@@ -147,13 +147,15 @@ const DetailProdukPage: React.FC = () => {
       <div className="max-w-7xl mx-auto lg:px-6 lg:pt-6">
         <div className="lg:flex lg:gap-8 items-start">
           <div className="flex-1 min-w-0 space-y-6">
-            <div className="space-y-6">
-              <ProductGallery
-                product={product}
-                activeImage={activeImage}
-                setActiveImage={setActiveImage}
-              />
-              <div className="space-y-6">
+            <div className="space-y-6 lg:flex lg:gap-8 lg:space-y-0">
+              <div className="lg:w-[380px] xl:w-[420px] shrink-0">
+                <ProductGallery
+                  product={product}
+                  activeImage={activeImage}
+                  setActiveImage={setActiveImage}
+                />
+              </div>
+              <div className="space-y-6 flex-1 min-w-0">
                 <ProductInfo
                   product={product}
                   displayHarga={displayHarga}

@@ -23,6 +23,11 @@ function GoogleCallbackContent() {
       return;
     }
 
+    if (peran && peran !== "KONSUMEN") {
+      router.push("/login?error=unauthorized_role");
+      return;
+    }
+
     // Simpan token sebagai httpOnly cookie melalui API route (server-side)
     // agar proxy-handler bisa membacanya. document.cookie tidak bisa buat httpOnly.
     fetch("/api/auth/set-token", {

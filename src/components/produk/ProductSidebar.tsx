@@ -71,32 +71,14 @@ const ProductSidebar: React.FC<ProductSidebarProps> = ({
         style={{ right: "max(1.5rem, calc((100vw - 1280px) / 2 + 1.5rem))" }}
       >
         <div className="bg-white border border-gray-100 rounded-3xl p-6 shadow-[0_8px_30px_rgb(0,0,0,0.04)] font-normal text-gray-700">
-          {/* Product Name */}
-          <div className="mb-1.5">
-            <h1 className="font-semibold text-xl lg:text-2xl text-gray-900 leading-snug">
-              {product.namaEtalase || product.nama}
-            </h1>
-          </div>
-
-          <div className="mb-5 border-b border-gray-100 pb-5">
-            <p className="text-3xl font-semibold text-primary-700">
-              {formatRupiah(displayHarga)}
-              <span className="text-sm font-normal text-gray-400 ml-1">
-                / {product.satuan}
-              </span>
-            </p>
-            <div className="flex items-center gap-2 mt-3">
-              <span className="text-sm text-gray-600 font-medium">
-                Stok Tersedia:
-              </span>
-              <span className="text-sm font-bold text-green-600 bg-green-50 px-2.5 py-0.5 rounded-lg border border-green-100">
-                {totalStok} {product.satuan}
-              </span>
-            </div>
+          <div className="mb-4">
+            <h2 className="text-sm font-semibold text-gray-900">
+              Atur Pembelian
+            </h2>
           </div>
 
           {/* Bulk Order CTA */}
-          <div className="mb-5">
+          <div className="mb-5 border-b border-gray-100 pb-5">
             <button
               onClick={onBulkOrder}
               disabled={isShoppingDisabled}
@@ -117,6 +99,13 @@ const ProductSidebar: React.FC<ProductSidebarProps> = ({
                 Lihat
               </span>
             </button>
+          </div>
+
+          <div className="flex justify-between items-center mb-4">
+            <span className="text-sm text-gray-600">Subtotal</span>
+            <span className="text-lg font-bold text-gray-900">
+              {formatRupiah(displayHarga)}
+            </span>
           </div>
 
           {/* Actions */}

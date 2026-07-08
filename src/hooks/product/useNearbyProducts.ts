@@ -68,6 +68,13 @@ export const useNearbyProducts = ({
       productGroupsByStore.set(product.tokoId, group);
     });
 
+    const storeCount = productGroupsByStore.size;
+    // Jika toko sedikit, izinkan lebih banyak produk per toko agar bagian sekitar tidak kosong
+    const dynamicMaxPerStore =
+      storeCount > 0
+        ? Math.max(maxProductsPerStore, Math.ceil(limit / storeCount))
+        : maxProductsPerStore;
+
     const selectedNearbyProducts: EcomProduct[] = [];
     productGroupsByStore.forEach((groupProducts) => {
       selectedNearbyProducts.push(
@@ -77,7 +84,7 @@ export const useNearbyProducts = ({
             const scoreB = (b.terjual || 0) * 0.7 + (b.rating || 0) * 0.3;
             return scoreB - scoreA;
           })
-          .slice(0, maxProductsPerStore),
+          .slice(0, dynamicMaxPerStore),
       );
     });
 

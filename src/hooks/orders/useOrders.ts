@@ -7,7 +7,7 @@ import type { ApiOrderData } from "@/types";
 
 export const useOrders = (isAuthenticated: boolean, _hasHydrated: boolean) => {
   const query = useInfiniteQuery({
-    queryKey: queryKeys.orders.all,
+    queryKey: ["orders"],
     queryFn: ({ pageParam = 1 }) =>
       ordersApi.getMyOrders({ page: pageParam, limit: 10 }),
     initialPageParam: 1,
@@ -18,7 +18,7 @@ export const useOrders = (isAuthenticated: boolean, _hasHydrated: boolean) => {
         lastPage?.data ||
         [];
       const dataArray = Array.isArray(data) ? data : [];
-      if (dataArray.length === 10) return allPages.length + 1;
+      if (dataArray.length === 10) return (allPages?.length || 0) + 1;
       return undefined;
     },
     enabled: _hasHydrated && isAuthenticated,

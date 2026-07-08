@@ -18,6 +18,12 @@ export const usePembayaran = (
     seconds: 59,
   });
 
+  // Reset state ketika orderId berubah (agar tidak nyangkut dari checkout sebelumnya)
+  useEffect(() => {
+    setIsPaid(false);
+    setIsProcessing(false);
+  }, [orderId]);
+
   // Fetch primary order
   const orderQuery = useQuery({
     queryKey: queryKeys.orders.detail(orderId ?? ""),

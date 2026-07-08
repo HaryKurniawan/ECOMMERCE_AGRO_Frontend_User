@@ -42,7 +42,7 @@ const NearbyProductsSection: React.FC<NearbyProductsSectionProps> = ({
           {nearbyProducts.map((product) => (
             <div
               key={product.id}
-              className="flex-shrink-0 w-[175px] lg:w-auto flex"
+              className="flex-shrink-0 w-[190px] lg:w-auto flex"
             >
               <ProductCard
                 product={product}
@@ -58,7 +58,7 @@ const NearbyProductsSection: React.FC<NearbyProductsSectionProps> = ({
             Array.from({ length: 4 - nearbyProducts.length }).map((_, i) => (
               <div
                 key={`empty-${i}`}
-                className="flex-shrink-0 w-[175px] lg:w-auto flex"
+                className="flex-shrink-0 w-[190px] lg:w-auto flex"
               >
                 <button
                   onClick={() => router.push("/katalog?sortBy=terdekat")}

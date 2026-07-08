@@ -5,7 +5,7 @@ import { AuthLayout, LoginForm } from "@/components/auth";
 
 export default function LoginPage() {
   return (
-    <AuthLayout title="Login">
+    <AuthLayout title="Login" hideHeaderOnMobile={true}>
       <LoginForm />
     </AuthLayout>
   );

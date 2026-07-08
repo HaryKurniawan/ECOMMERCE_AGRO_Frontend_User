@@ -78,7 +78,7 @@ export default function ForgotPasswordForm() {
         footer={null}
         centered
         closable={false}
-        maskClosable={false}
+        mask={{ closable: false }}
       >
         <p className="text-gray-600 mt-4 mb-6">
           Jika email Anda terdaftar, instruksi reset password telah dikirim ke{" "}

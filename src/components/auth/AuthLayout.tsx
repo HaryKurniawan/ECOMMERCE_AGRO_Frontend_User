@@ -7,6 +7,8 @@ interface AuthLayoutProps {
   title: string;
   subtitle?: string;
   showGuestChat?: boolean;
+  showMobileLogo?: boolean;
+  hideHeaderOnMobile?: boolean;
 }
 
 /**
@@ -18,6 +20,8 @@ export default function AuthLayout({
   title,
   subtitle,
   showGuestChat = true,
+  showMobileLogo = true,
+  hideHeaderOnMobile = false,
 }: AuthLayoutProps) {
   return (
     <div className="min-h-screen flex bg-white">
@@ -73,19 +77,23 @@ export default function AuthLayout({
       {/* ─── RIGHT PANE — Form ─── */}
       <div className="flex-1 flex flex-col items-center justify-center px-6 py-12 lg:px-14 xl:px-20">
         {/* Mobile logo */}
-        <div className="lg:hidden flex items-center justify-center gap-2 mb-10">
-          <div className="w-8 h-8 bg-primary-600 rounded-lg flex items-center justify-center">
-            <Leaf size={16} className="text-white" />
+        {showMobileLogo && (
+          <div className="lg:hidden flex items-center justify-center gap-2 mb-12">
+            <div className="w-8 h-8 bg-primary-600 rounded-full flex items-center justify-center">
+              <Leaf size={16} className="text-white" />
+            </div>
+            <span className="font-display font-semibold text-2xl text-gray-900">
+              Agro<span className="text-primary-600">Market</span>
+            </span>
           </div>
-          <span className="font-display font-bold text-lg text-gray-900">
-            Agro<span className="text-primary-600">Market</span>
-          </span>
-        </div>
+        )}
 
         {/* Form card */}
         <div className="w-full max-w-[360px]">
           {/* Heading */}
-          <div className="mb-8">
+          <div
+            className={`mb-8 ${hideHeaderOnMobile ? "hidden md:block" : ""}`}
+          >
             <h1 className="text-2xl font-display font-bold text-emerald-700 tracking-tight">
               {title}
             </h1>
@@ -106,7 +114,7 @@ export default function AuthLayout({
         {showGuestChat && (
           <Link
             href="/chat/guest"
-            className="fixed bottom-5 right-5 bg-white text-gray-500 px-3.5 py-2 rounded-full shadow-md border border-gray-200 hover:bg-emerald-50 hover:text-emerald-700 hover:border-emerald-200 transition-all z-50 flex items-center gap-2 text-sm font-medium"
+            className="fixed bottom-5 right-5 bg-white text-gray-500 px-3.5 py-2 rounded-full border border-gray-200 hover:bg-emerald-50 hover:text-emerald-700 hover:border-emerald-200 transition-all z-50 flex items-center gap-2 text-sm font-medium"
             title="Hubungi CS"
           >
             <Headphones size={15} />

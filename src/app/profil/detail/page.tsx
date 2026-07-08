@@ -187,53 +187,6 @@ const ProfileDetailPage: React.FC = () => {
             ))}
           </div>
         </div>
-
-        {/* Address Info Card */}
-        <div className="bg-white rounded-3xl p-6 shadow-sm border border-gray-100">
-          <div className="flex items-center justify-between mb-5">
-            <h3 className="font-display font-bold text-gray-900">
-              Alamat Utama
-            </h3>
-            <button
-              onClick={() => router.push("/profil/alamat")}
-              className="text-xs font-bold text-primary-600 hover:text-primary-700 flex items-center gap-1"
-            >
-              <Edit2 size={12} /> Ubah
-            </button>
-          </div>
-
-          {defaultAddress ? (
-            <div className="flex items-start gap-4">
-              <div className="p-2.5 bg-primary-50 rounded-xl text-primary-600">
-                <MapPin size={18} />
-              </div>
-              <div className="flex-1">
-                <p className="font-bold text-sm text-gray-900 mb-1">
-                  {defaultAddress.label}
-                </p>
-                <p className="text-xs text-gray-600 leading-relaxed mb-1">
-                  {defaultAddress.alamat}
-                </p>
-                <p className="text-[10px] text-gray-500">
-                  {defaultAddress.kota}, {defaultAddress.provinsi}{" "}
-                  {defaultAddress.kodePos}
-                </p>
-              </div>
-            </div>
-          ) : (
-            <div className="text-center py-4 bg-gray-50 rounded-2xl border border-dashed border-gray-200">
-              <p className="text-xs text-gray-500 italic">
-                Belum ada alamat utama set
-              </p>
-              <button
-                onClick={() => router.push("/profil/alamat")}
-                className="mt-2 text-xs font-bold text-primary-600"
-              >
-                Tambah Alamat
-              </button>
-            </div>
-          )}
-        </div>
       </div>
 
       {/* Edit Phone Modal */}

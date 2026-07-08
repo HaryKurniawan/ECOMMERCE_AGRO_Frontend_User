@@ -96,22 +96,22 @@ const PembayaranContent: React.FC = () => {
 
   // Jika belum sukses, tampilkan halaman Checkout Menunggu Pembayaran
   return (
-    <div className="animate-fade-in min-h-screen bg-gray-50">
+    <div className="animate-fade-in min-h-screen bg-gray-50/60">
       {/* Header */}
-      <div className="bg-white border-b border-gray-100 p-4 sticky top-0 z-40">
-        <div className="flex items-center gap-3 max-w-2xl mx-auto">
+      <div className="bg-white px-4 py-3.5 sticky top-0 z-40 border-b border-gray-100/80">
+        <div className="flex items-center gap-3 max-w-lg mx-auto">
           <button
             onClick={() => router.replace("/pesanan")}
-            className="p-2 hover:bg-gray-50 rounded-xl"
+            className="p-2 hover:bg-gray-50 rounded-full transition-colors -ml-1"
           >
             <ArrowLeft size={20} className="text-gray-600" />
           </button>
           <div>
-            <h1 className="font-display font-bold text-lg">
+            <h1 className="font-display font-semibold text-[17px] text-gray-800">
               Menunggu Pembayaran
             </h1>
             {isMultiOrder && (
-              <p className="text-xs text-gray-400">
+              <p className="text-[11px] text-gray-400 mt-0.5">
                 {allOrderIds.length} pesanan dari 1 checkout
               </p>
             )}
@@ -119,7 +119,7 @@ const PembayaranContent: React.FC = () => {
         </div>
       </div>
 
-      <div className="px-4 py-6 max-w-md mx-auto space-y-4">
+      <div className="px-4 pt-5 pb-10 max-w-lg mx-auto space-y-3">
         {/* Timer Banner */}
         <PaymentTimer timeLeft={timeLeft} />
 
@@ -134,16 +134,8 @@ const PembayaranContent: React.FC = () => {
           paymentUrl={order?.paymentUrl || undefined}
         />
 
-        {/* Instuctions */}
+        {/* Instructions */}
         <PaymentInstructions vaNumber={vaNumber} total={total} />
-
-        {/* Security Badge */}
-        <div className="flex items-center justify-center gap-2 py-2">
-          <Shield size={14} className="text-gray-400" />
-          <span className="text-[10px] text-gray-400">
-            Transaksi dilindungi enkripsi SSL 256-bit
-          </span>
-        </div>
 
         {/* Mockup Button */}
         <PaymentMockupAction
@@ -154,10 +146,10 @@ const PembayaranContent: React.FC = () => {
         />
 
         {/* Order ID Footer */}
-        <div className="text-center pb-6">
+        <div className="text-center pb-2">
           {isMultiOrder ? (
             <>
-              <p className="text-xs text-gray-400">
+              <p className="text-[11px] text-gray-400">
                 {allOrderIds.length} pesanan · 1 pembayaran
               </p>
               <p className="text-[10px] text-gray-300 mt-0.5 font-mono">
@@ -165,9 +157,9 @@ const PembayaranContent: React.FC = () => {
               </p>
             </>
           ) : (
-            <p className="text-xs text-gray-400">
+            <p className="text-[11px] text-gray-400">
               ID Pesanan:{" "}
-              <span className="font-mono font-bold">{primaryOrderId}</span>
+              <span className="font-mono font-semibold">{primaryOrderId}</span>
             </p>
           )}
         </div>

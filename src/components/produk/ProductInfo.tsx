@@ -43,7 +43,7 @@ const ProductInfo: React.FC<ProductInfoProps> = ({
     <div className="px-4 lg:px-0 mt-4 lg:mt-0 space-y-5">
       {/* Variant Preview */}
       {(product.varian || product.kemasan)?.length ? (
-        <div className="lg:hidden mb-4">
+        <div className="mb-4">
           <label
             htmlFor="kemasan-select"
             className="text-xs font-medium text-gray-600 block mb-2.5"
@@ -75,8 +75,8 @@ const ProductInfo: React.FC<ProductInfoProps> = ({
         </div>
       ) : null}
 
-      {/* Product name, Price, Rating, Sold - only on mobile */}
-      <div className="lg:hidden">
+      {/* Product name, Price, Rating, Sold */}
+      <div>
         <div className="flex items-start justify-between gap-4 mb-1">
           <div className="flex-1 min-w-0">
             <h1 className="font-semibold text-xl lg:text-2xl text-gray-900 leading-snug">

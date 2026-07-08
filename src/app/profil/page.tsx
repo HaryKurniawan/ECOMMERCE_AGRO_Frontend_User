@@ -63,26 +63,13 @@ const ProfilPage: React.FC = () => {
 
   const menuUtama = [
     {
-      id: "detail-profil",
-      label: "Detail Profil",
-      icon: UserCheck,
-      desc: "Lihat informasi lengkap akun Anda",
-      path: "/profil/detail",
-    },
-    {
       id: "beri-nilai",
       label: "Beri Nilai Pesanan",
       icon: Star,
       desc: "Berikan ulasan untuk pesanan selesai",
       path: "/pesanan?status=selesai",
     },
-    {
-      id: "toko-favorit",
-      label: "Toko Favorit",
-      icon: Heart,
-      desc: "Daftar toko yang Anda ikuti",
-      path: "/profil/favorit",
-    },
+
     {
       id: "alamat",
       label: "Alamat Tersimpan",
@@ -90,19 +77,11 @@ const ProfilPage: React.FC = () => {
       desc: "Kelola alamat pengiriman",
       path: "/profil/alamat",
     },
-  ];
-
-  const menuLainnya = [
-    {
-      id: "pengaturan",
-      label: "Pengaturan Akun",
-      icon: Settings,
-      path: "/profil/pengaturan",
-    },
     {
       id: "bantuan",
       label: "Pusat Bantuan",
       icon: MessageCircle,
+      desc: "Hubungi layanan pelanggan kami",
       path: "/chat",
     },
   ];
@@ -124,11 +103,21 @@ const ProfilPage: React.FC = () => {
     <div className="min-h-screen bg-gray-50 pb-24">
       {/* Compact Header */}
       <div className="bg-gradient-to-br from-primary-600 to-primary-700 pt-6 pb-20 px-5 relative overflow-hidden">
-        {/* Decorative circles */}
-        <div className="absolute -top-10 -right-10 w-40 h-40 bg-primary-500/20 rounded-full" />
-        <div className="absolute -bottom-6 -left-6 w-24 h-24 bg-primary-500/15 rounded-full" />
+        {/* Batik background pattern - faded at edges */}
+        <div
+          className="absolute inset-0 opacity-[0.08]"
+          style={{
+            backgroundImage: "url('/images/batik.svg')",
+            backgroundRepeat: "repeat",
+            backgroundSize: "160px",
+            WebkitMaskImage:
+              "linear-gradient(to right, transparent 0%, black 20%, black 80%, transparent 100%)",
+            maskImage:
+              "linear-gradient(to right, transparent 0%, black 20%, black 80%, transparent 100%)",
+          }}
+        />
         <div className="max-w-2xl mx-auto flex items-center justify-between relative z-10">
-          <h1 className="font-display font-bold text-lg text-white">
+          <h1 className="font-display font-semibold text-xl text-white">
             Profil Saya
           </h1>
           <button
@@ -142,13 +131,13 @@ const ProfilPage: React.FC = () => {
 
       {/* Profile Card (Overlapping) */}
       <div className="max-w-2xl mx-auto px-4 -mt-14 relative z-10">
-        <div className="bg-white rounded-2xl p-5 shadow-lg shadow-black/[0.03] border border-gray-100 mb-5">
+        <div className="bg-white rounded-2xl p-5 border border-gray-100 mb-5">
           <div className="flex items-center gap-4">
-            <div className="w-16 h-16 bg-primary-100 rounded-2xl flex items-center justify-center border-2 border-white shadow-sm flex-shrink-0">
-              <User size={32} className="text-primary-600" />
+            <div className="w-16 h-16 bg-gray-50 rounded-full flex items-center justify-center border border-gray-200 flex-shrink-0">
+              <User size={32} className="text-gray-400" />
             </div>
             <div className="flex-1 min-w-0">
-              <h2 className="font-display font-bold text-lg text-gray-900 truncate leading-tight">
+              <h2 className="font-display font-semibold text-lg text-gray-900 truncate leading-tight">
                 {profile.name || profile.email}
               </h2>
               <p className="text-xs text-gray-400 truncate">{profile.email}</p>
@@ -202,7 +191,7 @@ const ProfilPage: React.FC = () => {
             </button>
           </div>
 
-          <div className="grid grid-cols-5 gap-1">
+          <div className="grid grid-cols-4 gap-1">
             {orderStatuses.map((item) => {
               const count = orders.filter((o) => {
                 if (item.id === "tiba") {
@@ -266,24 +255,11 @@ const ProfilPage: React.FC = () => {
           ))}
         </div>
 
-        {/* Other Menus */}
+        {/* Logout Menu */}
         <div className="bg-white rounded-2xl shadow-sm border border-gray-100 mb-4 overflow-hidden">
-          {menuLainnya.map((menu, i) => (
-            <button
-              key={menu.id}
-              onClick={() => router.push(menu.path)}
-              className={`w-full flex items-center gap-4 px-5 py-4 hover:bg-gray-50 transition-colors active:bg-gray-100 ${i !== menuLainnya.length - 1 ? "border-b border-gray-50" : ""}`}
-            >
-              <menu.icon size={20} className="text-gray-400 flex-shrink-0" />
-              <p className="flex-1 text-left font-semibold text-gray-800 text-sm">
-                {menu.label}
-              </p>
-              <ChevronRight size={17} className="text-gray-300 flex-shrink-0" />
-            </button>
-          ))}
           <button
             onClick={handleLogoutClick}
-            className="w-full flex items-center gap-4 px-5 py-4 hover:bg-red-50 transition-colors border-t border-gray-50 group active:bg-red-100"
+            className="w-full flex items-center gap-4 px-5 py-4 hover:bg-red-50 transition-colors group active:bg-red-100"
           >
             <LogOut
               size={20}
