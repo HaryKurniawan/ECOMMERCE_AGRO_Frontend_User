@@ -14,6 +14,8 @@ import { alamatSchema } from "@/src/lib/validations/schemas";
 import type { MapPickerValue } from "@/src/components/ui/MapPicker";
 import type { ApiAddressData, Store } from "@/types";
 import { useCityStore } from "@/src/store/city-store";
+import { useAuthStore } from "@/src/store/auth-store";
+import { useProfile } from "@/src/hooks/profil/useProfile";
 
 type AlamatFormData = z.infer<typeof alamatSchema>;
 
@@ -36,11 +38,15 @@ export function useAlamatForm() {
   const { selectedCity, setCity } = useCityStore();
   const defaultCity = searchParams.get("city") || selectedCity;
 
+  const { isAuthenticated, _hasHydrated } = useAuthStore();
+  const { profile } = useProfile(isAuthenticated, _hasHydrated);
+
   const {
     register,
     handleSubmit,
     setValue,
     watch,
+    getValues,
     reset,
     formState: { errors },
   } = useForm<AlamatFormData>({
@@ -60,6 +66,17 @@ export function useAlamatForm() {
   });
 
   const formData = watch();
+
+  useEffect(() => {
+    if (!editId && profile) {
+      if (!getValues("penerima") && profile.name) {
+        setValue("penerima", profile.name);
+      }
+      if (!getValues("telepon") && profile.phone) {
+        setValue("telepon", profile.phone);
+      }
+    }
+  }, [editId, profile, setValue, getValues]);
 
   useEffect(() => {
     const checkAddresses = async () => {

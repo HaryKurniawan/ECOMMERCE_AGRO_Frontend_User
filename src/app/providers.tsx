@@ -6,6 +6,7 @@ import { useState } from "react";
 import { Toaster } from "react-hot-toast";
 
 import GlobalLoginModal from "@/src/components/GlobalLoginModal";
+import PhoneVerificationModal from "@/src/components/auth/PhoneVerificationModal";
 
 export function Providers({ children }: { children: React.ReactNode }) {
   const [queryClient] = useState(
@@ -25,6 +26,7 @@ export function Providers({ children }: { children: React.ReactNode }) {
     <QueryClientProvider client={queryClient}>
       {children}
       <GlobalLoginModal />
+      <PhoneVerificationModal />
       <Toaster position="top-center" reverseOrder={false} />
       {/* Devtools hanya muncul di development */}
       <ReactQueryDevtools initialIsOpen={false} />

@@ -170,6 +170,7 @@ export interface ApiUserProfile {
   email?: string;
   phone?: string;
   role: string;
+  noTeleponTerverifikasiPada?: string | null;
 }
 
 export interface ApiChatMessage {

@@ -18,6 +18,8 @@ export interface User {
   role: UserRole | string; // string fallback untuk kompatibilitas
   isVerifiedB2B?: boolean;
   b2bVerification?: Record<string, unknown>;
+  emailTerverifikasiPada?: string;
+  noTeleponTerverifikasiPada?: string;
   createdAt?: string;
   updatedAt?: string;
 }

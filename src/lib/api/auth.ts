@@ -24,6 +24,10 @@ export const authApi = {
   getB2BVerification: () => apiClient.get("/auth/b2b-verification"),
   verifyEmail: (token: string) =>
     apiClient.get(`/auth/verify-email?token=${token}`),
+  verifyOtp: (data: { email: string; otpCode: string }) =>
+    apiClient.post("/auth/verify-otp", data),
+  requestOtp: (data: { email: string; noTelepon?: string }) =>
+    apiClient.post("/auth/request-otp", data),
   resendVerification: (email: string) =>
     apiClient.post("/auth/resend-verification", { email }),
   forgotPassword: (email: string) =>
