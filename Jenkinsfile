@@ -37,7 +37,7 @@ pipeline {
                     # Hapus sisa file lama (jika ada) untuk mencegah Permission Denied
                     rm -f .env.local || true
                     # Ambil file environment dari Jenkins Credential sesuai branch
-                    cp $ENV_FILE .env.local
+                    cp "$ENV_FILE" .env.local
                     docker build -t ${IMAGE_NAME} .
                     '''
                 }
