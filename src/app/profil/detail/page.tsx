@@ -22,8 +22,7 @@ import { useAuthStore } from "@/src/store/auth-store";
 
 const ProfileDetailPage: React.FC = () => {
   const router = useRouter();
-  const { _hasHydrated, isAuthenticated, openPhoneVerificationModal } =
-    useAuthStore();
+  const { _hasHydrated, isAuthenticated } = useAuthStore();
   const {
     profile,
     loading: profileLoading,
@@ -216,13 +215,6 @@ const ProfileDetailPage: React.FC = () => {
                     Belum diatur
                   </p>
                 )}
-                <button
-                  onClick={() => openPhoneVerificationModal()}
-                  className="p-1.5 rounded-lg transition-colors flex items-center gap-1 text-xs font-semibold flex-shrink-0 text-primary-600 hover:bg-primary-50"
-                >
-                  <Edit2 size={13} />
-                  {profile.phone ? "Ubah" : "Tambah"}
-                </button>
               </div>
             </div>
           </div>
