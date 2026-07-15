@@ -46,7 +46,9 @@ export function useCheckoutData() {
 
         // 2. Fetch Addresses
         const addressRes = await addressesApi.getAll();
-        const rawAddresses = Array.isArray(addressRes.data?.data)
+        const rawAddresses: ApiAddressData[] = Array.isArray(
+          addressRes.data?.data,
+        )
           ? addressRes.data.data
           : Array.isArray(addressRes.data)
             ? addressRes.data
