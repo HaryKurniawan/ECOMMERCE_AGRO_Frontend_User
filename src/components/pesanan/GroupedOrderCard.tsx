@@ -46,8 +46,8 @@ export default function GroupedOrderCard({
           const rawItems = (orderAny.item ?? orderAny.items ?? []) as any[];
           const firstItem = rawItems[0];
           const productName =
-            firstItem?.produk?.nama ||
-            firstItem?.product?.nama ||
+            firstItem?.produk?.nama?.replace(" - ", " ") ||
+            firstItem?.product?.nama?.replace(" - ", " ") ||
             firstItem?.produkNama ||
             "Produk";
           const satuan =

@@ -40,26 +40,42 @@ const KatalogHeader: React.FC<KatalogHeaderProps> = ({
 
   return (
     <div className="bg-white border-b border-gray-100 px-4 pt-4 pb-3 sticky top-0 z-40 shadow-sm lg:hidden">
-      <div className="flex items-center gap-3 mb-3">
+      <div className="flex items-center gap-2">
         <button
           onClick={() => router.push("/")}
-          className="p-2 hover:bg-gray-50 rounded-xl transition-colors"
+          className="p-2 bg-white border border-gray-200 shadow-sm hover:border-gray-300 hover:bg-gray-50 rounded-xl transition-all shrink-0 -ml-2"
         >
           <ArrowLeft size={20} className="text-gray-600" />
         </button>
-        <div className="flex-1">
-          <h1 className="font-display font-bold text-[17px] text-gray-900">
-            Katalog Sayur
-          </h1>
-          <p className="text-[11px] text-gray-400 mt-0.5">
-            {total} produk ditemukan
-          </p>
+        <div className="flex-1 min-w-0">
+          <SearchBar
+            value={search}
+            onChange={setSearch}
+            placeholder="Cari sayur..."
+            rightElement={
+              <button
+                onClick={onOpenFilter}
+                className={`relative flex items-center justify-center p-1.5 rounded-lg transition-all ${
+                  activeFiltersCount > 0
+                    ? "bg-primary-600 text-white"
+                    : "text-gray-400 hover:bg-gray-100 hover:text-gray-600"
+                }`}
+              >
+                <SlidersHorizontal size={18} />
+                {activeFiltersCount > 0 && (
+                  <span className="absolute -top-1 -right-1 w-3.5 h-3.5 bg-red-500 rounded-full text-[8px] font-bold text-white flex items-center justify-center border border-white">
+                    {activeFiltersCount}
+                  </span>
+                )}
+              </button>
+            }
+          />
         </div>
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-1 shrink-0 -mr-1">
           {isVerifiedB2B && (
             <button
               onClick={() => router.push("/chat")}
-              className="relative p-2 hover:bg-gray-50 rounded-xl transition-colors"
+              className="relative p-2 bg-white border border-gray-200 shadow-sm hover:border-gray-300 hover:bg-gray-50 rounded-xl transition-all"
               aria-label="Chat"
             >
               <MessageCircle size={20} className="text-gray-600" />
@@ -67,31 +83,6 @@ const KatalogHeader: React.FC<KatalogHeaderProps> = ({
           )}
           <CartCountButton variant="light" size="sm" />
         </div>
-      </div>
-
-      <div className="flex items-center gap-2">
-        <div className="flex-1">
-          <SearchBar
-            value={search}
-            onChange={setSearch}
-            placeholder="Cari sayur..."
-          />
-        </div>
-        <button
-          onClick={onOpenFilter}
-          className={`relative flex-shrink-0 w-11 h-11 rounded-xl border flex items-center justify-center transition-all ${
-            activeFiltersCount > 0
-              ? "bg-primary-600 border-primary-600 text-white"
-              : "bg-white border-gray-200 text-gray-500 hover:border-primary-300"
-          }`}
-        >
-          <SlidersHorizontal size={18} />
-          {activeFiltersCount > 0 && (
-            <span className="absolute -top-1.5 -right-1.5 w-4 h-4 bg-red-500 rounded-full text-[9px] font-bold text-white flex items-center justify-center">
-              {activeFiltersCount}
-            </span>
-          )}
-        </button>
       </div>
 
       <div className="overflow-x-auto scroll-hide mt-3 -mx-4 px-4">

@@ -25,30 +25,32 @@ const CheckoutSummary: React.FC<CheckoutSummaryProps> = ({
   onSubmit,
 }) => {
   return (
-    <div className="bg-white rounded-3xl p-6 border border-gray-100 shadow-sm">
-      <h3 className="font-display font-bold text-gray-900 mb-6 uppercase tracking-widest text-sm">
+    <div className="bg-white border border-gray-200 rounded-2xl p-6">
+      <h3 className="text-gray-800 mb-4 text-base font-semibold">
         Ringkasan Belanja
       </h3>
 
       <div className="space-y-3 text-sm">
         <div className="flex justify-between text-gray-600">
-          <span className="font-medium">Total Harga ({itemCount} Barang)</span>
-          <span className="font-bold text-gray-900">
+          <span className="font-normal">Total Harga ({itemCount} Barang)</span>
+          <span className="font-normal text-gray-900">
             {formatRupiah(totalBarang)}
           </span>
         </div>
         <div className="flex justify-between text-gray-600">
-          <span className="font-medium">Total Ongkos Kirim</span>
-          <span className="font-bold text-gray-900">
+          <span className="font-normal">Total Ongkos Kirim</span>
+          <span className="font-normal text-gray-900">
             {loadingShipping ? "Menghitung..." : formatRupiah(totalOngkir)}
           </span>
         </div>
       </div>
 
-      <div className="mt-6 pt-6 border-t border-dashed border-gray-200">
-        <div className="flex justify-between items-end">
-          <span className="text-sm font-bold text-gray-500">Total Tagihan</span>
-          <span className="font-display font-bold text-2xl text-primary-600">
+      <div className="mt-5 pt-5 border-t border-gray-100">
+        <div className="flex justify-between items-center">
+          <span className="text-sm font-normal text-gray-700">
+            Total Tagihan
+          </span>
+          <span className="text-2xl font-semibold text-primary-600">
             {formatRupiah(grandTotal)}
           </span>
         </div>
@@ -57,7 +59,7 @@ const CheckoutSummary: React.FC<CheckoutSummaryProps> = ({
       <button
         onClick={onSubmit}
         disabled={disabled || loadingSubmit || loadingShipping}
-        className="w-full mt-6 bg-primary-600 text-white font-bold py-4 rounded-xl hover:bg-primary-700 active:scale-[0.98] transition-all disabled:opacity-50 disabled:grayscale flex justify-center items-center gap-2 shadow-lg"
+        className="w-full mt-6 bg-primary-600 text-white font-medium py-3 rounded-xl hover:bg-primary-700 active:scale-[0.98] transition-all disabled:opacity-50 flex justify-center items-center gap-2"
       >
         {loadingSubmit ? (
           <>
@@ -65,7 +67,7 @@ const CheckoutSummary: React.FC<CheckoutSummaryProps> = ({
           </>
         ) : (
           <>
-            <CheckCircle2 size={18} /> Bayar Sekarang
+            <CheckCircle2 size={18} /> Buat Pesanan
           </>
         )}
       </button>

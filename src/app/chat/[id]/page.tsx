@@ -208,7 +208,8 @@ const ChatRoomContent: React.FC = () => {
                 storeName: oStoreName,
                 totalHarga: Number(orderData.totalHarga || 0),
                 itemCount: orderData.item?.length || 0,
-                firstItemName: firstItem?.produk?.nama || "Produk",
+                firstItemName:
+                  firstItem?.produk?.nama?.replace(" - ", " ") || "Produk",
                 firstItemImage: firstItem?.produk?.gambarUrl || null,
               };
               const cardMsg = `Halo, saya ingin menanyakan pesanan #${oShortId}\n---ORDER_META---\n${JSON.stringify(orderMeta)}`;

@@ -3,11 +3,18 @@
 import { useState, useCallback } from "react";
 
 import { useAuthStore } from "@/src/store/auth-store";
+import { useProfile } from "@/src/hooks/profil/useProfile";
 import { useAddItemToCart } from "@/src/hooks/cart/useCartQuery";
 import type { EcomProduct } from "@/types";
 
 export function useAddToCart() {
-  const { isAuthenticated, _hasHydrated, openLoginModal } = useAuthStore();
+  const {
+    isAuthenticated,
+    _hasHydrated,
+    openLoginModal,
+    openPhoneVerificationModal,
+  } = useAuthStore();
+  const { profile } = useProfile(isAuthenticated, _hasHydrated);
   const addItemMutation = useAddItemToCart();
 
   const [showAddToCartModal, setShowAddToCartModal] = useState(false);
@@ -24,10 +31,17 @@ export function useAddToCart() {
         openLoginModal();
         return;
       }
+
       setSelectedProduct(product);
       setShowAddToCartModal(true);
     },
-    [_hasHydrated, isAuthenticated, openLoginModal],
+    [
+      _hasHydrated,
+      isAuthenticated,
+      openLoginModal,
+      profile,
+      openPhoneVerificationModal,
+    ],
   );
 
   const handleConfirmAddToCart = useCallback(

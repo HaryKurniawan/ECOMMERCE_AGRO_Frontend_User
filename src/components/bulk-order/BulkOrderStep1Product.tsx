@@ -41,7 +41,7 @@ export const BulkOrderStep1Product: React.FC<BulkOrderStep1ProductProps> = ({
             {product.gambarUrl ? (
               <Image
                 src={product.gambarUrl}
-                alt={product.nama || ""}
+                alt={product.nama?.replace(" - ", " ") || ""}
                 fill
                 className="object-cover"
                 unoptimized
@@ -54,7 +54,7 @@ export const BulkOrderStep1Product: React.FC<BulkOrderStep1ProductProps> = ({
           </div>
           <div className="flex-1 min-w-0 py-1 pr-2">
             <h3 className="font-semibold text-sm text-gray-900 truncate">
-              {product.nama}
+              {product.nama?.replace(" - ", " ")}
             </h3>
             <p className="text-primary-600 font-bold mt-1">
               {formatRupiah(product.harga)}{" "}

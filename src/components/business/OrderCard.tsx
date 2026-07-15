@@ -78,15 +78,15 @@ export default function OrderCard({
   };
 
   // Handle both API shapes:
-  // list API  → item[].produk.nama  + item[].produk.toko.nama
-  // detail API → items[].product.nama + storeName
+  // list API  → item[].produk.nama?.replace(' - ', ' ')  + item[].produk.toko.nama
+  // detail API → items[].product.nama?.replace(' - ', ' ') + storeName
   const rawItems = order.item ?? order.items ?? [];
   const firstItem = rawItems[0] as any;
   const itemCount = rawItems.length;
 
   const productName =
-    firstItem?.produk?.nama ||
-    firstItem?.product?.nama ||
+    firstItem?.produk?.nama?.replace(" - ", " ") ||
+    firstItem?.product?.nama?.replace(" - ", " ") ||
     firstItem?.produkNama ||
     "Produk";
 

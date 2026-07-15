@@ -34,7 +34,7 @@ const ProductMobileAction: React.FC<ProductMobileActionProps> = ({
         <button
           onClick={onChatSeller}
           disabled={chatLoading}
-          className="w-12 h-12 flex-shrink-0 flex items-center justify-center border border-gray-200 rounded-xl text-gray-600 bg-white hover:bg-gray-50 transition-all active:scale-90 disabled:opacity-50"
+          className="w-12 h-12 flex-shrink-0 flex items-center justify-center border border-gray-200 rounded-xl text-primary-600 bg-white hover:bg-gray-50 transition-all active:scale-90 disabled:opacity-50"
           title="Chat"
         >
           {chatLoading ? (
@@ -48,7 +48,7 @@ const ProductMobileAction: React.FC<ProductMobileActionProps> = ({
         <button
           onClick={onOpenCartModal}
           disabled={isShoppingDisabled}
-          className="w-12 h-12 flex-shrink-0 flex items-center justify-center border border-primary-200 rounded-xl text-primary-600 bg-primary-50 hover:bg-primary-100 transition-all active:scale-95 shadow-sm disabled:opacity-50 disabled:cursor-not-allowed"
+          className="w-12 h-12 flex-shrink-0 flex items-center justify-center border border-gray-200 rounded-xl text-primary-600 bg-white hover:bg-gray-50 transition-all active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed"
           title="Tambah ke Keranjang"
         >
           <ShoppingCart size={22} strokeWidth={2} />

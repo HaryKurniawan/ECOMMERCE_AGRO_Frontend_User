@@ -54,6 +54,9 @@ export const useNearbyProducts = ({
         .map((store) => store.id),
     );
 
+    // Jika hanya ada 1 toko di kota tersebut (atau tidak ada), jangan tampilkan fitur produk sekitar
+    if (validTokoIds.size <= 1) return [];
+
     // 3. Filter products from those stores
     const allNearbyProducts = products.filter((p) =>
       validTokoIds.has(p.tokoId),

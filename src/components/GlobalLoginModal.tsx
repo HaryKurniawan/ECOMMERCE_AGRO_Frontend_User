@@ -21,7 +21,7 @@ export default function GlobalLoginModal() {
       onClose={closeLoginModal}
       illustration="/login-now.svg"
       title="Login dulu yuk!"
-      description="Yuk, masuk ke akunmu untuk pengalaman belanja yang lebih seru!"
+      description="Masuk ke akunmu untuk pengalaman belanja yang lebih seru!"
       variant="horizontal"
       primaryButton={{
         label: "Login Sekarang",

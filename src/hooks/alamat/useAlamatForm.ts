@@ -123,6 +123,80 @@ export function useAlamatForm() {
     checkAddresses();
   }, [editId, reset, setValue]);
 
+  const checkCityAvailability = async (kotaToCheck: string) => {
+    if (!kotaToCheck) return true;
+    try {
+      const storesRes = await storesApi.getAll({ limit: 1000 });
+      let storesRaw = storesRes?.data?.data;
+
+      // Jika responsenya dibungkus pagination objek (e.g. { data: [...], total: ... })
+      if (
+        storesRaw &&
+        !Array.isArray(storesRaw) &&
+        Array.isArray(storesRaw.data)
+      ) {
+        storesRaw = storesRaw.data;
+      } else if (storesRes?.data && Array.isArray(storesRes.data)) {
+        storesRaw = storesRes.data;
+      }
+
+      const stores: Store[] = Array.isArray(storesRaw) ? storesRaw : [];
+
+      const normalizeString = (str: string) => {
+        let s = str.toLowerCase().trim();
+        // Ubah format Inggris ke Indonesia
+        if (s.endsWith(" city")) s = "kota " + s.replace(/\s+city$/, "");
+        if (s.endsWith(" regency"))
+          s = "kabupaten " + s.replace(/\s+regency$/, "");
+        // Seragamkan awalan kab
+        s = s.replace(/^kab\.?\s+/i, "kabupaten ");
+        return s.trim();
+      };
+
+      const savedKotaNorm = normalizeString(kotaToCheck);
+      const isAmbiguous =
+        !savedKotaNorm.startsWith("kota ") &&
+        !savedKotaNorm.startsWith("kabupaten ");
+
+      const isKotaAvailable = stores.some((s: Store) => {
+        const match = (storeCity: string, userCity: string) => {
+          if (storeCity === userCity) return true;
+          // Jika map hanya mereturn "Bandung" (tanpa kota/kabupaten), kita izinkan keduanya (fallback)
+          if (
+            isAmbiguous &&
+            (storeCity === "kota " + userCity ||
+              storeCity === "kabupaten " + userCity)
+          ) {
+            return true;
+          }
+          return false;
+        };
+
+        const kabNorm = normalizeString(s.kabupaten || "");
+        if (match(kabNorm, savedKotaNorm)) return true;
+
+        if (s.areaCakupanKota && Array.isArray(s.areaCakupanKota)) {
+          return s.areaCakupanKota.some((c) => {
+            const cn = normalizeString(c);
+            return match(cn, savedKotaNorm);
+          });
+        }
+        return false;
+      });
+
+      if (!isKotaAvailable) {
+        setCityWarning(
+          `Maaf, toko kami belum tersedia di alamat tersebut (${kotaToCheck}).`,
+        );
+        return false;
+      }
+      return true;
+    } catch (err) {
+      console.error("Failed to validate city", err);
+      return true;
+    }
+  };
+
   const handleMapChange = (val: MapPickerValue) => {
     setMapValue(val);
 
@@ -140,7 +214,10 @@ export function useAlamatForm() {
         addr.county ||
         addr.town ||
         "";
-      if (kota) setValue("kota", kota);
+      if (kota) {
+        setValue("kota", kota);
+        checkCityAvailability(kota);
+      }
 
       // Kecamatan
       let kecamatan = addr.district || addr.city_district || "";
@@ -196,52 +273,12 @@ export function useAlamatForm() {
       // Validate city availability BEFORE saving
       const savedKota = payload.kota;
       if (savedKota) {
-        try {
-          const storesRes = await storesApi.getAll({ limit: 1000 });
-          const storesRaw = storesRes?.data?.data || storesRes?.data;
-          const stores: Store[] = Array.isArray(storesRaw) ? storesRaw : [];
-
-          const normalizeString = (str: string) =>
-            str
-              .toLowerCase()
-              .trim()
-              .replace(/^kota\s+/i, "") // "Kota Bandung" → "bandung"
-              .replace(/^kab\.?\s+/i, "") // "Kab. Bandung" → "bandung"
-              .replace(/^kabupaten\s+/i, ""); // "Kabupaten Garut" → "garut"
-
-          const savedKotaNorm = normalizeString(savedKota);
-
-          const isKotaAvailable = stores.some((s: Store) => {
-            // Cek kabupaten toko (normalize keduanya)
-            if (normalizeString(s.kabupaten || "") === savedKotaNorm)
-              return true;
-
-            // Cek areaCakupanKota dengan substring matching
-            if (s.areaCakupanKota && Array.isArray(s.areaCakupanKota)) {
-              return s.areaCakupanKota.some((c) => {
-                const cn = normalizeString(c);
-                return (
-                  cn === savedKotaNorm ||
-                  cn.includes(savedKotaNorm) ||
-                  savedKotaNorm.includes(cn)
-                );
-              });
-            }
-
-            return false;
-          });
-
-          if (!isKotaAvailable) {
-            // Hanya tampilkan peringatan — JANGAN blokir penyimpanan
-            // Konsumen boleh menyimpan alamat, tapi diperingatkan
-            setCityWarning(
-              `Area "${savedKota}" mungkin belum dijangkau semua toko. Anda tetap bisa menyimpan alamat ini.`,
-            );
-          } else {
-            setCity(savedKota);
-          }
-        } catch (err) {
-          console.error("Failed to validate city", err);
+        const isKotaAvailable = await checkCityAvailability(savedKota);
+        if (!isKotaAvailable) {
+          setActionLoading(false);
+          return; // Tolak dan blokir penyimpanan
+        } else {
+          setCity(savedKota);
         }
       }
 

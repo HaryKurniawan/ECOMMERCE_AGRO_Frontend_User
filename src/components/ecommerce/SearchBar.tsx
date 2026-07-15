@@ -9,6 +9,7 @@ interface SearchBarProps {
   placeholder?: string;
   variant?: "default" | "glass";
   className?: string;
+  rightElement?: React.ReactNode;
 }
 
 const SearchBar: React.FC<SearchBarProps> = ({
@@ -19,6 +20,7 @@ const SearchBar: React.FC<SearchBarProps> = ({
   placeholder = "Cari sayur, paket, toko...",
   variant = "default",
   className = "",
+  rightElement,
 }) => {
   const handleKeyDown = (e: React.KeyboardEvent) => {
     if (e.key === "Enter" && onSearch) {
@@ -48,21 +50,27 @@ const SearchBar: React.FC<SearchBarProps> = ({
           value={value}
           onChange={(e) => onChange(e.target.value)}
           onKeyDown={handleKeyDown}
-          className={`w-full pl-10 pr-4 py-2.5 bg-transparent text-sm outline-none 
+          className={`w-full pl-10 ${rightElement || onFilterClick ? "pr-12" : "pr-4"} py-2.5 bg-transparent text-sm outline-none 
             ${isGlass ? "text-white/90 placeholder-white/60" : "text-gray-700 placeholder-gray-400"}
           `}
         />
+        {(rightElement || onFilterClick) && (
+          <div className="absolute right-1.5 flex items-center">
+            {rightElement ? (
+              rightElement
+            ) : onFilterClick ? (
+              <button
+                onClick={onFilterClick}
+                className={`p-1.5 rounded-lg transition-all active:scale-95
+                  ${isGlass ? "text-white/80 hover:bg-white/10" : "text-gray-400 hover:bg-gray-100 hover:text-gray-600"}
+                `}
+              >
+                <SlidersHorizontal size={18} />
+              </button>
+            ) : null}
+          </div>
+        )}
       </div>
-      {onFilterClick && (
-        <button
-          onClick={onFilterClick}
-          className={`p-2.5 rounded-xl border transition-all active:scale-95
-            ${isGlass ? "bg-white/20 border-white/30 text-white hover:bg-white/30" : "bg-gray-50 border-gray-200 text-gray-400 hover:bg-gray-100"}
-          `}
-        >
-          <SlidersHorizontal size={18} />
-        </button>
-      )}
     </div>
   );
 };

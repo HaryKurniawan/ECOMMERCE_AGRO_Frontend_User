@@ -26,7 +26,7 @@ const ProductReviewsPreview: React.FC<ProductReviewsPreviewProps> = ({
 
   return (
     <div className="px-4 lg:px-0 pb-10">
-      <div className="bg-white rounded-2xl border border-gray-100 overflow-hidden">
+      <div className="bg-white rounded-2xl border border-gray-200 overflow-hidden">
         {/* Header */}
         <div className="px-5 py-4 flex items-center justify-between">
           <div className="flex items-center gap-2.5">

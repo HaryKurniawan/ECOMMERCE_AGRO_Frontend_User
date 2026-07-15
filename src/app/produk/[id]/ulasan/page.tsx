@@ -55,7 +55,7 @@ const UlasanProdukPage = () => {
             Ulasan Pembeli
           </h1>
           <p className="text-xs text-gray-500 truncate">
-            {product?.nama || "Memuat produk..."}
+            {product?.nama?.replace(" - ", " ") || "Memuat produk..."}
           </p>
         </div>
       </div>

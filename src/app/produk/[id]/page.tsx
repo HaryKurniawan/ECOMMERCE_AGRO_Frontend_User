@@ -14,6 +14,7 @@ import CartSuccessModal from "@/src/components/ecommerce/CartSuccessModal";
 import CartCountButton from "@/src/components/ecommerce/CartCountButton";
 import EmptyState from "@/src/components/ecommerce/EmptyState";
 import { useAuthStore } from "@/src/store/auth-store";
+import { useProfile } from "@/src/hooks/profil/useProfile";
 
 // Sub-components
 import {
@@ -30,7 +31,14 @@ const DetailProdukPage: React.FC = () => {
   const params = useParams();
   const id = params.id as string;
   const router = useRouter();
-  const { isAuthenticated, _hasHydrated, openLoginModal } = useAuthStore();
+  const {
+    isAuthenticated,
+    _hasHydrated,
+    openLoginModal,
+    openPhoneVerificationModal,
+  } = useAuthStore();
+
+  const { profile } = useProfile(isAuthenticated, _hasHydrated);
 
   const { product, store, userAddress, addresses, loading, isOutOfArea } =
     useProductDetail(id as string, isAuthenticated);
@@ -126,8 +134,10 @@ const DetailProdukPage: React.FC = () => {
     <div className="animate-fade-in relative min-h-screen bg-gray-50 pb-20 lg:pb-10">
       {/* Mobile Header */}
       <div
-        className={`bg-white/80 backdrop-blur-md sticky top-0 lg:top-16 z-40 px-4 py-3 lg:hidden flex items-center justify-between transition-all duration-300 ${
-          isScrolled ? "border-b border-gray-100 shadow-sm" : ""
+        className={`sticky top-0 lg:top-16 z-40 px-4 py-3 lg:hidden flex items-center justify-between transition-all duration-300 ${
+          isScrolled
+            ? "bg-white/90 backdrop-blur-md border-b border-gray-100 shadow-sm"
+            : "bg-transparent"
         }`}
       >
         <button

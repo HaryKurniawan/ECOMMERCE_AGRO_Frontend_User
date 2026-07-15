@@ -10,7 +10,7 @@ export const useOrdersSummary = (
   _hasHydrated: boolean,
 ) => {
   const query = useQuery({
-    queryKey: queryKeys.orders.all,
+    queryKey: ["orders", "summary"],
     queryFn: () => ordersApi.getMyOrders(),
     select: (res): ApiOrderData[] => {
       const data = res?.data?.data?.data || res?.data?.data || res?.data || [];

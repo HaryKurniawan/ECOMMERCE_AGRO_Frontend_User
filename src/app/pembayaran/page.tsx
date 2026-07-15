@@ -55,10 +55,12 @@ const PembayaranContent: React.FC = () => {
     }
   }, [order, loading, router]);
 
-  // Prevent back navigation by replacing history
+  // Prevent back navigation by pushing a dummy state, so when user clicks back it redirects to /pesanan safely
   useEffect(() => {
-    const handlePopState = (event: PopStateEvent) => {
-      event.preventDefault();
+    // Push state immediately so the first "back" just pops this state
+    window.history.pushState(null, "", window.location.href);
+
+    const handlePopState = () => {
       router.replace("/pesanan");
     };
 

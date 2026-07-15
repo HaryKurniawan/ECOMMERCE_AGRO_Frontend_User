@@ -22,6 +22,7 @@ import {
   LogOut,
 } from "lucide-react";
 
+import CartCountButton from "@/src/components/ecommerce/CartCountButton";
 import {
   useProfile,
   useOrdersSummary,
@@ -62,6 +63,13 @@ const ProfilPage: React.FC = () => {
   };
 
   const menuUtama = [
+    {
+      id: "detail-profil",
+      label: "Detail Profil",
+      icon: User,
+      desc: "Lihat dan atur informasi akun Anda",
+      path: "/profil/detail",
+    },
     {
       id: "beri-nilai",
       label: "Beri Nilai Pesanan",
@@ -120,19 +128,18 @@ const ProfilPage: React.FC = () => {
           <h1 className="font-display font-semibold text-xl text-white">
             Profil Saya
           </h1>
-          <button
-            onClick={() => router.push("/profil/pengaturan")}
-            className="p-2 bg-white/15 backdrop-blur-sm rounded-full text-white hover:bg-white/25 transition-colors"
-          >
-            <Settings size={18} />
-          </button>
+          <CartCountButton
+            variant="dark"
+            size="sm"
+            className="!bg-transparent hover:!bg-white/10"
+          />
         </div>
       </div>
 
       {/* Profile Card (Overlapping) */}
       <div className="max-w-2xl mx-auto px-4 -mt-14 relative z-10">
-        <div className="bg-white rounded-2xl p-5 border border-gray-100 mb-5">
-          <div className="flex items-center gap-4">
+        <div className="bg-white rounded-2xl p-5 border border-gray-200 mb-5">
+          <div className="flex items-center gap-5">
             <div className="w-16 h-16 bg-gray-50 rounded-full flex items-center justify-center border border-gray-200 flex-shrink-0">
               <User size={32} className="text-gray-400" />
             </div>
@@ -142,18 +149,12 @@ const ProfilPage: React.FC = () => {
               </h2>
               <p className="text-xs text-gray-400 truncate">{profile.email}</p>
             </div>
-            <button
-              onClick={() => router.push("/profil/detail")}
-              className="text-gray-300 hover:text-primary-600 transition-colors"
-            >
-              <ChevronRight size={20} />
-            </button>
           </div>
 
           {(profile.role === "SELLER" ||
             profile.role === "ADMIN_FARMER" ||
             profile.role === "SUPER_ADMIN") && (
-            <div className="flex gap-2.5 mt-4 pt-4 border-t border-gray-100">
+            <div className="flex gap-2.5 mt-4 pt-4 border-t border-gray-200">
               {profile.role === "SELLER" && (
                 <button
                   onClick={() => router.push("/seller/dashboard")}
@@ -178,14 +179,14 @@ const ProfilPage: React.FC = () => {
         </div>
 
         {/* Orders Quick-Access */}
-        <div className="bg-white rounded-2xl p-5 shadow-sm border border-gray-100 mb-4">
+        <div className="bg-white rounded-2xl p-5 border border-gray-200 mb-4">
           <div className="flex items-center justify-between mb-4">
-            <h3 className="font-display font-bold text-[15px] text-gray-900">
+            <h3 className="font-semibold text-[15px] text-gray-800">
               Pesanan Saya
             </h3>
             <button
               onClick={() => router.push("/pesanan")}
-              className="text-xs text-primary-600 font-bold hover:text-primary-700"
+              className="text-xs text-primary-600 font-medium hover:text-primary-700"
             >
               Lihat Semua
             </button>
@@ -212,19 +213,19 @@ const ProfilPage: React.FC = () => {
                 <button
                   key={item.id}
                   onClick={() => router.push(`/pesanan?status=${item.id}`)}
-                  className="flex flex-col items-center gap-2 py-3 rounded-xl hover:bg-gray-50 transition-colors relative active:scale-95"
+                  className="flex flex-col items-center gap-2 py-3 rounded-xl hover:bg-gray-50 transition-colors active:scale-95"
                 >
-                  <div className="w-12 h-12 bg-primary-50 rounded-xl flex items-center justify-center text-primary-600">
+                  <div className="relative w-12 h-12 bg-primary-50 rounded-xl flex items-center justify-center text-primary-600">
                     <item.icon size={23} strokeWidth={1.8} />
+                    {count > 0 && (
+                      <span className="absolute -top-1.5 -right-1.5 w-4 h-4 bg-red-500 text-white text-[9px] font-bold rounded-full flex items-center justify-center border-2 border-white shadow-sm box-content">
+                        {count}
+                      </span>
+                    )}
                   </div>
                   <span className="text-xs font-semibold text-gray-500 text-center leading-tight">
                     {item.label}
                   </span>
-                  {count > 0 && (
-                    <span className="absolute top-1 right-1 w-4 h-4 bg-red-500 text-white text-[9px] font-bold rounded-full flex items-center justify-center border-2 border-white shadow-sm">
-                      {count}
-                    </span>
-                  )}
                 </button>
               );
             })}
@@ -232,7 +233,7 @@ const ProfilPage: React.FC = () => {
         </div>
 
         {/* Main Menus */}
-        <div className="bg-white rounded-2xl shadow-sm border border-gray-100 mb-3 overflow-hidden">
+        <div className="bg-white rounded-2xl border border-gray-200 mb-3 overflow-hidden">
           {menuUtama.map((menu, i) => (
             <button
               key={menu.id}
@@ -256,7 +257,7 @@ const ProfilPage: React.FC = () => {
         </div>
 
         {/* Logout Menu */}
-        <div className="bg-white rounded-2xl shadow-sm border border-gray-100 mb-4 overflow-hidden">
+        <div className="bg-white rounded-2xl border border-gray-200 mb-4 overflow-hidden">
           <button
             onClick={handleLogoutClick}
             className="w-full flex items-center gap-4 px-5 py-4 hover:bg-red-50 transition-colors group active:bg-red-100"

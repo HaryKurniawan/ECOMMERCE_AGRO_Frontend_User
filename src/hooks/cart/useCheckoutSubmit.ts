@@ -5,7 +5,10 @@
 
 import { useState, useCallback } from "react";
 import { useRouter } from "next/navigation";
+import { Modal } from "antd";
 
+import { useAuthStore } from "@/src/store/auth-store";
+import { useProfile } from "@/src/hooks/profil/useProfile";
 import { ordersApi, cartApi } from "@/lib/ecommerce-api";
 import type { ApiShippingInfo } from "@/types";
 
@@ -21,16 +24,38 @@ export function useCheckoutSubmit(
 ) {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
+  const [errorModal, setErrorModal] = useState({
+    isOpen: false,
+    title: "",
+    message: "",
+  });
+  const { isAuthenticated, _hasHydrated, openPhoneVerificationModal } =
+    useAuthStore();
+  const { profile } = useProfile(isAuthenticated, _hasHydrated);
 
   const handleSubmit = useCallback(async () => {
+    if (profile && !profile.noTeleponTerverifikasiPada) {
+      openPhoneVerificationModal();
+      return;
+    }
+
     if (!selectedAddressId) {
-      return alert("Silakan pilih alamat pengiriman");
+      setErrorModal({
+        isOpen: true,
+        title: "Alamat Pengiriman Kosong",
+        message: "Silakan pilih alamat pengiriman terlebih dahulu.",
+      });
+      return;
     }
 
     if (!allDeliverable) {
-      return alert(
-        "Beberapa toko berada di luar jangkauan pengiriman. Silakan sesuaikan keranjang Anda.",
-      );
+      setErrorModal({
+        isOpen: true,
+        title: "Di Luar Jangkauan",
+        message:
+          "Beberapa toko berada di luar jangkauan pengiriman. Silakan pilih alamat lain atau sesuaikan keranjang Anda.",
+      });
+      return;
     }
 
     setLoading(true);
@@ -109,7 +134,12 @@ export function useCheckoutSubmit(
         err.response?.data?.message ||
         err.message ||
         "Terjadi kesalahan saat membuat pesanan";
-      alert(`Gagal Checkout: ${errMsg}`);
+
+      setErrorModal({
+        isOpen: true,
+        title: "Gagal Checkout",
+        message: errMsg,
+      });
     } finally {
       setLoading(false);
     }
@@ -121,10 +151,14 @@ export function useCheckoutSubmit(
     catatanPerStore,
     paymentMethod,
     router,
+    profile,
+    openPhoneVerificationModal,
   ]);
 
   return {
     loading,
     handleSubmit,
+    errorModal,
+    closeErrorModal: () => setErrorModal((p) => ({ ...p, isOpen: false })),
   };
 }

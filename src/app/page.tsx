@@ -221,7 +221,9 @@ const HomePage: React.FC = () => {
             onSelectCity={(city) => {
               setCity(city);
               setPromptCity(city);
-              setShowAddressPrompt(true);
+              setTimeout(() => {
+                setShowAddressPrompt(true);
+              }, 400);
             }}
           />
 

@@ -10,6 +10,7 @@ import {
   Megaphone,
   Info,
   Trash2,
+  CheckCircle2,
 } from "lucide-react";
 import { formatDistanceToNow } from "date-fns";
 import { id as localeId } from "date-fns/locale";
@@ -230,7 +231,7 @@ export default function NotifikasiPage() {
           ))
         ) : (
           <EmptyState
-            illustration="/empty-notif.svg"
+            icon={<CheckCircle2 size={48} />}
             title="Semua sudah dibaca!"
             description="Kamu sudah up-to-date. Notifikasi tentang pesanan dan info penting akan muncul di sini."
           />

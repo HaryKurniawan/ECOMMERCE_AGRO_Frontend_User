@@ -1,6 +1,7 @@
 import React from "react";
 import Image from "next/image";
-import { Wallet } from "lucide-react";
+import { Wallet, ChevronRight } from "lucide-react";
+import { useRouter } from "next/navigation";
 
 import { PAYMENT_METHODS, type PaymentMethod } from "./payment-methods";
 
@@ -9,108 +10,71 @@ interface PaymentMethodSectionProps {
   onSelect: (method: string) => void;
 }
 
-/** Render logo: gambar asli kalau ada, fallback badge teks dengan warna brand */
-const PaymentLogo: React.FC<{ method: PaymentMethod }> = ({ method }) => {
-  if (method.logo) {
-    return (
-      <div
-        className={`w-10 h-10 rounded-xl flex items-center justify-center overflow-hidden ${method.bgColor} p-1`}
-      >
-        <Image
-          src={method.logo}
-          alt={method.label}
-          width={36}
-          height={36}
-          className="object-contain w-full h-full"
-          unoptimized
-        />
-      </div>
-    );
-  }
-  // Fallback: badge teks singkat berwarna brand (untuk bank VA)
-  return (
-    <div
-      className={`w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0 ${method.bgColor}`}
-    >
-      <span className="text-white font-black text-[10px] tracking-tight leading-tight text-center">
-        {method.badge}
-      </span>
-    </div>
-  );
-};
-
 const PaymentMethodSection: React.FC<PaymentMethodSectionProps> = ({
   selectedMethod,
-  onSelect,
 }) => {
-  const categories = Array.from(
-    new Set(PAYMENT_METHODS.map((m) => m.sublabel)),
-  );
+  const router = useRouter();
+  const method = PAYMENT_METHODS.find((m) => m.id === selectedMethod);
 
-  const MethodItem = ({ method }: { method: PaymentMethod }) => {
-    const isSelected = selectedMethod === method.id;
-    return (
-      <label
-        key={method.id}
-        className={`flex items-center gap-3 p-3 border rounded-xl cursor-pointer transition-all ${
-          isSelected
-            ? "border-primary-500 bg-primary-50/50 ring-1 ring-primary-500"
-            : "border-gray-200 hover:bg-gray-50"
-        }`}
-      >
-        <input
-          type="radio"
-          name="payment-method"
-          checked={isSelected}
-          onChange={() => onSelect(method.id)}
-          className="sr-only"
-        />
-        <PaymentLogo method={method} />
-        <span
-          className={`text-sm flex-1 ${isSelected ? "font-semibold text-gray-900" : "font-normal text-gray-700"}`}
-        >
-          {method.label}
-        </span>
-        {isSelected && (
-          <div className="ml-auto w-5 h-5 rounded-full bg-primary-500 flex items-center justify-center flex-shrink-0">
-            <svg
-              className="w-3 h-3 text-white"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={3}
-                d="M5 13l4 4L19 7"
-              />
-            </svg>
-          </div>
-        )}
-      </label>
+  const handleClick = () => {
+    const currentUrl = window.location.pathname + window.location.search;
+    router.push(
+      `/checkout/pembayaran?redirect=${encodeURIComponent(currentUrl)}`,
     );
   };
 
   return (
-    <div className="bg-white rounded-3xl p-6 border border-gray-100 shadow-sm">
-      <h2 className="font-semibold text-lg text-gray-800 mb-4 flex items-center gap-2">
-        <Wallet className="text-primary-600" size={20} />
+    <div className="space-y-4">
+      <h2 className="font-semibold text-lg text-gray-800 flex items-center gap-2 px-1">
         Metode Pembayaran
       </h2>
 
-      {categories.map((category, idx) => (
-        <div key={category} className={idx > 0 ? "mt-4" : ""}>
-          <p className="text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-2">
-            {category}
-          </p>
-          <div className="space-y-2">
-            {PAYMENT_METHODS.filter((m) => m.sublabel === category).map((m) => (
-              <MethodItem key={m.id} method={m} />
-            ))}
+      <div
+        onClick={handleClick}
+        className="bg-white rounded-2xl p-4 border border-gray-200 cursor-pointer hover:border-primary-400 transition-all flex items-center justify-between group"
+      >
+        {method ? (
+          <div className="flex items-center gap-4">
+            {method.logo ? (
+              <div className="w-14 h-8 flex items-center justify-center px-2">
+                <Image
+                  src={method.logo}
+                  alt={method.label}
+                  width={48}
+                  height={32}
+                  className="object-contain w-full h-full"
+                  unoptimized
+                />
+              </div>
+            ) : (
+              <div
+                className={`w-14 h-8 rounded-lg flex items-center justify-center flex-shrink-0 ${method.bgColor}`}
+              >
+                <span className="text-white font-black text-[10px] tracking-tight leading-tight text-center">
+                  {method.badge}
+                </span>
+              </div>
+            )}
+            <div>
+              <p className="text-sm font-semibold text-gray-900">
+                {method.label}
+              </p>
+              <p className="text-xs text-gray-500">{method.sublabel}</p>
+            </div>
           </div>
+        ) : (
+          <div className="text-sm font-semibold text-gray-700 py-2 pl-1">
+            Pilih Metode Pembayaran
+          </div>
+        )}
+        <div className="flex items-center gap-1 text-primary-600 text-sm font-medium">
+          Ubah
+          <ChevronRight
+            size={16}
+            className="group-hover:translate-x-1 transition-transform"
+          />
         </div>
-      ))}
+      </div>
     </div>
   );
 };

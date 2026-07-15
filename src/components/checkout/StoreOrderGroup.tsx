@@ -26,9 +26,9 @@ const StoreOrderGroup: React.FC<StoreOrderGroupProps> = ({
   hasSelectedAddress,
 }) => {
   return (
-    <div className="bg-white rounded-3xl border border-gray-100 shadow-sm overflow-hidden font-normal text-gray-700">
+    <div className="bg-white border border-gray-200 rounded-2xl overflow-hidden font-normal text-gray-700">
       {/* Store Header */}
-      <div className="bg-gray-50/50 px-5 py-4 border-b border-gray-100 text-gray-900 flex items-center gap-2 font-normal">
+      <div className="bg-white px-5 py-4 border-b border-gray-100 text-gray-900 flex items-center gap-2 font-normal">
         <span className="w-6 h-6 bg-white rounded-lg flex items-center justify-center border border-gray-200 shadow-sm">
           <Store size={12} className="text-gray-500" />
         </span>
@@ -40,7 +40,7 @@ const StoreOrderGroup: React.FC<StoreOrderGroupProps> = ({
         {items.map((item) => (
           <div key={item.id} className="p-5 flex gap-4 font-normal">
             <div className="relative w-20 h-20 bg-gray-50 rounded-2xl overflow-hidden flex-shrink-0 border border-gray-100 font-normal">
-              {item.gambar && item.gambar.startsWith("http") ? (
+              {item.gambar ? (
                 <Image
                   src={item.gambar}
                   alt={item.produkNama || "Produk"}
@@ -70,7 +70,7 @@ const StoreOrderGroup: React.FC<StoreOrderGroupProps> = ({
       </div>
 
       {/* Footer / Shipping Options */}
-      <div className="p-5 bg-gray-50/50 border-t border-gray-100 space-y-4 font-normal">
+      <div className="p-5 bg-white border-t border-gray-100 space-y-4 font-normal">
         <input
           aria-label="Tinggalkan pesan"
           type="text"
@@ -99,8 +99,8 @@ const StoreOrderGroup: React.FC<StoreOrderGroupProps> = ({
               <div
                 className={`p-4 rounded-2xl border transition-all duration-200 flex flex-col justify-between font-normal ${
                   shipping.isAvailable
-                    ? "bg-primary-50/10 border-primary-100 hover:border-primary-200"
-                    : "bg-red-50/10 border-red-100"
+                    ? "bg-white border-gray-200 hover:border-gray-300"
+                    : "bg-white border-red-200"
                 }`}
               >
                 <div className="w-full flex justify-between items-start font-normal">

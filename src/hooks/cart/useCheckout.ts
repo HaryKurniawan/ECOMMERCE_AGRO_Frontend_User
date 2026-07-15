@@ -4,7 +4,7 @@
  */
 
 import { useState, useEffect, useMemo } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 
 import { useAuthStore } from "@/src/store/auth-store";
 
@@ -19,10 +19,19 @@ import {
 
 export const useCheckout = () => {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const { isAuthenticated, _hasHydrated } = useAuthStore();
 
   // State
-  const [paymentMethod, setPaymentMethod] = useState("BCA_VA");
+  const paymentMethodParam = searchParams.get("paymentMethod") || "BCA_VA";
+  const [paymentMethod, setPaymentMethod] = useState(paymentMethodParam);
+
+  useEffect(() => {
+    if (paymentMethodParam) {
+      setPaymentMethod(paymentMethodParam);
+    }
+  }, [paymentMethodParam]);
+
   const [catatanPerStore, setCatatanPerStore] = useState<
     { tokoId: string; text: string }[]
   >([]);
@@ -56,7 +65,12 @@ export const useCheckout = () => {
   const grandTotal = totalBarang + totalOngkir;
 
   // Order submission
-  const { loading: loadingSubmit, handleSubmit } = useCheckoutSubmit(
+  const {
+    loading: loadingSubmit,
+    handleSubmit,
+    errorModal,
+    closeErrorModal,
+  } = useCheckoutSubmit(
     selectedAddressId,
     paymentMethod,
     groupedByStore,
@@ -117,5 +131,9 @@ export const useCheckout = () => {
     // Actions
     handleSubmit,
     updateCatatan,
+
+    // Error Modal
+    errorModal,
+    closeErrorModal,
   };
 };

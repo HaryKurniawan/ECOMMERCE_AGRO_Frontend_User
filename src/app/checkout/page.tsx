@@ -2,7 +2,7 @@
 
 import React, { Suspense } from "react";
 import { useRouter } from "next/navigation";
-import { ArrowLeft } from "lucide-react";
+import { ArrowLeft, ShieldAlert } from "lucide-react";
 
 import { CheckoutSkeleton } from "@/src/components/ecommerce/Skeleton";
 import EmptyState from "@/src/components/ecommerce/EmptyState";
@@ -13,9 +13,16 @@ import {
   PaymentMethodSection,
   CheckoutSummary,
 } from "@/src/components/checkout";
+import { useAuthStore } from "@/src/store/auth-store";
+import { useProfile } from "@/src/hooks/profil/useProfile";
+import ActionModal from "@/src/components/ActionModal";
 
 const CheckoutContent: React.FC = () => {
   const router = useRouter();
+  const { isAuthenticated, _hasHydrated, openPhoneVerificationModal } =
+    useAuthStore();
+  const { profile } = useProfile(isAuthenticated, _hasHydrated);
+
   const {
     items,
     addresses,
@@ -35,6 +42,8 @@ const CheckoutContent: React.FC = () => {
     allDeliverable,
     handleSubmit,
     updateCatatan,
+    errorModal,
+    closeErrorModal,
   } = useCheckout();
 
   if (loadingInitial) {
@@ -46,14 +55,14 @@ const CheckoutContent: React.FC = () => {
       <div className="min-h-screen bg-gray-50">
         {/* Header */}
         <div className="bg-white border-b border-gray-100 px-4 py-3 sticky top-0 lg:top-16 z-40">
-          <div className="flex items-center gap-4 max-w-5xl mx-auto">
+          <div className="relative flex items-center justify-center max-w-5xl mx-auto">
             <button
-              onClick={() => router.back()}
-              className="p-2 hover:bg-gray-50 rounded-full lg:hidden"
+              onClick={() => router.push("/keranjang")}
+              className="absolute left-0 p-2 hover:bg-gray-50 rounded-full transition-colors lg:hidden"
             >
               <ArrowLeft size={20} className="text-gray-600" />
             </button>
-            <h1 className="font-display font-semibold text-xl text-gray-900">
+            <h1 className="font-display font-semibold text-[17px] text-gray-900 py-1">
               Checkout
             </h1>
           </div>
@@ -77,14 +86,14 @@ const CheckoutContent: React.FC = () => {
     <div className="min-h-screen bg-gray-50 pb-32 lg:pb-10">
       {/* Header */}
       <div className="bg-white border-b border-gray-100 px-4 py-3 sticky top-0 lg:top-16 z-40">
-        <div className="flex items-center gap-4 max-w-5xl mx-auto">
+        <div className="relative flex items-center justify-center max-w-5xl mx-auto">
           <button
-            onClick={() => router.back()}
-            className="p-2 hover:bg-gray-50 rounded-full lg:hidden"
+            onClick={() => router.push("/keranjang")}
+            className="absolute left-0 p-2 hover:bg-gray-50 rounded-full transition-colors lg:hidden"
           >
             <ArrowLeft size={20} className="text-gray-600" />
           </button>
-          <h1 className="font-display font-semibold text-xl text-gray-900">
+          <h1 className="font-display font-semibold text-[17px] text-gray-900 py-1">
             Checkout
           </h1>
         </div>
@@ -98,6 +107,29 @@ const CheckoutContent: React.FC = () => {
             selectedAddressId={selectedAddressId}
             onSelect={(id) => setSelectedAddressId(id)}
           />
+
+          {/* Phone Verification Card */}
+          {profile && !profile.noTeleponTerverifikasiPada && (
+            <div className="bg-white border border-gray-200 rounded-2xl p-6 flex items-center justify-between gap-3">
+              <div className="flex items-center gap-2.5">
+                <ShieldAlert
+                  className="text-primary-600 flex-shrink-0"
+                  size={18}
+                />
+                <span className="text-sm font-normal text-gray-800">
+                  {profile.phone
+                    ? "Nomor WhatsApp belum diverifikasi"
+                    : "Nomor telepon belum diisi"}
+                </span>
+              </div>
+              <button
+                onClick={openPhoneVerificationModal}
+                className="px-4 py-2 bg-primary-600 text-white font-normal text-xs rounded-lg hover:bg-primary-700 active:scale-95 transition-all whitespace-nowrap"
+              >
+                {profile.phone ? "Verifikasi" : "Isi Sekarang"}
+              </button>
+            </div>
+          )}
 
           <div className="space-y-6">
             <h2 className="font-semibold text-lg text-gray-800 flex items-center gap-2 px-1">
@@ -148,6 +180,24 @@ const CheckoutContent: React.FC = () => {
           </div>
         </div>
       </div>
+
+      {/* Error Modal */}
+      <ActionModal
+        isOpen={errorModal.isOpen}
+        onClose={closeErrorModal}
+        title={errorModal.title}
+        description={errorModal.message}
+        icon={<ShieldAlert size={28} className="text-red-500" />}
+        variant="horizontal"
+        primaryButton={{
+          label: "Ke Beranda",
+          onClick: () => router.push("/"),
+        }}
+        secondaryButton={{
+          label: "Ubah Alamat",
+          onClick: () => router.push("/profil/alamat"),
+        }}
+      />
     </div>
   );
 };

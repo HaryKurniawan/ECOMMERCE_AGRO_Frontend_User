@@ -54,14 +54,35 @@ export function useCheckoutData() {
 
         setAddresses(rawAddresses);
 
-        // Set default address
-        const defaultAddr = rawAddresses.find(
-          (a: ApiAddressData) => a.isDefault,
-        );
-        if (defaultAddr && defaultAddr.id) {
-          setSelectedAddressId(String(defaultAddr.id));
-        } else if (rawAddresses.length > 0 && rawAddresses[0].id) {
-          setSelectedAddressId(String(rawAddresses[0].id));
+        // Set default address or read from searchParams
+        const queryAddressId = searchParams.get("addressId");
+
+        if (queryAddressId) {
+          const isValidAddress = rawAddresses.some(
+            (a) => String(a.id) === queryAddressId,
+          );
+          if (isValidAddress) {
+            setSelectedAddressId(queryAddressId);
+          } else {
+            // Fallback if not valid
+            const defaultAddr = rawAddresses.find(
+              (a: ApiAddressData) => a.isDefault,
+            );
+            if (defaultAddr && defaultAddr.id) {
+              setSelectedAddressId(String(defaultAddr.id));
+            } else if (rawAddresses.length > 0 && rawAddresses[0].id) {
+              setSelectedAddressId(String(rawAddresses[0].id));
+            }
+          }
+        } else {
+          const defaultAddr = rawAddresses.find(
+            (a: ApiAddressData) => a.isDefault,
+          );
+          if (defaultAddr && defaultAddr.id) {
+            setSelectedAddressId(String(defaultAddr.id));
+          } else if (rawAddresses.length > 0 && rawAddresses[0].id) {
+            setSelectedAddressId(String(rawAddresses[0].id));
+          }
         }
       } catch (error) {
         console.error("Error loading checkout data:", error);

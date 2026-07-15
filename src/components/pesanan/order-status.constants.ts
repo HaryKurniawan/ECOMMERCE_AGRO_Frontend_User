@@ -90,4 +90,13 @@ export const ORDER_STATUS_COLORS = new Map<
       dot: "bg-indigo-500",
     },
   ],
+  [
+    "DIBATALKAN",
+    {
+      text: "text-red-600",
+      bg: "bg-red-50",
+      ring: "ring-red-200",
+      dot: "bg-red-500",
+    },
+  ],
 ]);

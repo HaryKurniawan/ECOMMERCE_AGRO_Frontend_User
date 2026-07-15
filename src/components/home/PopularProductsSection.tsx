@@ -32,9 +32,7 @@ const PopularProductsSection: React.FC<PopularProductsSectionProps> = ({
       : [];
   }, [products]);
 
-  const title = selectedCity
-    ? `Produk Populer di ${selectedCity}`
-    : "Produk Populer";
+  const title = selectedCity ? `Produk di ${selectedCity}` : "Semua Produk";
 
   if (popularProducts.length === 0) {
     return (

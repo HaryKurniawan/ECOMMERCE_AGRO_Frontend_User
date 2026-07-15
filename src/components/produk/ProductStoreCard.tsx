@@ -24,7 +24,7 @@ const ProductStoreCard: React.FC<ProductStoreCardProps> = ({ store }) => {
         onClick={() => store?.id && router.push(`/toko/${store.id}`)}
         className="w-full group text-left"
       >
-        <div className="flex items-center gap-4 p-4 bg-white border border-gray-100 rounded-3xl shadow-[0_8px_30px_rgb(0,0,0,0.04)] hover:border-primary-200 transition-all duration-200">
+        <div className="flex items-center gap-4 p-4 bg-white border border-gray-200 rounded-3xl hover:border-primary-200 transition-all duration-200">
           {/* Store Avatar */}
           <div className="relative w-12 h-12 rounded-xl overflow-hidden bg-gradient-to-br from-primary-50 to-primary-100 border border-primary-100 flex-shrink-0 flex items-center justify-center shadow-sm">
             {store?.foto ? (
@@ -36,7 +36,7 @@ const ProductStoreCard: React.FC<ProductStoreCardProps> = ({ store }) => {
                 unoptimized
               />
             ) : (
-              <Store className="text-primary-400" size={22} />
+              <Store className="text-primary-600" size={22} />
             )}
           </div>
 
@@ -67,9 +67,8 @@ const ProductStoreCard: React.FC<ProductStoreCardProps> = ({ store }) => {
           </div>
 
           {/* CTA */}
-          <div className="flex-shrink-0 flex items-center gap-1.5 text-xs font-semibold text-primary-600 opacity-0 group-hover:opacity-100 transition-all translate-x-1 group-hover:translate-x-0 pr-1">
+          <div className="flex-shrink-0 px-3 py-1.5 rounded-lg border border-gray-200 text-[11px] font-semibold text-primary-600 group-hover:bg-primary-50 transition-colors">
             Kunjungi
-            <ArrowRight size={13} />
           </div>
         </div>
       </button>

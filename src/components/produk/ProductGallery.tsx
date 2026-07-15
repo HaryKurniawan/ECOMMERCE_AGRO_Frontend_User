@@ -63,38 +63,18 @@ export default function ProductGallery({
   };
 
   return (
-    <div className="space-y-4 px-4 lg:px-0 w-full shrink-0">
+    <div className="space-y-4 px-4 lg:px-0 w-full shrink-0 mt-2">
       {/* Main Photo + Thumbnails Container */}
       <div className="flex flex-col gap-3">
         {/* Main Photo */}
-        <div className="relative w-full aspect-[10/9] lg:aspect-square bg-slate-100 rounded-2xl overflow-hidden group mx-auto">
+        <div className="relative w-full aspect-[4/3] lg:aspect-square bg-slate-100 rounded-2xl overflow-hidden group mx-auto">
           <Image
             src={currentPhoto}
-            alt={`${product.nama} - Foto ${currentPhotoIndex + 1}`}
+            alt={`${product.nama?.replace(" - ", " ")} - Foto ${currentPhotoIndex + 1}`}
             fill
             className="object-contain"
             priority
           />
-
-          {/* Navigation Arrows */}
-          {displayPhotos.length > 1 && (
-            <>
-              <button
-                onClick={goToPrevious}
-                className="absolute left-4 top-1/2 -translate-y-1/2 p-2 bg-white/80 hover:bg-white rounded-full transition-all opacity-0 group-hover:opacity-100 z-10"
-                aria-label="Foto sebelumnya"
-              >
-                <ChevronLeft className="w-5 h-5 text-slate-700" />
-              </button>
-              <button
-                onClick={goToNext}
-                className="absolute right-4 top-1/2 -translate-y-1/2 p-2 bg-white/80 hover:bg-white rounded-full transition-all opacity-0 group-hover:opacity-100 z-10"
-                aria-label="Foto berikutnya"
-              >
-                <ChevronRight className="w-5 h-5 text-slate-700" />
-              </button>
-            </>
-          )}
 
           {/* Thumbnail Gallery - Floating at bottom */}
           {displayPhotos.length > 1 && (

@@ -52,8 +52,11 @@ const BulkOrderModal: React.FC<BulkOrderModalProps> = ({
           </h2>
           <p className="text-gray-500 text-sm leading-relaxed mb-8">
             Dapatkan harga khusus grosir untuk komoditas{" "}
-            <span className="font-bold text-gray-900">{product?.nama}</span>.
-            Permintaan Anda akan dikirim langsung ke Penjual untuk dikonfirmasi.
+            <span className="font-bold text-gray-900">
+              {product?.nama?.replace(" - ", " ")}
+            </span>
+            . Permintaan Anda akan dikirim langsung ke Penjual untuk
+            dikonfirmasi.
           </p>
 
           <div className="space-y-4 mb-10 text-left bg-gray-50 p-6 rounded-3xl border border-gray-100">

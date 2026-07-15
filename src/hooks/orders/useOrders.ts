@@ -7,7 +7,7 @@ import type { ApiOrderData } from "@/types";
 
 export const useOrders = (isAuthenticated: boolean, _hasHydrated: boolean) => {
   const query = useInfiniteQuery({
-    queryKey: ["orders"],
+    queryKey: ["orders", "infinite"],
     queryFn: ({ pageParam = 1 }) =>
       ordersApi.getMyOrders({ page: pageParam, limit: 10 }),
     initialPageParam: 1,

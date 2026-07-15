@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect, Suspense } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import {
   ArrowLeft,
   Plus,
@@ -15,11 +15,13 @@ import {
   Briefcase,
   Warehouse,
   MoreHorizontal,
+  MapPin,
 } from "lucide-react";
 
 import { addressesApi } from "@/lib/ecommerce-api";
 import { AddressListSkeleton } from "@/src/components/ecommerce/Skeleton";
 import EmptyState from "@/src/components/ecommerce/EmptyState";
+import ActionModal from "@/src/components/ActionModal";
 import type { ApiAddressData } from "@/types";
 
 const LABEL_ICONS: Record<string, React.ReactNode> = {
@@ -31,6 +33,8 @@ const LABEL_ICONS: Record<string, React.ReactNode> = {
 
 function AlamatPageContent() {
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const redirectUrl = searchParams.get("redirect");
 
   const [addresses, setAddresses] = useState<ApiAddressData[]>([]);
   const [loading, setLoading] = useState(true);
@@ -41,6 +45,10 @@ function AlamatPageContent() {
   const [confirmDelete, setConfirmDelete] = useState<string | number | null>(
     null,
   );
+  const [confirmSetDefault, setConfirmSetDefault] = useState<
+    string | number | null
+  >(null);
+  const [showMaxModal, setShowMaxModal] = useState(false);
 
   const showToast = (msg: string) => {
     setToast(msg);
@@ -64,7 +72,8 @@ function AlamatPageContent() {
     Promise.resolve().then(() => fetchAddresses());
   }, []);
 
-  const handleOpenForm = (address?: ApiAddressData) => {
+  const handleOpenForm = (e?: React.MouseEvent, address?: ApiAddressData) => {
+    if (e) e.stopPropagation();
     if (address) {
       router.push(`/profil/alamat/form?id=${address.id}`);
     } else {
@@ -88,10 +97,13 @@ function AlamatPageContent() {
 
   const handleSetDefault = async (id: string | number) => {
     setActionLoading(true);
+    setConfirmSetDefault(null);
     try {
       await addressesApi.setDefault(String(id));
       showToast("Alamat utama diperbarui ✓");
       await fetchAddresses();
+      // Segarkan state route Next.js di background
+      router.refresh();
     } catch {
       showToast("Gagal mengatur alamat utama.");
     } finally {
@@ -105,7 +117,7 @@ function AlamatPageContent() {
         <div className="bg-white border-b border-gray-100 p-4 sticky top-0 lg:top-16 z-40">
           <div className="flex items-center gap-3 max-w-2xl mx-auto">
             <button
-              onClick={() => router.back()}
+              onClick={() => router.push("/profil")}
               className="p-2 hover:bg-gray-50 rounded-xl transition-colors"
             >
               <ArrowLeft size={20} className="text-gray-600" />
@@ -136,7 +148,7 @@ function AlamatPageContent() {
       <div className="bg-white border-b border-gray-100 px-4 py-3 sticky top-0 lg:top-16 z-[999]">
         <div className="relative flex items-center justify-center max-w-2xl mx-auto">
           <button
-            onClick={() => router.back()}
+            onClick={() => router.push("/profil")}
             className="absolute left-0 p-2 hover:bg-gray-50 rounded-full transition-colors"
           >
             <ArrowLeft size={20} className="text-gray-600" />
@@ -168,41 +180,48 @@ function AlamatPageContent() {
             {addresses.map((address) => (
               <div
                 key={address.id}
+                onClick={() => {
+                  if (redirectUrl) {
+                    const separator = redirectUrl.includes("?") ? "&" : "?";
+                    router.push(
+                      `${redirectUrl}${separator}addressId=${address.id}`,
+                    );
+                  }
+                }}
                 className={`bg-white rounded-2xl border overflow-hidden transition-all ${
+                  redirectUrl ? "cursor-pointer hover:border-primary-400" : ""
+                } ${
                   address.isDefault
-                    ? "border-primary-400 shadow-[0_2px_12px_rgba(22,163,74,0.08)]"
-                    : "border-gray-100 shadow-sm hover:border-gray-200"
+                    ? "border-gray-200"
+                    : "border-gray-200 hover:border-gray-300"
                 }`}
               >
-                {/* Default badge stripe */}
-                {address.isDefault && (
-                  <div className="bg-primary-600 px-4 py-1.5 flex items-center gap-1.5">
-                    <Star size={11} fill="white" className="text-white" />
-                    <span className="text-[11px] font-bold text-white uppercase tracking-wide">
-                      Alamat Utama
-                    </span>
-                  </div>
-                )}
-
                 <div className="p-4">
                   <div className="flex items-start justify-between mb-3">
-                    <div className="flex items-center gap-2">
-                      <span className="flex items-center gap-1.5 bg-gray-100 text-gray-700 text-xs font-bold px-2.5 py-1 rounded-lg">
+                    <div className="flex items-center gap-2 flex-wrap">
+                      <span className="flex items-center gap-1.5 bg-gray-100 text-gray-600 text-xs font-medium px-2.5 py-1 rounded-lg">
                         {LABEL_ICONS[address.label || "Lainnya"] || (
                           <MoreHorizontal size={12} />
                         )}
                         {address.label || "Alamat"}
                       </span>
+                      {address.isDefault && (
+                        <span className="flex items-center gap-1 text-primary-600 text-xs font-medium">
+                          <Star size={11} fill="currentColor" />
+                          Utama
+                        </span>
+                      )}
                     </div>
                     <div className="flex gap-1">
                       <button
-                        onClick={() => handleOpenForm(address)}
+                        onClick={(e) => handleOpenForm(e, address)}
                         className="p-2 text-gray-400 hover:text-blue-600 hover:bg-blue-50 rounded-xl transition-colors"
                       >
                         <Edit2 size={15} />
                       </button>
                       <button
-                        onClick={() => {
+                        onClick={(e) => {
+                          e.stopPropagation();
                           if (address.id) setConfirmDelete(address.id);
                         }}
                         className="p-2 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded-xl transition-colors"
@@ -221,8 +240,9 @@ function AlamatPageContent() {
 
                   {!address.isDefault && (
                     <button
-                      onClick={() => {
-                        if (address.id) handleSetDefault(address.id);
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        if (address.id) setConfirmSetDefault(address.id);
                       }}
                       disabled={actionLoading}
                       className="mt-3 w-full text-xs font-semibold text-primary-600 hover:text-primary-700 py-2 bg-primary-50 hover:bg-primary-100 rounded-xl transition-colors disabled:opacity-50"
@@ -241,14 +261,56 @@ function AlamatPageContent() {
       <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-100 p-4 z-40 pb-safe">
         <div className="max-w-2xl mx-auto">
           <button
-            onClick={() => handleOpenForm()}
-            className="w-full flex items-center justify-center gap-2 py-3.5 bg-primary-600 text-white rounded-2xl font-semibold shadow-lg shadow-primary-500/20 hover:bg-primary-700 transition-all"
+            onClick={(e) => {
+              if (addresses.length >= 3) {
+                setShowMaxModal(true);
+              } else {
+                handleOpenForm(e);
+              }
+            }}
+            className={`w-full flex items-center justify-center gap-2 py-3.5 rounded-2xl font-medium transition-all ${
+              addresses.length >= 3
+                ? "bg-gray-50 border border-gray-200 text-gray-400 cursor-not-allowed"
+                : "bg-white border border-gray-200 text-primary-600 hover:bg-gray-50"
+            }`}
           >
             <Plus size={18} />
             Tambah Alamat Baru
           </button>
         </div>
       </div>
+
+      {/* Max Address Modal */}
+      <ActionModal
+        isOpen={showMaxModal}
+        onClose={() => setShowMaxModal(false)}
+        title="Batas Alamat Tercapai"
+        description="Anda sudah menyimpan 3 alamat (batas maksimal). Hapus atau edit alamat yang ada untuk mengelola daftar alamat Anda."
+        icon={<MapPin size={28} className="text-orange-500" />}
+        primaryButton={{
+          label: "Oke, Mengerti",
+          onClick: () => setShowMaxModal(false),
+        }}
+      />
+
+      {/* Confirmation Modal for Default Address */}
+      <ActionModal
+        isOpen={!!confirmSetDefault}
+        onClose={() => setConfirmSetDefault(null)}
+        title="Jadikan Alamat Utama?"
+        description="Alamat ini akan digunakan secara otomatis saat checkout."
+        icon={<Star size={28} className="text-primary-500" />}
+        primaryButton={{
+          label: actionLoading ? "Menyimpan..." : "Ya, Jadikan Utama",
+          onClick: () => {
+            if (confirmSetDefault) handleSetDefault(confirmSetDefault);
+          },
+        }}
+        secondaryButton={{
+          label: "Batal",
+          onClick: () => setConfirmSetDefault(null),
+        }}
+      />
 
       {/* ── Delete Confirm Bottom Sheet ── */}
       {confirmDelete && (

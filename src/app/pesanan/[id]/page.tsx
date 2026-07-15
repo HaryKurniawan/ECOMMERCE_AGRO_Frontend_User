@@ -53,6 +53,24 @@ const OrderDetailPage = () => {
 
   const timeLeft = useCountdown(order?.createdAt);
 
+  React.useEffect(() => {
+    if (
+      order?.status === "MENUNGGU_BAYAR" &&
+      timeLeft.hours === 0 &&
+      timeLeft.minutes === 0 &&
+      timeLeft.seconds === 0
+    ) {
+      const expiry = new Date(order.createdAt).getTime() + 1 * 60 * 60 * 1000;
+      if (Date.now() >= expiry) {
+        const reloadKey = `reloaded_${order.id}`;
+        if (!sessionStorage.getItem(reloadKey)) {
+          sessionStorage.setItem(reloadKey, "true");
+          window.location.reload();
+        }
+      }
+    }
+  }, [order?.status, order?.createdAt, order?.id, timeLeft]);
+
   if (loading) return <OrderDetailSkeleton />;
   if (!order)
     return (
@@ -160,7 +178,7 @@ const OrderDetailPage = () => {
                   {item.produk?.gambarUrl ? (
                     <Image
                       src={item.produk.gambarUrl}
-                      alt={item.produk.nama || ""}
+                      alt={item.produk.nama?.replace(" - ", " ") || ""}
                       fill
                       className="object-cover"
                       unoptimized
@@ -171,7 +189,7 @@ const OrderDetailPage = () => {
                 </div>
                 <div className="flex-1 min-w-0">
                   <p className="text-[13px] font-semibold text-gray-800 truncate">
-                    {item.produk?.nama || "Item"}
+                    {item.produk?.nama?.replace(" - ", " ") || "Item"}
                   </p>
                   <p className="text-[11px] text-gray-400 mt-0.5">
                     {item.jumlah} x {formatRupiah(item.harga)}

@@ -42,7 +42,7 @@ function mapAuthResponse(data: BackendAuthPayload): AuthResponse {
     user: {
       id: p.id,
       email: p.email,
-      name: p.nama ?? p.name,
+      name: p.nama?.replace(" - ", " ") ?? p.name,
       role: p.peran ?? p.role ?? "",
       isVerifiedB2B: p.terverifikasiB2B ?? p.isVerifiedB2B,
     },

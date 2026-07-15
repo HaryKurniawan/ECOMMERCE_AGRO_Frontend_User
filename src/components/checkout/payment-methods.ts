@@ -12,34 +12,6 @@ export interface PaymentMethod {
 
 export const PAYMENT_METHODS: PaymentMethod[] = [
   {
-    id: "BCA_VA",
-    label: "BCA Virtual Account",
-    badge: "BCA",
-    bgColor: "bg-[#005BAB]",
-    sublabel: "Transfer Bank",
-  },
-  {
-    id: "BRI_VA",
-    label: "BRI Virtual Account",
-    badge: "BRI",
-    bgColor: "bg-[#003F8A]",
-    sublabel: "Transfer Bank",
-  },
-  {
-    id: "BNI_VA",
-    label: "BNI Virtual Account",
-    badge: "BNI",
-    bgColor: "bg-[#F37021]",
-    sublabel: "Transfer Bank",
-  },
-  {
-    id: "MANDIRI_VA",
-    label: "Mandiri Virtual Account",
-    badge: "MDR",
-    bgColor: "bg-[#003D8F]",
-    sublabel: "Transfer Bank",
-  },
-  {
     id: "QRIS",
     label: "QRIS",
     logo: "/images/payment/QRIS.png",
@@ -73,5 +45,33 @@ export const PAYMENT_METHODS: PaymentMethod[] = [
     logo: "/images/payment/SPAY.png",
     bgColor: "bg-[#EE4D2D]",
     sublabel: "E-Wallet",
+  },
+  {
+    id: "BCA_VA",
+    label: "BCA Virtual Account",
+    logo: "/images/payment/bca.png",
+    bgColor: "bg-white border border-gray-200",
+    sublabel: "Transfer Bank",
+  },
+  {
+    id: "BRI_VA",
+    label: "BRI Virtual Account",
+    logo: "/images/payment/bri.png",
+    bgColor: "bg-white border border-gray-200",
+    sublabel: "Transfer Bank",
+  },
+  {
+    id: "BNI_VA",
+    label: "BNI Virtual Account",
+    logo: "/images/payment/bni.png",
+    bgColor: "bg-white border border-gray-200",
+    sublabel: "Transfer Bank",
+  },
+  {
+    id: "MANDIRI_VA",
+    label: "Mandiri Virtual Account",
+    logo: "/images/payment/mandiri.png",
+    bgColor: "bg-white border border-gray-200",
+    sublabel: "Transfer Bank",
   },
 ];

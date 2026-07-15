@@ -230,7 +230,7 @@ const ChatSidebar: React.FC<ChatSidebarProps> = ({
         {sellerConversations.length === 0 && (
           <div className="pt-4">
             <EmptyState
-              illustration="/empty-chat.svg"
+              icon={<MessageCircle size={48} />}
               title="Belum ada percakapan"
               description="Chat dengan penjual langsung dari halaman produk mereka."
             />

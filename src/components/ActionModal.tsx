@@ -49,13 +49,13 @@ const ActionModal: React.FC<ActionModalProps> = ({
       }}
       styles={{
         body: {
-          padding: "16px 8px 8px",
+          padding: "4px 2px 2px",
         },
       }}
     >
       <div className="flex flex-col items-center justify-center text-center">
         {illustration ? (
-          <div className="relative w-full h-44 mb-6">
+          <div className="relative w-full h-40 mb-6">
             <Image
               src={illustration}
               alt="Illustration"
@@ -88,7 +88,7 @@ const ActionModal: React.FC<ActionModalProps> = ({
             danger={primaryButton.danger}
             size="large"
             onClick={primaryButton.onClick}
-            className={`flex-1 rounded-2xl font-semibold !py-3.5 h-auto leading-none text-[13px] shadow-none ${!primaryButton.danger ? "bg-primary-600 hover:bg-primary-500 border-none" : ""}`}
+            className={`flex-1 rounded-2xl font-semibold !py-3.5 h-auto leading-none text-[13px] shadow-none ${!primaryButton.danger ? "!bg-primary-600 hover:!bg-primary-500 active:!bg-primary-700 !border-none" : ""}`}
           >
             {primaryButton.label}
           </Button>
@@ -98,7 +98,7 @@ const ActionModal: React.FC<ActionModalProps> = ({
               type="default"
               size="large"
               onClick={secondaryButton.onClick || onClose}
-              className="flex-1 rounded-2xl font-semibold !py-3.5 h-auto leading-none text-[13px] text-gray-400 border border-gray-100 bg-white hover:bg-gray-50 shadow-none"
+              className="flex-1 rounded-2xl font-semibold !py-3.5 h-auto leading-none text-[13px] text-gray-500 border border-gray-200 bg-white hover:!bg-primary-50 hover:!text-primary-600 hover:!border-primary-600 shadow-none"
             >
               {secondaryButton.label}
             </Button>

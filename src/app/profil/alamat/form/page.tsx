@@ -2,7 +2,6 @@
 
 import { Suspense, useEffect } from "react";
 import dynamic from "next/dynamic";
-import { Modal } from "antd";
 import {
   Loader2,
   ArrowLeft,
@@ -18,6 +17,7 @@ import {
 } from "lucide-react";
 
 import { useAlamatForm } from "@/src/hooks/alamat/useAlamatForm";
+import ActionModal from "@/src/components/ActionModal";
 
 // Dynamic import for SSR safety
 const MapPicker = dynamic(() => import("@/src/components/ui/MapPicker"), {
@@ -64,20 +64,7 @@ function AlamatFormPageContent() {
     defaultCity,
   } = useAlamatForm();
 
-  useEffect(() => {
-    if (cityWarning) {
-      Modal.warning({
-        title: "Area Belum Tersedia",
-        content: <p className="text-sm mt-2">{cityWarning}</p>,
-        centered: true,
-        okText: "Mengerti",
-        onOk: () => {
-          clearCityWarning();
-        },
-      });
-    }
-  }, [cityWarning, clearCityWarning]);
-
+  // Removed Modal.warning useEffect as we are using ActionModal now
   if (loading) {
     return (
       <div className="min-h-screen bg-gray-50 flex flex-col items-center justify-center py-16 gap-3">
@@ -350,6 +337,18 @@ function AlamatFormPageContent() {
           </div>
         </form>
       </div>
+
+      <ActionModal
+        isOpen={!!cityWarning}
+        onClose={clearCityWarning}
+        title="Area Belum Tersedia"
+        description={cityWarning}
+        icon={<MapPin size={28} className="text-orange-500" />}
+        primaryButton={{
+          label: "Mengerti",
+          onClick: clearCityWarning,
+        }}
+      />
     </div>
   );
 }

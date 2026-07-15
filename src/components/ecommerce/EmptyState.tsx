@@ -16,7 +16,8 @@ import Image from "next/image";
 
 interface EmptyStateProps {
   /** Path to SVG/image in /public, e.g. '/empty-cart.svg' */
-  illustration: string;
+  illustration?: string;
+  icon?: React.ReactNode;
   title: string;
   description: string;
   actionLabel?: string;
@@ -28,6 +29,7 @@ interface EmptyStateProps {
 
 const EmptyState: React.FC<EmptyStateProps> = ({
   illustration,
+  icon,
   title,
   description,
   actionLabel,
@@ -40,16 +42,22 @@ const EmptyState: React.FC<EmptyStateProps> = ({
     <div
       className={`flex flex-col items-center justify-center text-center py-2 px-6 ${className}`}
     >
-      {/* Illustration */}
-      <div className="relative w-52 h-52 mb-4 select-none">
-        <Image
-          src={illustration}
-          alt={title}
-          fill
-          className="object-contain drop-shadow-sm"
-          priority
-        />
-      </div>
+      {/* Icon or Illustration */}
+      {icon ? (
+        <div className="mb-6 flex items-center justify-center w-24 h-24 rounded-full bg-emerald-50 text-emerald-500">
+          {icon}
+        </div>
+      ) : illustration ? (
+        <div className="relative w-52 h-52 mb-4 select-none">
+          <Image
+            src={illustration}
+            alt={title}
+            fill
+            className="object-contain drop-shadow-sm"
+            priority
+          />
+        </div>
+      ) : null}
 
       {/* Text */}
       <h2 className="font-display font-semibold text-gray-900 text-xl mb-2 leading-tight">

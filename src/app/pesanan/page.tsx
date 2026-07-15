@@ -79,10 +79,16 @@ const PesananContent = () => {
           | "diproses"
           | "dikirim"
           | "tiba"
-          | "selesai") || "menunggu_bayar";
+          | "selesai"
+          | "dibatalkan") || "menunggu_bayar";
 
   const [activeTab, setActiveTab] = useState<
-    "menunggu_bayar" | "diproses" | "dikirim" | "tiba" | "selesai"
+    | "menunggu_bayar"
+    | "diproses"
+    | "dikirim"
+    | "tiba"
+    | "selesai"
+    | "dibatalkan"
   >(initialTab as any);
   const [confirmingId, setConfirmingId] = useState<string | null>(null);
 
@@ -121,6 +127,7 @@ const PesananContent = () => {
     { id: "dikirim", label: "Dikirim" },
     { id: "tiba", label: "Tiba" },
     { id: "selesai", label: "Selesai" },
+    { id: "dibatalkan", label: "Dibatalkan" },
   ];
 
   const getStatusFromTab = (tab: string) => {
@@ -135,6 +142,8 @@ const PesananContent = () => {
         return ["ARRIVED"];
       case "selesai":
         return ["SELESAI"];
+      case "dibatalkan":
+        return ["DIBATALKAN"];
       default:
         return [];
     }
@@ -236,7 +245,8 @@ const PesananContent = () => {
                       | "diproses"
                       | "dikirim"
                       | "tiba"
-                      | "selesai",
+                      | "selesai"
+                      | "dibatalkan",
                   )
                 }
                 className={`px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap transition-all border ${

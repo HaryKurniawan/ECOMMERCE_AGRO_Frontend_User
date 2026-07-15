@@ -57,14 +57,14 @@ const ProductCard: React.FC<ProductCardProps> = ({
       }}
       role="button"
       tabIndex={0}
-      className="bg-white rounded-2xl border border-gray-100 overflow-hidden text-left group w-full h-full flex flex-col shadow-sm cursor-pointer transition-all duration-300"
+      className="bg-white rounded-2xl border border-gray-200 overflow-hidden text-left group w-full h-full flex flex-col cursor-pointer transition-all duration-300"
     >
       {/* Image Area */}
       <div className="relative bg-gray-50 h-36 lg:h-40 flex items-center justify-center flex-shrink-0 overflow-hidden border-b border-gray-50">
         {product.gambarUrl ? (
           <Image
             src={product.gambarUrl}
-            alt={product.nama}
+            alt={product.nama?.replace(" - ", " ")}
             fill
             sizes="(max-width: 768px) 50vw, 33vw"
             className="object-cover group-hover:scale-110 transition-transform duration-500"
@@ -99,7 +99,7 @@ const ProductCard: React.FC<ProductCardProps> = ({
 
         {/* Nama Produk — LEBIH BESAR */}
         <h3 className="font-semibold text-sm text-gray-900 leading-snug group-hover:text-primary-700 transition-colors line-clamp-2 mb-1">
-          {product.nama}
+          {product.nama?.replace(" - ", " ")}
         </h3>
 
         {/* Label komoditas / kategori */}
@@ -156,7 +156,7 @@ const ProductCard: React.FC<ProductCardProps> = ({
                 if (onAddToCart) onAddToCart(product);
               }}
               className={`w-full mt-3 py-2 bg-white border border-gray-200 hover:border-primary-300 hover:bg-gray-50 text-primary-600 rounded-xl text-xs font-medium items-center justify-center gap-1.5 transition-all active:scale-95 ${hideCartOnMobile ? "hidden lg:flex" : "flex"}`}
-              aria-label={`Tambah ${product.nama} ke keranjang`}
+              aria-label={`Tambah ${product.nama?.replace(" - ", " ")} ke keranjang`}
             >
               <Plus size={14} /> Keranjang
             </button>

@@ -15,12 +15,15 @@ interface AuthState {
   isAuthenticated: boolean;
   _hasHydrated: boolean;
   isLoginModalOpen: boolean;
+  isPhoneVerificationModalOpen: boolean;
   showOnboarding: boolean;
   setAuth: (user: User) => void;
   clearAuth: () => void;
   setHasHydrated: (state: boolean) => void;
   openLoginModal: () => void;
   closeLoginModal: () => void;
+  openPhoneVerificationModal: () => void;
+  closePhoneVerificationModal: () => void;
   triggerOnboarding: () => void;
   dismissOnboarding: () => void;
 }
@@ -32,12 +35,18 @@ export const useAuthStore = create<AuthState>()(
       isAuthenticated: false,
       _hasHydrated: false,
       isLoginModalOpen: false,
+      isPhoneVerificationModalOpen: false,
       showOnboarding: false,
       setAuth: (user) => {
         set({ user, isAuthenticated: true });
       },
       clearAuth: () => {
-        set({ user: null, isAuthenticated: false, isLoginModalOpen: false });
+        set({
+          user: null,
+          isAuthenticated: false,
+          isLoginModalOpen: false,
+          isPhoneVerificationModalOpen: false,
+        });
       },
       setHasHydrated: (state) => {
         set({ _hasHydrated: state });
@@ -47,6 +56,12 @@ export const useAuthStore = create<AuthState>()(
       },
       closeLoginModal: () => {
         set({ isLoginModalOpen: false });
+      },
+      openPhoneVerificationModal: () => {
+        set({ isPhoneVerificationModalOpen: true });
+      },
+      closePhoneVerificationModal: () => {
+        set({ isPhoneVerificationModalOpen: false });
       },
       triggerOnboarding: () => {
         // Only show if not already dismissed permanently
