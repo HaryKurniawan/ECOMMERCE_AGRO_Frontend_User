@@ -2,14 +2,10 @@ pipeline {
     agent any
 
     environment {
-        // Tentukan variabel berdasarkan nama branch yang sedang di-deploy
-        // Jika Jenkins tidak mendeteksi branch_name (bukan multibranch), kita anggap ini main/production agar kompatibel mundur
-        IS_PRODUCTION = "${env.BRANCH_NAME == 'main' || env.BRANCH_NAME == 'master' || env.BRANCH_NAME == null}"
-        
-        // Atur port dan nama container sesuai target
-        APP_PORT = "${IS_PRODUCTION == 'true' ? '3001' : '3004'}"
-        CONTAINER_NAME = "${IS_PRODUCTION == 'true' ? 'agro-frontend-user' : 'agro-frontend-staging'}"
-        ENV_CRED_ID = "${IS_PRODUCTION == 'true' ? 'agro_env_frontend_user' : 'frontend-user-env-staging'}"
+        // Atur port dan nama container sesuai target (Nginx mengarah ke 3002)
+        APP_PORT = "3002"
+        CONTAINER_NAME = "agro-frontend-user"
+        ENV_CRED_ID = "agro_env_frontend_user"
         IMAGE_NAME = "${CONTAINER_NAME}-image"
     }
 
@@ -63,7 +59,7 @@ pipeline {
                 echo "1. Menyalakan versi baru di latar belakang (tanpa menggangu live server)..."
                 docker run -d \
                 --name $TEST_CONTAINER \
-                --network 1panel-network \
+                --network agro-network \
                 --env-file .env.local \
                 ${IMAGE_NAME}
 
@@ -85,7 +81,7 @@ pipeline {
                     echo "4. Mengalihkan lalu lintas pengunjung ke versi terbaru..."
                     docker run -d \
                     --name ${CONTAINER_NAME} \
-                    --network 1panel-network \
+                    --network agro-network \
                     --env-file .env.local \
                     -p ${APP_PORT}:3000 \
                     ${IMAGE_NAME}
