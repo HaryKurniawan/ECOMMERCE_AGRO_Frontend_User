@@ -32,11 +32,6 @@ function VerifyContent() {
   const [resending, setResending] = useState(false);
   const [resent, setResent] = useState(false);
 
-  const [otpMode, setOtpMode] = useState(false);
-  const [otpCode, setOtpCode] = useState("");
-  const [verifyingOtp, setVerifyingOtp] = useState(false);
-  const [otpSuccess, setOtpSuccess] = useState(false);
-
   const handleResend = async () => {
     if (resending || !email || email === "email Anda") return;
     setResending(true);
@@ -48,20 +43,6 @@ function VerifyContent() {
       alert("Gagal mengirim ulang email verifikasi. Coba lagi nanti.");
     } finally {
       setResending(false);
-    }
-  };
-
-  const handleVerifyOtp = async () => {
-    if (!email || email === "email Anda" || otpCode.length < 6) return;
-    setVerifyingOtp(true);
-    try {
-      await authApi.verifyOtp({ email, otpCode });
-      setOtpSuccess(true);
-      alert("WhatsApp berhasil diverifikasi!");
-    } catch (err: any) {
-      alert(err.response?.data?.message || "OTP tidak valid");
-    } finally {
-      setVerifyingOtp(false);
     }
   };
 
@@ -195,49 +176,6 @@ function VerifyContent() {
               >
                 <ArrowLeft size={16} /> Kembali ke Login
               </button>
-
-              {!otpMode ? (
-                <button
-                  onClick={() => setOtpMode(true)}
-                  className="w-full bg-transparent text-emerald-600 font-medium py-2 flex items-center justify-center gap-2 hover:text-emerald-700 transition-colors text-sm mt-4 border-t border-emerald-100 pt-4"
-                >
-                  <MessageCircle size={16} /> Punya kode OTP WhatsApp?
-                  Verifikasi sekarang
-                </button>
-              ) : (
-                <div className="mt-4 border-t border-emerald-100 pt-4">
-                  <h3 className="text-sm font-bold text-gray-800 mb-2">
-                    Verifikasi WhatsApp
-                  </h3>
-                  <div className="flex gap-2">
-                    <input
-                      type="text"
-                      placeholder="Masukkan 6 Digit OTP"
-                      value={otpCode}
-                      onChange={(e) =>
-                        setOtpCode(
-                          e.target.value.replace(/\D/g, "").slice(0, 6),
-                        )
-                      }
-                      className="flex-1 bg-gray-50 border border-gray-200 rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500"
-                      disabled={otpSuccess}
-                    />
-                    <button
-                      onClick={handleVerifyOtp}
-                      disabled={
-                        verifyingOtp || otpCode.length < 6 || otpSuccess
-                      }
-                      className="bg-emerald-600 text-white px-4 rounded-xl text-sm font-semibold hover:bg-emerald-700 disabled:opacity-50"
-                    >
-                      {verifyingOtp
-                        ? "Loading..."
-                        : otpSuccess
-                          ? "Berhasil"
-                          : "Kirim"}
-                    </button>
-                  </div>
-                </div>
-              )}
             </div>
           </div>
         </div>

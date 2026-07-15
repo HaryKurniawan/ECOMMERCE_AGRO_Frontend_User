@@ -8,12 +8,7 @@ import { useAddItemToCart } from "@/src/hooks/cart/useCartQuery";
 import type { EcomProduct } from "@/types";
 
 export function useAddToCart() {
-  const {
-    isAuthenticated,
-    _hasHydrated,
-    openLoginModal,
-    openPhoneVerificationModal,
-  } = useAuthStore();
+  const { isAuthenticated, _hasHydrated, openLoginModal } = useAuthStore();
   const { profile } = useProfile(isAuthenticated, _hasHydrated);
   const addItemMutation = useAddItemToCart();
 
@@ -35,13 +30,7 @@ export function useAddToCart() {
       setSelectedProduct(product);
       setShowAddToCartModal(true);
     },
-    [
-      _hasHydrated,
-      isAuthenticated,
-      openLoginModal,
-      profile,
-      openPhoneVerificationModal,
-    ],
+    [_hasHydrated, isAuthenticated, openLoginModal, profile],
   );
 
   const handleConfirmAddToCart = useCallback(

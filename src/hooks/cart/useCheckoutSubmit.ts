@@ -34,11 +34,6 @@ export function useCheckoutSubmit(
   const { profile } = useProfile(isAuthenticated, _hasHydrated);
 
   const handleSubmit = useCallback(async () => {
-    if (profile && !profile.noTeleponTerverifikasiPada) {
-      openPhoneVerificationModal();
-      return;
-    }
-
     if (!selectedAddressId) {
       setErrorModal({
         isOpen: true,

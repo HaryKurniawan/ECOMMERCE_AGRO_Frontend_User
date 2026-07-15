@@ -108,29 +108,6 @@ const CheckoutContent: React.FC = () => {
             onSelect={(id) => setSelectedAddressId(id)}
           />
 
-          {/* Phone Verification Card */}
-          {profile && !profile.noTeleponTerverifikasiPada && (
-            <div className="bg-white border border-gray-200 rounded-2xl p-6 flex items-center justify-between gap-3">
-              <div className="flex items-center gap-2.5">
-                <ShieldAlert
-                  className="text-primary-600 flex-shrink-0"
-                  size={18}
-                />
-                <span className="text-sm font-normal text-gray-800">
-                  {profile.phone
-                    ? "Nomor WhatsApp belum diverifikasi"
-                    : "Nomor telepon belum diisi"}
-                </span>
-              </div>
-              <button
-                onClick={openPhoneVerificationModal}
-                className="px-4 py-2 bg-primary-600 text-white font-normal text-xs rounded-lg hover:bg-primary-700 active:scale-95 transition-all whitespace-nowrap"
-              >
-                {profile.phone ? "Verifikasi" : "Isi Sekarang"}
-              </button>
-            </div>
-          )}
-
           <div className="space-y-6">
             <h2 className="font-semibold text-lg text-gray-800 flex items-center gap-2 px-1">
               Pesanan Anda

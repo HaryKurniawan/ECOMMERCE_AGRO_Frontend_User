@@ -72,8 +72,6 @@ const ProfileDetailPage: React.FC = () => {
 
   if (!profile) return null;
 
-  const isPhoneVerified = !!profile.noTeleponTerverifikasiPada;
-
   return (
     <div className="min-h-screen bg-gray-50 pb-20">
       {/* Toast Notification */}
@@ -207,12 +205,6 @@ const ProfileDetailPage: React.FC = () => {
                 <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">
                   Nomor Telepon
                 </p>
-                {profile.phone && isPhoneVerified && (
-                  <span className="flex items-center gap-0.5 text-[10px] bg-green-50 text-green-600 px-1.5 py-0.5 rounded-full font-bold border border-green-100">
-                    <CheckCircle2 size={9} />
-                    Terverifikasi
-                  </span>
-                )}
               </div>
               <div className="flex items-center justify-between gap-2">
                 {profile.phone ? (
@@ -226,23 +218,10 @@ const ProfileDetailPage: React.FC = () => {
                 )}
                 <button
                   onClick={() => openPhoneVerificationModal()}
-                  className={`p-1.5 rounded-lg transition-colors flex items-center gap-1 text-xs font-semibold flex-shrink-0 ${
-                    isPhoneVerified
-                      ? "text-primary-600 hover:bg-primary-50"
-                      : "bg-red-50 text-red-600 hover:bg-red-100"
-                  }`}
+                  className="p-1.5 rounded-lg transition-colors flex items-center gap-1 text-xs font-semibold flex-shrink-0 text-primary-600 hover:bg-primary-50"
                 >
-                  {isPhoneVerified ? (
-                    <>
-                      <Edit2 size={13} />
-                      Ubah
-                    </>
-                  ) : (
-                    <>
-                      <ShieldAlert size={13} />
-                      Verifikasi
-                    </>
-                  )}
+                  <Edit2 size={13} />
+                  {profile.phone ? "Ubah" : "Tambah"}
                 </button>
               </div>
             </div>

@@ -31,12 +31,7 @@ const DetailProdukPage: React.FC = () => {
   const params = useParams();
   const id = params.id as string;
   const router = useRouter();
-  const {
-    isAuthenticated,
-    _hasHydrated,
-    openLoginModal,
-    openPhoneVerificationModal,
-  } = useAuthStore();
+  const { isAuthenticated, _hasHydrated, openLoginModal } = useAuthStore();
 
   const { profile } = useProfile(isAuthenticated, _hasHydrated);
 
