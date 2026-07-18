@@ -70,6 +70,7 @@ export const ordersApi = {
     harga: number;
     alamatKirim: string;
     catatan?: string;
+    metodeBayar?: string;
     packagingSpecs?: any[];
     diskonGrosirPersen?: number;
   }) =>
@@ -84,7 +85,7 @@ export const ordersApi = {
       ],
       alamatKirim: data.alamatKirim,
       catatan: data.catatan,
-      metodeBayar: "MANUAL",
+      metodeBayar: data.metodeBayar || "MANUAL",
       packagingSpecs: data.packagingSpecs,
       diskonGrosirPersen: data.diskonGrosirPersen,
     }),
