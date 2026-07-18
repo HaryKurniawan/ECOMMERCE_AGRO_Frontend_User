@@ -70,6 +70,8 @@ export const ordersApi = {
     harga: number;
     alamatKirim: string;
     catatan?: string;
+    packagingSpecs?: any[];
+    diskonGrosirPersen?: number;
   }) =>
     apiClient.post("/ecom-pesanan/grosir", {
       item: [
@@ -83,5 +85,7 @@ export const ordersApi = {
       alamatKirim: data.alamatKirim,
       catatan: data.catatan,
       metodeBayar: "MANUAL",
+      packagingSpecs: data.packagingSpecs,
+      diskonGrosirPersen: data.diskonGrosirPersen,
     }),
 };

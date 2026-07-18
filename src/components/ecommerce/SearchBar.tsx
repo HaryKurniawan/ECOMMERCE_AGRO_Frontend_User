@@ -34,11 +34,11 @@ const SearchBar: React.FC<SearchBarProps> = ({
     <div className={`relative flex items-center gap-2 ${className}`}>
       <div
         className={`relative flex-1 flex items-center rounded-xl transition-all duration-200 border 
-          ${
-            isGlass
-              ? "bg-white/20 backdrop-blur-md border-white/30 focus-within:bg-white/30"
-              : "bg-white border-gray-200 shadow-sm focus-within:ring-2 focus-within:ring-primary-100 focus-within:border-primary-400"
-          }`}
+            ${
+              isGlass
+                ? "bg-white/20 backdrop-blur-md border-white/30 focus-within:bg-white/30"
+                : "bg-white border-gray-200 focus-within:ring-2 focus-within:ring-primary-100 focus-within:border-primary-400"
+            }`}
       >
         <Search
           size={18}

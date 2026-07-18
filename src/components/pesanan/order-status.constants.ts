@@ -46,6 +46,15 @@ export const ORDER_STATUS_COLORS = new Map<
   { text: string; bg: string; ring: string; dot: string }
 >([
   [
+    "MENUNGGU_KONFIRMASI_SELLER",
+    {
+      text: "text-orange-600",
+      bg: "bg-orange-50",
+      ring: "ring-orange-200",
+      dot: "bg-orange-500",
+    },
+  ],
+  [
     "MENUNGGU_BAYAR",
     {
       text: "text-amber-600",

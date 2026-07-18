@@ -19,6 +19,8 @@ export function useCheckoutShipping(
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
+    let isActive = true;
+
     const fetchShipping = async () => {
       if (itemsLength === 0) {
         setShippingInfos([]);
@@ -30,7 +32,6 @@ export function useCheckoutShipping(
 
       // If address is selected, try to fetch actual shipping costs
       if (selectedAddressId) {
-        if (loading) return;
         setLoading(true);
 
         try {
@@ -44,7 +45,12 @@ export function useCheckoutShipping(
             stores: storeRequests,
           });
 
-          const rawData = res.data?.data;
+          if (!isActive) return;
+
+          // The response from backend is doubly nested:
+          // axios res.data -> { success: true, data: { statusCode: 200, data: [...] } }
+          const rawData = res.data?.data?.data || res.data?.data;
+
           const infos = Array.isArray(rawData)
             ? rawData
             : Array.isArray(res.data)
@@ -58,11 +64,15 @@ export function useCheckoutShipping(
             setShippingInfos(defaultShipping);
           }
         } catch (err) {
+          if (!isActive) return;
           console.error("Failed to calculate shipping", err);
+          alert("Gagal menghitung ongkir: " + (err as any).message);
           // Fall back to default shipping on error
           setShippingInfos(defaultShipping);
         } finally {
-          setLoading(false);
+          if (isActive) {
+            setLoading(false);
+          }
         }
       } else {
         // No address selected, use default shipping
@@ -71,6 +81,10 @@ export function useCheckoutShipping(
     };
 
     fetchShipping();
+
+    return () => {
+      isActive = false;
+    };
   }, [selectedAddressId, groupedByStore, itemsLength]);
 
   return {

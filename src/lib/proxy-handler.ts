@@ -38,8 +38,6 @@ export async function handleProxyRequest(request: NextRequest, slug: string[]) {
 
   // Automatically attach the HttpOnly cookie's token into the Authorization header
   const tokenCookie = request.cookies.get("accessToken");
-  console.warn("[PROXY] Path:", targetPath);
-  console.warn("[PROXY] Extracted accessToken cookie:", !!tokenCookie?.value);
   if (tokenCookie?.value) {
     headers.set("Authorization", `Bearer ${tokenCookie.value}`);
   } else {
@@ -80,6 +78,14 @@ export async function handleProxyRequest(request: NextRequest, slug: string[]) {
     }
 
     const dataText = await response.text();
+
+    if (targetPath.includes("logistics/calculate")) {
+      console.log("LOGISTICS PROXY REQUEST:", { targetUrl, body });
+      console.log("LOGISTICS PROXY RESPONSE:", {
+        status: response.status,
+        dataText,
+      });
+    }
 
     // Create the standard Next.js response passing through the backend's status
     const proxyResponse = new NextResponse(dataText, {

@@ -166,11 +166,18 @@ const RatingPage = () => {
                     )}
                   </div>
                   <div className="flex-1 min-w-0">
-                    <p className="font-semibold text-gray-800 text-sm truncate">
-                      {item.productNama}
-                    </p>
+                    <div className="flex items-center gap-2">
+                      <p className="font-semibold text-gray-800 text-sm truncate">
+                        {item.productNama}
+                      </p>
+                      {item.isGrosir && (
+                        <span className="px-1.5 py-0.5 rounded text-[10px] font-bold bg-purple-100 text-purple-700">
+                          Grosiran
+                        </span>
+                      )}
+                    </div>
                     <p className="text-xs text-gray-500 mt-0.5">
-                      {item.jumlah} item
+                      {item.jumlah} {item.isGrosir ? "kg" : "item"}
                     </p>
                   </div>
                   {isItemDone && (

@@ -105,6 +105,7 @@ export interface ApiOrderData {
   paymentUrl?: string;
   paymentId?: string;
   fotoSebelumKirimUrl?: string | null;
+  isGrosir?: boolean;
 }
 
 export interface ApiStoreData {
@@ -151,6 +152,7 @@ export interface ApiOrderReviewStatusItem {
   productFoto: string | null;
   productHarga: number | string;
   jumlah: number | string;
+  isGrosir?: boolean;
   isReviewed: boolean;
   review: {
     rating: number;

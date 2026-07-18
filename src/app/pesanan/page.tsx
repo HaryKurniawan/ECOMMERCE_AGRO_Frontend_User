@@ -141,7 +141,7 @@ const PesananContent = () => {
       case "tiba":
         return ["ARRIVED"];
       case "selesai":
-        return ["SELESAI"];
+        return ["SELESAI", "DITUTUP"];
       case "dibatalkan":
         return ["DIBATALKAN"];
       default:

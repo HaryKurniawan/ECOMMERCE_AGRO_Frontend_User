@@ -3,7 +3,7 @@
 import React from "react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-import { Package, Store, ChevronRight } from "lucide-react";
+import { Package, Store, ChevronRight, TrendingUp } from "lucide-react";
 
 import { formatRupiah } from "@/lib/ecommerce-api";
 import type { ApiOrderData } from "@/types";
@@ -43,6 +43,12 @@ const STATUS_CONFIG: Record<
     dot: "bg-violet-400",
   },
   SELESAI: {
+    label: "Selesai",
+    bg: "bg-emerald-50",
+    text: "text-emerald-700",
+    dot: "bg-emerald-400",
+  },
+  DITUTUP: {
     label: "Selesai",
     bg: "bg-emerald-50",
     text: "text-emerald-700",
@@ -132,6 +138,12 @@ export default function OrderCard({
           <span className="text-sm font-bold text-gray-800 truncate">
             {storeName}
           </span>
+          {order.isGrosir && (
+            <span className="inline-flex items-center gap-1 text-[9px] font-bold px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-700 shrink-0">
+              <TrendingUp size={9} />
+              Grosiran
+            </span>
+          )}
         </div>
         {/* Status badge */}
         <span

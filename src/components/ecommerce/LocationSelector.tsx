@@ -35,7 +35,7 @@ const LocationSelector: React.FC<LocationSelectorProps> = ({
   }, []);
 
   const isDark = variant === "dark";
-  const label = selectedCity || "Semua Lokasi";
+  const label = selectedCity || "Pilih Lokasi";
 
   const triggerClass = isDark
     ? "text-white/90 hover:text-white"
@@ -76,27 +76,6 @@ const LocationSelector: React.FC<LocationSelectorProps> = ({
           </div>
 
           <div className="max-h-72 overflow-y-auto py-1">
-            {/* Opsi: Semua Lokasi */}
-            <button
-              type="button"
-              onClick={() => handleSelect(null)}
-              className={`w-full text-left px-4 py-3 flex items-center justify-between transition-colors ${
-                !selectedCity ? "bg-primary-50/50" : "hover:bg-gray-50"
-              }`}
-            >
-              <div className="flex items-center gap-3">
-                <Globe size={18} className="text-primary-500" />
-                <span
-                  className={`text-[15px] font-medium ${!selectedCity ? "text-primary-700 font-semibold" : "text-gray-700"}`}
-                >
-                  Semua Lokasi
-                </span>
-              </div>
-              {!selectedCity && (
-                <Check size={16} className="text-primary-600" />
-              )}
-            </button>
-
             {availableCities.length > 0 ? (
               availableCities.map((city) => {
                 const active = selectedCity === city.name;

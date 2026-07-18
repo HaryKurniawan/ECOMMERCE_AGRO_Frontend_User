@@ -207,6 +207,12 @@ const ProfilPage: React.FC = () => {
                     (o as any).pengiriman?.status !== "ARRIVED"
                   );
                 }
+                if (item.id === "menunggu_bayar") {
+                  return (
+                    o.status?.toUpperCase() === "MENUNGGU_BAYAR" ||
+                    o.status?.toUpperCase() === "MENUNGGU_KONFIRMASI_SELLER"
+                  );
+                }
                 return o.status?.toLowerCase() === item.id.toLowerCase();
               }).length;
               return (

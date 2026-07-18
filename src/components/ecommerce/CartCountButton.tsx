@@ -39,7 +39,7 @@ const CartCountButton: React.FC<CartCountButtonProps> = ({
   const isLight = variant === "light";
 
   const buttonClass = isLight
-    ? `relative p-2 bg-white border border-gray-200 hover:border-gray-300 hover:bg-gray-50 rounded-xl transition-all shadow-sm ${className}`
+    ? `relative p-2 bg-white border border-gray-200 hover:border-gray-300 hover:bg-gray-50 rounded-xl transition-all ${className}`
     : `relative p-2.5 bg-white/15 border border-white/20 rounded-xl flex-shrink-0 hover:bg-white/25 transition-colors ${className}`;
 
   const iconClass = isLight ? "text-gray-600" : "text-white";

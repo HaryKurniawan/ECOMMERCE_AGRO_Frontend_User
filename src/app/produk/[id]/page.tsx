@@ -118,7 +118,7 @@ const DetailProdukPage: React.FC = () => {
       setModalMode("buy");
       handleAddToCart(product);
     } else if (mode === "grosir") {
-      router.push(`/produk/${id}/beli-grosir`);
+      router.push(`/produk/${id}/grosir`);
     } else {
       setModalMode("cart");
       handleAddToCart(product);
@@ -145,7 +145,7 @@ const DetailProdukPage: React.FC = () => {
           Detail Produk
         </span>
         <div className="flex items-center gap-1">
-          <CartCountButton />
+          <CartCountButton className="!bg-transparent !border-none !shadow-none" />
         </div>
       </div>
 

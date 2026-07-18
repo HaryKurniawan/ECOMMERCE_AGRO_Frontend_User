@@ -1,32 +1,36 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { useParams, useRouter } from "next/navigation";
-import { ArrowLeft, AlertCircle, CheckCircle2 } from "lucide-react";
+import { useParams, useRouter, useSearchParams } from "next/navigation";
+import { ArrowLeft, AlertCircle, CheckCircle2, Loader2 } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 
 import { useProductDetail } from "@/src/hooks/produk/useProductDetail";
 import { useBulkOrder } from "@/src/hooks/produk/useBulkOrder";
 import { useAuthStore } from "@/src/store/auth-store";
 import { addressesApi } from "@/lib/ecommerce-api";
+import { apiClient } from "@/src/lib/api-client";
 import {
   formatAddressDetails,
   getSelectedAddress,
 } from "@/src/lib/address-utils";
 import { ProductDetailSkeleton } from "@/src/components/ecommerce/Skeleton";
 import {
-  BulkOrderStep1Product,
+  BulkOrderStep1Quantity,
+  BulkOrderStep2Packaging,
   BulkOrderStep2Details,
   BulkOrderStep3Address,
   BulkOrderProgressIndicator,
   BulkOrderSummary,
 } from "@/src/components/bulk-order";
+import { PaymentMethodSection } from "@/src/components/checkout";
 import type { ApiAddressData } from "@/types";
 
 export default function BeliGrosirPage() {
   const params = useParams();
   const id = params.id as string;
   const router = useRouter();
+  const searchParams = useSearchParams();
   const { isAuthenticated, _hasHydrated } = useAuthStore();
 
   const {
@@ -57,6 +61,30 @@ export default function BeliGrosirPage() {
     staleTime: 5 * 60 * 1000,
   });
 
+  // Fetch config grosir dari toko
+  const { data: grosirConfig } = useQuery<{
+    diskonGrosirPersen: number;
+    ongkosKirimGrosir: number;
+  }>({
+    queryKey: ["toko", "harga", "config", "grosir-config", product?.tokoId],
+    queryFn: async () => {
+      try {
+        const res = await apiClient.get(`/toko/harga/config`);
+        return {
+          diskonGrosirPersen: res.data?.data?.diskonGrosirPersen ?? 0,
+          ongkosKirimGrosir: res.data?.data?.ongkosKirimGrosir ?? 0,
+        };
+      } catch {
+        return { diskonGrosirPersen: 0, ongkosKirimGrosir: 0 };
+      }
+    },
+    enabled: isAuthenticated && _hasHydrated && !!product?.tokoId,
+    staleTime: 5 * 60 * 1000,
+  });
+
+  const diskonGrosirPersen = grosirConfig?.diskonGrosirPersen || 0;
+  const ongkosKirimGrosir = grosirConfig?.ongkosKirimGrosir || 0;
+
   // State management
   const [jumlah, setJumlah] = useState<number>(300);
   const [catatan, setCatatan] = useState("");
@@ -67,6 +95,71 @@ export default function BeliGrosirPage() {
   const [packagingSpecs, setPackagingSpecs] = useState<
     Array<{ ukuranKg: number; jumlahBungkus: number }>
   >([]);
+  const [metodeBayar, setMetodeBayar] = useState<string>("TRANSFER");
+  const [isStateLoaded, setIsStateLoaded] = useState(false);
+
+  const STORAGE_KEY = `bulk-order-${id}`;
+
+  // Read state from localStorage on mount
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      try {
+        const saved = localStorage.getItem(STORAGE_KEY);
+        if (saved) {
+          const parsed = JSON.parse(saved);
+          if (parsed.jumlah) setJumlah(parsed.jumlah);
+          if (parsed.catatan !== undefined) setCatatan(parsed.catatan);
+          if (parsed.currentStep) setCurrentStep(parsed.currentStep);
+          if (parsed.packagingSpecs) setPackagingSpecs(parsed.packagingSpecs);
+          if (parsed.metodeBayar) setMetodeBayar(parsed.metodeBayar);
+        }
+      } catch (e) {
+        // ignore
+      }
+
+      // Override metode bayar jika ada dari URL (kembali dari pilih pembayaran)
+      const paymentParam = searchParams.get("paymentMethod");
+      if (paymentParam) {
+        setMetodeBayar(paymentParam);
+        // Clear param to keep URL clean, using replaceState to avoid reload
+        const newUrl = window.location.pathname;
+        window.history.replaceState({}, "", newUrl);
+      }
+
+      setIsStateLoaded(true);
+    }
+  }, [id, searchParams]);
+
+  // Save state to localStorage on change
+  useEffect(() => {
+    if (isStateLoaded && typeof window !== "undefined") {
+      localStorage.setItem(
+        STORAGE_KEY,
+        JSON.stringify({
+          jumlah,
+          catatan,
+          currentStep,
+          packagingSpecs,
+          metodeBayar,
+        }),
+      );
+    }
+  }, [
+    jumlah,
+    catatan,
+    currentStep,
+    packagingSpecs,
+    metodeBayar,
+    id,
+    isStateLoaded,
+  ]);
+
+  // Clear state on success
+  useEffect(() => {
+    if (isSuccess && typeof window !== "undefined") {
+      localStorage.removeItem(STORAGE_KEY);
+    }
+  }, [isSuccess, id]);
 
   // Auto-select default address
   useEffect(() => {
@@ -118,7 +211,15 @@ export default function BeliGrosirPage() {
   // Form validation
   const isFormValid =
     jumlah >= 300 &&
-    (useManual ? manualAlamat.trim().length > 0 : selectedAddressId !== "");
+    (useManual ? manualAlamat.trim().length > 0 : selectedAddressId !== "") &&
+    metodeBayar !== "";
+
+  const isStepValid =
+    currentStep === 1
+      ? jumlah >= 300
+      : currentStep === 2
+        ? true // packaging is optional
+        : isFormValid;
 
   // Handle submit
   const handleSubmit = async () => {
@@ -135,86 +236,127 @@ export default function BeliGrosirPage() {
       jumlah,
       alamatKirim: finalAlamat,
       catatan,
+      metodeBayar,
+      packagingSpecs: packagingSpecs.length > 0 ? packagingSpecs : undefined,
+      diskonGrosirPersen:
+        diskonGrosirPersen > 0 ? diskonGrosirPersen : undefined,
     });
   };
 
   // Step labels
-  const STEPS = ["Produk & Kualitas", "Rincian Pesanan", "Alamat Kirim"];
+  const STEPS = ["Jumlah Pesanan", "Pilih Kemasan", "Rincian & Pengiriman"];
 
   return (
     <div className="min-h-screen bg-gray-50/80 pb-32">
-      {/* Header */}
-      <div className="bg-white/80 backdrop-blur-md border-b border-gray-100 px-4 py-3.5 sticky top-0 lg:top-16 z-40">
-        <div className="max-w-4xl mx-auto flex items-center justify-center relative">
-          <button
-            onClick={() => router.back()}
-            className="absolute left-0 p-2 hover:bg-gray-100 rounded-xl transition-all active:scale-90 lg:hidden"
-          >
-            <ArrowLeft size={20} className="text-gray-700" />
-          </button>
-          <h1 className="font-semibold text-base text-gray-900">
-            Pengajuan Grosir
-          </h1>
-        </div>
-      </div>
-
       <div className="max-w-4xl mx-auto px-4 py-6 lg:py-8">
         {/* Progress Indicator */}
         <BulkOrderProgressIndicator currentStep={currentStep} steps={STEPS} />
 
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <div
+          className={
+            currentStep === 3
+              ? "grid grid-cols-1 lg:grid-cols-3 gap-6"
+              : "max-w-2xl mx-auto"
+          }
+        >
           {/* Left: Form Steps */}
-          <div className="lg:col-span-2 space-y-5">
-            {/* Step 1: Product & Quality */}
+          <div
+            className={
+              currentStep === 3 ? "lg:col-span-2 space-y-5" : "space-y-5"
+            }
+          >
+            {/* Step 1: Quantity */}
             {currentStep === 1 && (
-              <BulkOrderStep1Product
+              <BulkOrderStep1Quantity
                 product={product}
                 jumlah={jumlah}
                 onJumlahChange={setJumlah}
               />
             )}
 
-            {/* Step 2: Order Details */}
+            {/* Step 2: Packaging */}
             {currentStep === 2 && (
-              <BulkOrderStep2Details
+              <BulkOrderStep2Packaging
                 jumlah={jumlah}
                 packagingSpecs={packagingSpecs}
-                catatan={catatan}
                 onPackagingSpecsChange={setPackagingSpecs}
-                onCatatanChange={setCatatan}
+                satuan={product?.satuan}
               />
             )}
 
-            {/* Step 3: Address */}
+            {/* Step 3: Details & Address */}
             {currentStep === 3 && (
-              <BulkOrderStep3Address
-                addresses={addresses}
-                selectedAddressId={selectedAddressId}
-                useManual={useManual}
-                manualAlamat={manualAlamat}
-                addressesLoading={addressesLoading}
-                onAddressSelect={setSelectedAddressId}
-                onManualAddressToggle={setUseManual}
-                onManualAlamatChange={setManualAlamat}
-                onNavigateToForm={() => router.push("/profil/alamat")}
-              />
+              <div className="space-y-5">
+                <BulkOrderStep3Address
+                  addresses={addresses}
+                  selectedAddressId={selectedAddressId}
+                  useManual={useManual}
+                  manualAlamat={manualAlamat}
+                  addressesLoading={addressesLoading}
+                  onAddressSelect={setSelectedAddressId}
+                  onManualAddressToggle={setUseManual}
+                  onManualAlamatChange={setManualAlamat}
+                  onNavigateToForm={() => router.push("/profil/alamat")}
+                />
+                <BulkOrderStep2Details
+                  catatan={catatan}
+                  onCatatanChange={setCatatan}
+                />
+                <PaymentMethodSection
+                  selectedMethod={metodeBayar}
+                  onSelect={setMetodeBayar}
+                />
+              </div>
             )}
           </div>
 
           {/* Right: Summary */}
-          <div className="lg:col-span-1">
-            <BulkOrderSummary
-              product={product}
-              jumlah={jumlah}
-              packagingSpecs={packagingSpecs}
-              currentStep={currentStep}
-              isFormValid={isFormValid}
-              bulkOrderLoading={bulkOrderLoading}
-              onNextStep={() => setCurrentStep((prev) => prev + 1)}
-              onPrevStep={() => setCurrentStep((prev) => prev - 1)}
-              onSubmit={handleSubmit}
-            />
-          </div>
+          {currentStep === 3 && (
+            <div className="lg:col-span-1">
+              <BulkOrderSummary
+                product={product}
+                jumlah={jumlah}
+                packagingSpecs={packagingSpecs}
+                diskonGrosirPersen={diskonGrosirPersen}
+                ongkosKirimGrosir={ongkosKirimGrosir}
+                currentStep={currentStep}
+              />
+            </div>
+          )}
+        </div>
+      </div>
+
+      {/* Bottom Navigation */}
+      <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 p-4 z-50">
+        <div className="max-w-4xl mx-auto flex items-center justify-between gap-4">
+          <button
+            onClick={() =>
+              currentStep > 1
+                ? setCurrentStep((prev) => prev - 1)
+                : router.back()
+            }
+            className="px-6 py-3 bg-gray-100 text-gray-700 font-semibold rounded-xl hover:bg-gray-200 transition-all active:scale-95"
+          >
+            Kembali
+          </button>
+
+          <button
+            onClick={() =>
+              currentStep < 3
+                ? setCurrentStep((prev) => prev + 1)
+                : handleSubmit()
+            }
+            disabled={!isStepValid || bulkOrderLoading}
+            className="flex-1 max-w-xs px-6 py-3 bg-primary-600 text-white font-semibold rounded-xl hover:bg-primary-700 transition-all active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+          >
+            {bulkOrderLoading ? (
+              <Loader2 size={18} className="animate-spin" />
+            ) : currentStep < 3 ? (
+              "Lanjut"
+            ) : (
+              "Ajukan Sekarang"
+            )}
+          </button>
         </div>
       </div>
 
@@ -222,30 +364,30 @@ export default function BeliGrosirPage() {
       {isSuccess && (
         <div className="fixed inset-0 z-[100] flex items-center justify-center px-4 bg-black/40 backdrop-blur-sm animate-fade-in">
           <div className="bg-white rounded-3xl w-full max-w-sm overflow-hidden shadow-2xl animate-slide-up relative p-8 text-center border border-gray-100">
-            <div className="w-24 h-24 bg-emerald-50 rounded-full flex items-center justify-center mx-auto mb-6">
-              <div className="w-16 h-16 bg-emerald-500 rounded-full flex items-center justify-center shadow-lg shadow-emerald-200">
+            <div className="w-24 h-24 bg-primary-50 rounded-full flex items-center justify-center mx-auto mb-6">
+              <div className="w-16 h-16 bg-primary-500 rounded-full flex items-center justify-center">
                 <CheckCircle2 size={36} className="text-white" />
               </div>
             </div>
 
-            <h2 className="font-display font-bold text-2xl text-gray-900 mb-2 tracking-tight">
-              Pengajuan Berhasil! 🎉
+            <h2 className="font-display font-semibold text-xl text-gray-900 mb-3 tracking-tight">
+              Pengajuan Berhasil!
             </h2>
             <p className="text-gray-500 text-sm mb-8 leading-relaxed">
-              Pengajuan grosir kamu telah dikirim ke Penjual. Kamu bisa memantau
-              status pesanan di halaman pesanan.
+              Pengajuan sudah kami terima! Tunggu konfirmasi dari penjual, ya —
+              setelah disetujui kamu bisa langsung lanjut ke pembayaran.
             </p>
 
             <div className="space-y-3">
               <button
                 onClick={() => router.replace("/pesanan")}
-                className="w-full py-3.5 bg-primary-600 hover:bg-primary-700 text-white rounded-2xl font-bold text-sm transition-all shadow-lg shadow-primary-200"
+                className="w-full py-3.5 bg-primary-600 hover:bg-primary-700 text-white rounded-2xl font-bold text-sm transition-all"
               >
                 Lihat Status Pengajuan
               </button>
               <button
                 onClick={() => router.replace("/")}
-                className="w-full py-3.5 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-2xl font-semibold text-sm transition-all"
+                className="w-full py-3.5 bg-primary-50 hover:bg-primary-100 text-primary-700 rounded-2xl font-semibold text-sm transition-all"
               >
                 Kembali ke Beranda
               </button>

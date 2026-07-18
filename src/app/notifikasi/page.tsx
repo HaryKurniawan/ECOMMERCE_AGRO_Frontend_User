@@ -19,9 +19,11 @@ import EmptyState from "@/src/components/ecommerce/EmptyState";
 import type { ApiNotifCategory } from "@/types/api/dto";
 import { notificationsApi } from "@/lib/api/notifications";
 import { useNotifStore } from "@/store/notifikasi-store";
+import { useAuthStore } from "@/src/store/auth-store";
 
 export default function NotifikasiPage() {
   const queryClient = useQueryClient();
+  const { user } = useAuthStore();
   const [activeTab, setActiveTab] = useState<ApiNotifCategory>("Semua");
 
   const {
@@ -149,22 +151,27 @@ export default function NotifikasiPage() {
       {/* Tabs */}
       <div className="bg-white border-b border-gray-100 overflow-x-auto scroll-hide">
         <div className="flex items-center gap-6 px-4 max-w-2xl mx-auto w-full">
-          {(["Semua", "Transaksi", "Info", "Tugas"] as ApiNotifCategory[]).map(
-            (tab) => (
-              <button
-                key={tab}
-                onClick={() => setActiveTab(tab)}
-                className={`py-3 px-1 text-sm font-semibold transition-all relative whitespace-nowrap ${
-                  activeTab === tab ? "text-primary-600" : "text-gray-400"
-                }`}
-              >
-                {tab}
-                {activeTab === tab && (
-                  <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-primary-600 rounded-full" />
-                )}
-              </button>
-            ),
-          )}
+          {(
+            [
+              "Semua",
+              "Transaksi",
+              "Info",
+              ...(user?.role && user.role !== "USER" ? ["Tugas"] : []),
+            ] as ApiNotifCategory[]
+          ).map((tab) => (
+            <button
+              key={tab}
+              onClick={() => setActiveTab(tab)}
+              className={`py-3 px-1 text-sm font-semibold transition-all relative whitespace-nowrap ${
+                activeTab === tab ? "text-primary-600" : "text-gray-400"
+              }`}
+            >
+              {tab}
+              {activeTab === tab && (
+                <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-primary-600 rounded-full" />
+              )}
+            </button>
+          ))}
         </div>
       </div>
 

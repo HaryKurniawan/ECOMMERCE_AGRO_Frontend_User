@@ -12,6 +12,7 @@ interface CheckoutSummaryProps {
   loadingSubmit: boolean;
   disabled: boolean;
   onSubmit: () => void;
+  shippingInfos?: any;
 }
 
 const CheckoutSummary: React.FC<CheckoutSummaryProps> = ({
@@ -23,6 +24,7 @@ const CheckoutSummary: React.FC<CheckoutSummaryProps> = ({
   loadingSubmit,
   disabled,
   onSubmit,
+  shippingInfos,
 }) => {
   return (
     <div className="bg-white border border-gray-200 rounded-2xl p-6">
@@ -71,6 +73,12 @@ const CheckoutSummary: React.FC<CheckoutSummaryProps> = ({
           </>
         )}
       </button>
+
+      {shippingInfos && (
+        <div className="mt-4 p-2 bg-gray-100 text-xs rounded overflow-auto max-h-32">
+          <pre>{JSON.stringify(shippingInfos, null, 2)}</pre>
+        </div>
+      )}
     </div>
   );
 };

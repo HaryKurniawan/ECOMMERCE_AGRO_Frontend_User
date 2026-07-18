@@ -29,8 +29,20 @@ apiClient.interceptors.request.use((config) => {
 // ─── Response interceptor for error handling ─────────────────────────────────
 
 apiClient.interceptors.response.use(
-  (response) => response,
+  (response) => {
+    if (response.config.url?.includes("calculate")) {
+      console.log("CALCULATE SUCCESS:", response.data);
+    }
+    return response;
+  },
   (error) => {
+    if (error.config?.url?.includes("calculate")) {
+      console.error(
+        "CALCULATE ERROR:",
+        error.response?.status,
+        error.response?.data,
+      );
+    }
     // Only redirect if the 401 is NOT from the login or register endpoints
     const isAuthRoute =
       error.config?.url?.includes("/auth/login") ||

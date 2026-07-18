@@ -16,6 +16,9 @@ import {
   Wallet,
   ChevronRight,
   Camera,
+  Package,
+  Tag,
+  TrendingUp,
 } from "lucide-react";
 import Image from "next/image";
 
@@ -106,6 +109,38 @@ const OrderDetailPage = () => {
       0,
     ) || 0;
 
+  const isGrosir = !!(order as any).isGrosir;
+  const userCatatan = (order as any).catatan || "";
+  let packagingSpecsRaw = [];
+  try {
+    const raw = (order as any).kemasanGrosir;
+    if (typeof raw === "string") {
+      packagingSpecsRaw = JSON.parse(raw);
+    } else if (Array.isArray(raw)) {
+      packagingSpecsRaw = raw;
+    }
+  } catch (e) {
+    packagingSpecsRaw = [];
+  }
+
+  const packagingSpecs = isGrosir
+    ? packagingSpecsRaw.map((s: any) => {
+        const jumlah =
+          (order as any).item?.reduce(
+            (sum: number, i: any) => sum + Number(i.jumlah || 0),
+            0,
+          ) || 0;
+        const sisa = jumlah % (s.ukuranKg || 1);
+        return { ...s, sisa };
+      })
+    : [];
+
+  const diskonGrosirPersen: number = (order as any).diskonGrosirPersen || 0;
+  const diskonNominal =
+    diskonGrosirPersen > 0
+      ? Math.round((subtotal * diskonGrosirPersen) / 100)
+      : 0;
+
   return (
     <div className="min-h-screen bg-[#FAFAFA] pb-28">
       {/* Header */}
@@ -121,9 +156,13 @@ const OrderDetailPage = () => {
             Detail Pesanan
           </h1>
           <span
-            className={`text-[10px] font-bold px-2.5 py-1 rounded-full border ${colors.bg} ${colors.text} border-current/10`}
+            className={`text-[11px] font-semibold px-3 py-1 rounded-full ${colors.bg} ${colors.text}`}
           >
-            {ORDER_ROADMAP.find((r) => r.key === statusKey)?.label || statusKey}
+            {ORDER_ROADMAP.find((r) => r.key === statusKey)?.label ||
+              statusKey
+                .split("_")
+                .map((w) => w.charAt(0) + w.slice(1).toLowerCase())
+                .join(" ")}
           </span>
         </div>
       </div>
@@ -148,7 +187,7 @@ const OrderDetailPage = () => {
         />
 
         {/* Store + Items */}
-        <section className="bg-white rounded-2xl border border-gray-200 overflow-hidden shadow-sm">
+        <section className="bg-white rounded-2xl border border-gray-200 overflow-hidden">
           {/* Store header */}
           <div className="px-5 py-3 border-b border-gray-50 flex items-center justify-between bg-gray-50/30">
             <div className="flex items-center gap-2">
@@ -205,8 +244,68 @@ const OrderDetailPage = () => {
           </div>
         </section>
 
+        {/* Grosir — Kemasan yang Dipesan */}
+        {isGrosir && packagingSpecs.length > 0 && (
+          <section className="bg-white rounded-2xl border border-gray-200 overflow-hidden">
+            <div className="px-5 py-3 bg-primary-50/60 border-b border-gray-200 flex items-center gap-2">
+              <div className="w-6 h-6 bg-primary-100 rounded-lg flex items-center justify-center">
+                <Package size={13} className="text-primary-600" />
+              </div>
+              <h2 className="font-bold text-[13px] text-primary-800">
+                Kemasan yang Dipesan
+              </h2>
+              <span className="ml-auto text-[10px] text-primary-600 bg-primary-100 px-2 py-0.5 rounded-full font-semibold flex items-center gap-1">
+                <TrendingUp size={9} /> Grosiran
+              </span>
+            </div>
+            <div className="divide-y divide-gray-50">
+              {packagingSpecs.map((spec, idx) => {
+                const fullBags = spec.jumlahBungkus;
+                const hasSisa = spec.sisa > 0;
+                return (
+                  <div key={idx} className="px-5 py-3 flex items-center gap-3">
+                    <div className="w-9 h-9 bg-primary-50 rounded-xl flex items-center justify-center shrink-0">
+                      <Package size={16} className="text-primary-500" />
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <p className="text-[13px] font-semibold text-gray-800">
+                        Kemasan {spec.ukuranKg} kg
+                      </p>
+                      <p className="text-[11px] text-gray-400 mt-0.5">
+                        {fullBags} bungkus @ {spec.ukuranKg} kg
+                        {hasSisa && (
+                          <span className="ml-1.5 text-amber-500">
+                            + 1 kemasan isi {spec.sisa} kg
+                          </span>
+                        )}
+                      </p>
+                    </div>
+                    <div className="text-right shrink-0">
+                      <p className="text-[13px] font-bold text-gray-700">
+                        {fullBags + (hasSisa ? 1 : 0)} bungkus
+                      </p>
+                      <p className="text-[10px] text-gray-400">
+                        = {spec.ukuranKg * fullBags + (hasSisa ? spec.sisa : 0)}{" "}
+                        kg
+                      </p>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+            {userCatatan && (
+              <div className="px-5 py-3 border-t border-dashed border-gray-100">
+                <p className="text-[11px] text-gray-400 font-medium mb-0.5">
+                  Catatan
+                </p>
+                <p className="text-xs text-gray-600">{userCatatan}</p>
+              </div>
+            )}
+          </section>
+        )}
+
         {/* Address */}
-        <section className="bg-white rounded-2xl border border-gray-100 p-5">
+        <section className="bg-white rounded-2xl border border-gray-200 p-5">
           <div className="flex items-center gap-2 mb-3">
             <div className="w-7 h-7 bg-primary-50 rounded-lg flex items-center justify-center">
               <MapPin size={13} className="text-primary-600" />
@@ -233,10 +332,10 @@ const OrderDetailPage = () => {
 
         {/* Foto Sebelum Kirim */}
         {order.fotoSebelumKirimUrl && (
-          <section className="bg-white rounded-2xl border border-gray-100 p-5">
+          <section className="bg-white rounded-2xl border border-gray-200 p-5">
             <div className="flex items-center gap-2 mb-3">
-              <div className="w-7 h-7 bg-blue-50 rounded-lg flex items-center justify-center">
-                <Camera size={13} className="text-blue-600" />
+              <div className="w-7 h-7 bg-primary-50 rounded-lg flex items-center justify-center">
+                <Camera size={13} className="text-primary-600" />
               </div>
               <h2 className="font-bold text-sm text-gray-800">
                 Foto Sebelum Kirim (Dari Seller)
@@ -258,11 +357,11 @@ const OrderDetailPage = () => {
         )}
 
         {/* Payment */}
-        <section className="bg-white rounded-2xl border border-gray-100 overflow-hidden">
+        <section className="bg-white rounded-2xl border border-gray-200 overflow-hidden">
           <div className="p-5">
             <div className="flex items-center gap-2 mb-4">
-              <div className="w-7 h-7 bg-violet-50 rounded-lg flex items-center justify-center">
-                <CreditCard size={13} className="text-violet-500" />
+              <div className="w-7 h-7 bg-primary-50 rounded-lg flex items-center justify-center">
+                <CreditCard size={13} className="text-primary-500" />
               </div>
               <h2 className="font-bold text-sm text-gray-800">Pembayaran</h2>
             </div>
@@ -276,6 +375,17 @@ const OrderDetailPage = () => {
                   {formatRupiah(subtotal)}
                 </span>
               </div>
+              {isGrosir && diskonNominal > 0 && (
+                <div className="flex justify-between items-center">
+                  <span className="text-primary-600 flex items-center gap-1">
+                    <Tag size={10} />
+                    Diskon Grosir ({diskonGrosirPersen}%)
+                  </span>
+                  <span className="text-primary-600 font-semibold">
+                    - {formatRupiah(diskonNominal)}
+                  </span>
+                </div>
+              )}
               <div className="flex justify-between">
                 <span className="text-gray-400">Ongkos Kirim</span>
                 <span className="text-gray-600 font-medium">
@@ -301,71 +411,54 @@ const OrderDetailPage = () => {
       </div>
 
       {/* Bottom Bar */}
-      <div className="fixed bottom-0 inset-x-0 bg-white border-t border-gray-100 z-30">
-        <div className="max-w-2xl mx-auto px-4 py-3 flex gap-2.5">
-          <button
-            onClick={handleChat}
-            disabled={chattingLoading}
-            className="flex items-center justify-center gap-2 py-3 px-4 border border-gray-200 text-gray-600 rounded-2xl font-bold text-[13px] hover:bg-gray-50 transition-all active:scale-[0.97] disabled:opacity-50"
-          >
-            {chattingLoading ? (
-              <Loader2 size={15} className="animate-spin" />
-            ) : (
-              <MessageCircle size={15} />
-            )}
-            <span className="hidden sm:inline">Chat Seller</span>
-            <span className="sm:hidden">Chat</span>
-          </button>
-
-          {statusKey === "MENUNGGU_BAYAR" ? (
-            <button
-              onClick={() => {
-                router.push(`/pembayaran?orderId=${order.id}`);
-              }}
-              className="flex-1 py-3 bg-primary-600 text-white rounded-2xl font-bold text-[13px] shadow-lg shadow-primary-600/20 hover:bg-primary-700 transition-all active:scale-[0.98] flex items-center justify-center gap-2"
-            >
-              <Wallet size={15} /> Bayar Sekarang
-            </button>
-          ) : (order as any).pengiriman?.status === "ARRIVED" &&
-            order.status !== "SELESAI" ? (
-            <button
-              onClick={handleConfirm}
-              disabled={confirming}
-              className="flex-1 py-3 bg-emerald-600 text-white rounded-2xl font-bold text-[13px] shadow-lg shadow-emerald-600/20 hover:bg-emerald-700 transition-all active:scale-[0.98] flex items-center justify-center gap-2 disabled:opacity-60"
-            >
-              {confirming ? (
-                <Loader2 size={15} className="animate-spin" />
-              ) : (
-                <CheckCircle size={15} />
-              )}
-              Konfirmasi Diterima
-            </button>
-          ) : statusKey === "SELESAI" ? (
-            <div className="flex-1 flex gap-2">
+      {(statusKey === "MENUNGGU_BAYAR" ||
+        ((order as any).pengiriman?.status === "ARRIVED" &&
+          order.status !== "SELESAI") ||
+        statusKey === "SELESAI") && (
+        <div className="fixed bottom-0 inset-x-0 bg-white border-t border-gray-100 z-30">
+          <div className="max-w-2xl mx-auto px-4 py-3 flex gap-2.5">
+            {statusKey === "MENUNGGU_BAYAR" ? (
               <button
-                onClick={() => router.push(`/pesanan/${order.id}/rating`)}
-                className="flex-1 py-3 border border-amber-300 text-amber-600 rounded-2xl font-bold text-[13px] hover:bg-amber-50 transition-all flex items-center justify-center gap-1.5 active:scale-[0.97]"
+                onClick={() => {
+                  router.push(`/pembayaran?orderId=${order.id}`);
+                }}
+                className="flex-1 py-3 bg-primary-600 text-white rounded-2xl font-bold text-[13px] shadow-lg shadow-primary-600/20 hover:bg-primary-700 transition-all active:scale-[0.98] flex items-center justify-center gap-2"
               >
-                <Star size={14} className="fill-amber-400" /> Ulasan
+                <Wallet size={15} /> Bayar Sekarang
               </button>
+            ) : (order as any).pengiriman?.status === "ARRIVED" &&
+              order.status !== "SELESAI" ? (
               <button
-                onClick={() => router.push("/katalog")}
-                className="flex-1 py-3 bg-primary-600 text-white rounded-2xl font-bold text-[13px] shadow-lg shadow-primary-600/20 hover:bg-primary-700 transition-all flex items-center justify-center gap-1.5 active:scale-[0.98]"
+                onClick={handleConfirm}
+                disabled={confirming}
+                className="flex-1 py-3 bg-emerald-600 text-white rounded-2xl font-bold text-[13px] shadow-lg shadow-emerald-600/20 hover:bg-emerald-700 transition-all active:scale-[0.98] flex items-center justify-center gap-2 disabled:opacity-60"
               >
-                <ShoppingBag size={14} /> Beli Lagi
+                {confirming ? (
+                  <Loader2 size={15} className="animate-spin" />
+                ) : (
+                  <CheckCircle size={15} />
+                )}
+                Konfirmasi Diterima
               </button>
-            </div>
-          ) : (
-            <button
-              onClick={() => router.push("/notifikasi")}
-              className="flex-1 py-3 bg-primary-600 text-white rounded-2xl font-bold text-[13px] shadow-lg shadow-primary-600/20 hover:bg-primary-700 transition-all flex items-center justify-center gap-2 active:scale-[0.98]"
-            >
-              Pantau Pesanan{" "}
-              <ChevronRight size={14} className="text-white/60" />
-            </button>
-          )}
+            ) : statusKey === "SELESAI" ? (
+              <div className="flex-1 flex gap-2">
+                <button
+                  onClick={() => router.push(`/pesanan/${order.id}/rating`)}
+                  className="flex-1 py-3 border border-amber-300 text-amber-600 rounded-2xl font-bold text-[13px] hover:bg-amber-50 transition-all flex items-center justify-center gap-1.5 active:scale-[0.97]"
+                >
+                  <Star size={14} className="fill-amber-400" /> Ulasan
+                </button>
+                <button
+                  onClick={() => router.push("/katalog")}
+                  className="flex-1 py-3 bg-primary-600 text-white rounded-2xl font-bold text-[13px] shadow-lg shadow-primary-600/20 hover:bg-primary-700 transition-all flex items-center justify-center gap-1.5 active:scale-[0.98]"
+                >
+                  <ShoppingBag size={14} /> Beli Lagi
+                </button>
+              </div>
+            ) : null}
+          </div>
         </div>
-      </div>
+      )}
     </div>
   );
 };

@@ -3,6 +3,11 @@ import toast from "react-hot-toast";
 
 import { ordersApi } from "@/lib/ecommerce-api";
 
+interface PackagingSpec {
+  ukuranKg: number;
+  jumlahBungkus: number;
+}
+
 export const useBulkOrder = (product: any) => {
   const [showBulkOrderModal, setShowBulkOrderModal] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -12,6 +17,9 @@ export const useBulkOrder = (product: any) => {
     jumlah: number;
     alamatKirim: string;
     catatan: string;
+    metodeBayar: string;
+    packagingSpecs?: PackagingSpec[];
+    diskonGrosirPersen?: number;
   }) => {
     if (!product) return;
     setLoading(true);
@@ -24,6 +32,9 @@ export const useBulkOrder = (product: any) => {
         harga: product.harga,
         alamatKirim: data.alamatKirim,
         catatan: data.catatan,
+        metodeBayar: data.metodeBayar,
+        packagingSpecs: data.packagingSpecs,
+        diskonGrosirPersen: data.diskonGrosirPersen,
       });
 
       if (response.data) {
