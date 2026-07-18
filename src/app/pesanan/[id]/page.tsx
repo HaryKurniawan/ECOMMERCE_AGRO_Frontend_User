@@ -259,7 +259,7 @@ const OrderDetailPage = () => {
               </span>
             </div>
             <div className="divide-y divide-gray-50">
-              {packagingSpecs.map((spec, idx) => {
+              {packagingSpecs.map((spec: any, idx: number) => {
                 const fullBags = spec.jumlahBungkus;
                 const hasSisa = spec.sisa > 0;
                 return (
