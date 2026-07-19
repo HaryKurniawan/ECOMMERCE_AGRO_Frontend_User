@@ -10,6 +10,29 @@ pipeline {
     }
 
     stages {
+        stage('Notify Start') {
+            steps {
+                withCredentials([
+                    string(credentialsId: 'telegram-bot-token', variable: 'TG_TOKEN'),
+                    string(credentialsId: 'telegram-chat-id', variable: 'TG_CHAT')
+                ]) {
+                    sh '''
+                    TOKEN=$(echo "$TG_TOKEN" | tr -d '\r\n ')
+                    CHAT=$(echo "$TG_CHAT" | tr -d '\r\n ')
+                    curl -sS -X POST "https://api.telegram.org/bot${TOKEN}/sendMessage" \
+                        -H "Content-Type: application/json" \
+                        -d @- <<EOF
+{
+    "chat_id": "${CHAT}",
+    "parse_mode": "Markdown",
+    "text": "🚀 *MEMULAI DEPLOY*\\n📦 Service: Frontend User (agro-frontend-user)\\n🔢 Build: #${BUILD_NUMBER}\\n🔗 [Lihat Build](${BUILD_URL})"
+}
+EOF
+                    '''
+                }
+            }
+        }
+
         stage('Gitleaks Secret Scan') {
             steps {
                 sh '''
@@ -113,11 +136,47 @@ pipeline {
 
         success {
             echo "${CONTAINER_NAME} (Port ${APP_PORT}) deployment successful!"
+            withCredentials([
+                string(credentialsId: 'telegram-bot-token', variable: 'TG_TOKEN'),
+                string(credentialsId: 'telegram-chat-id', variable: 'TG_CHAT')
+            ]) {
+                sh '''
+                TOKEN=$(echo "$TG_TOKEN" | tr -d '\r\n ')
+                CHAT=$(echo "$TG_CHAT" | tr -d '\r\n ')
+                curl -sS -X POST "https://api.telegram.org/bot${TOKEN}/sendMessage" \
+                    -H "Content-Type: application/json" \
+                    -d @- <<EOF
+{
+    "chat_id": "${CHAT}",
+    "parse_mode": "Markdown",
+    "text": "✅ *DEPLOY BERHASIL*\\n📦 Service: Frontend User (agro-frontend-user)\\n🔢 Build: #${BUILD_NUMBER}\\n🌐 Port: ${APP_PORT}\\n🔗 [Lihat Build](${BUILD_URL})"
+}
+EOF
+                '''
+            }
         }
 
         failure {
             echo "${CONTAINER_NAME} deployment failed! Pengecekan log container live (jika ada):"
             sh 'docker logs ${CONTAINER_NAME} --tail 100 || true'
+            withCredentials([
+                string(credentialsId: 'telegram-bot-token', variable: 'TG_TOKEN'),
+                string(credentialsId: 'telegram-chat-id', variable: 'TG_CHAT')
+            ]) {
+                sh '''
+                TOKEN=$(echo "$TG_TOKEN" | tr -d '\r\n ')
+                CHAT=$(echo "$TG_CHAT" | tr -d '\r\n ')
+                curl -sS -X POST "https://api.telegram.org/bot${TOKEN}/sendMessage" \
+                    -H "Content-Type: application/json" \
+                    -d @- <<EOF
+{
+    "chat_id": "${CHAT}",
+    "parse_mode": "Markdown",
+    "text": "❌ *DEPLOY GAGAL*\\n📦 Service: Frontend User (agro-frontend-user)\\n🔢 Build: #${BUILD_NUMBER}\\n🔗 [Cek Log Build](${BUILD_URL}console)"
+}
+EOF
+                '''
+            }
         }
     }
 }

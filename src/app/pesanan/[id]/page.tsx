@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import { useRouter, useParams } from "next/navigation";
+import { useRouter, useParams, useSearchParams } from "next/navigation";
 import {
   ArrowLeft,
   Store,
@@ -38,7 +38,7 @@ import {
 
 /* ─── Main ────────────────────────────────────────────────────────────────── */
 
-const OrderDetailPage = () => {
+const OrderDetailContent = () => {
   const router = useRouter();
   const params = useParams();
   const id = params.id as string;
@@ -55,6 +55,24 @@ const OrderDetailPage = () => {
   } = useOrderDetail(id);
 
   const timeLeft = useCountdown(order?.createdAt);
+
+  // Auto-konfirmasi ketika scan QR resi — URL ?konfirmasi=1
+  const searchParams = useSearchParams();
+  const konfirmasiParam = searchParams?.get("konfirmasi");
+  const autoConfirmRef = React.useRef(false);
+  React.useEffect(() => {
+    if (
+      konfirmasiParam === "1" &&
+      !autoConfirmRef.current &&
+      order &&
+      (order.status === "DIKIRIM" ||
+        (order as any).pengiriman?.status === "ARRIVED") &&
+      !confirming
+    ) {
+      autoConfirmRef.current = true;
+      handleConfirm();
+    }
+  }, [konfirmasiParam, order, confirming, handleConfirm]);
 
   React.useEffect(() => {
     if (
@@ -463,4 +481,10 @@ const OrderDetailPage = () => {
   );
 };
 
-export default OrderDetailPage;
+export default function OrderDetailPage() {
+  return (
+    <React.Suspense fallback={<OrderDetailSkeleton />}>
+      <OrderDetailContent />
+    </React.Suspense>
+  );
+}
