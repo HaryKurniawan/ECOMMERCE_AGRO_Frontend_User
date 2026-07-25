@@ -2,6 +2,7 @@
 
 import React, { useState } from "react";
 import { MapPin, ChevronDown, Check } from "lucide-react";
+import Image from "next/image";
 
 interface CitySelectionModalProps {
   isOpen: boolean;
@@ -27,25 +28,27 @@ const CitySelectionModal: React.FC<CitySelectionModalProps> = ({
         {/* Card */}
         <div className="bg-white rounded-3xl shadow-xl overflow-hidden">
           {/* Header */}
-          <div className="px-6 pt-8 pb-6 text-center border-b border-gray-100">
-            <div className="w-12 h-12 bg-primary-50 rounded-2xl flex items-center justify-center mx-auto mb-4">
-              <MapPin size={22} className="text-primary-600" />
+          <div className="px-6 pt-6 pb-6 text-center border-b border-gray-100">
+            <div className="flex justify-center -mt-10 -mb-10">
+              <Image
+                src="/dimana-lokasi.svg"
+                alt="Location Illustration"
+                width={280}
+                height={280}
+                className="object-contain w-[280px] h-[280px]"
+                priority
+              />
             </div>
-            <h2 className="font-display text-lg font-semibold text-gray-900 mb-1 leading-tight">
+            <h2 className="font-display text-xl font-medium text-gray-900 mb-2 leading-tight">
               Di mana kotamu?
             </h2>
-            <p className="text-sm text-gray-400 leading-relaxed">
-              Kami tampilkan produk segar dari petani di kotamu
+            <p className="text-[13px] text-gray-500 leading-relaxed px-2">
+              Tentukan lokasi terdekat untuk mulai berbelanja.
             </p>
           </div>
 
           {/* Content */}
           <div className="px-6 py-6 space-y-4">
-            {/* Label */}
-            <p className="text-[11px] font-semibold text-gray-400 uppercase tracking-widest">
-              Pilih kota pengiriman
-            </p>
-
             {/* Custom Dropdown */}
             <div className="relative">
               <button
@@ -109,13 +112,6 @@ const CitySelectionModal: React.FC<CitySelectionModalProps> = ({
                 </div>
               )}
             </div>
-
-            {selectedCityData && (
-              <p className="text-[11px] text-primary-600 font-medium">
-                ✓ {selectedCityData.sellerCount} seller tersedia di{" "}
-                {selectedCityData.name}
-              </p>
-            )}
 
             {/* CTA Button */}
             <button

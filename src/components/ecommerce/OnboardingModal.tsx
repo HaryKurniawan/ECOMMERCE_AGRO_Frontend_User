@@ -23,7 +23,7 @@ const slides = [
   },
   {
     id: "address",
-    image: "/onboarding-address.png",
+    image: "/images/maps.svg",
     badgeColor: "bg-blue-50 text-blue-700",
     title: "Temukan Toko Tani\nTerdekat dari Lokasimu",
     description: "Isi alamat agar kami rekomendasikan produk segar terdekat.",

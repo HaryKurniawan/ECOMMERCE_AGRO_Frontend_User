@@ -98,40 +98,43 @@ const RatingPage = () => {
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Header */}
-      <div className="sticky top-0 z-20 bg-white border-b border-gray-100 px-4 py-3 flex items-center gap-3 shadow-sm">
+      <div className="sticky top-0 z-20 bg-white border-b border-gray-100 h-14 flex items-center justify-center shadow-sm relative">
         <button
           onClick={() => router.back()}
-          className="p-2 hover:bg-gray-100 rounded-full text-gray-600"
+          className="absolute left-2 p-2 hover:bg-gray-100 rounded-full text-gray-600 transition-colors"
         >
           <ArrowLeft size={20} />
         </button>
-        <div>
-          <h1 className="font-bold text-gray-800 text-[16px]">Beri Ulasan</h1>
-          <p className="text-xs text-gray-500">
-            Ceritakan pengalaman belanja Anda
-          </p>
-        </div>
+        <h1 className="font-medium text-gray-800 text-[15px]">Beri Ulasan</h1>
       </div>
 
       <div className="max-w-xl mx-auto px-4 py-6 space-y-4 pb-32">
         {allDone && (
           <div className="flex flex-col items-center py-10 text-center">
-            <div className="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center mb-4">
-              <CheckCircle2 size={48} className="text-green-500" />
+            <div className="w-20 h-20 bg-emerald-100 rounded-full flex items-center justify-center mb-4">
+              <CheckCircle2 size={40} className="text-emerald-500" />
             </div>
-            <h2 className="text-lg font-bold text-gray-800 mb-1">
+            <h2 className="text-lg font-medium text-gray-800 mb-2">
               Terima kasih!
             </h2>
-            <p className="text-sm text-gray-500 mb-6">
+            <p className="text-[13px] text-gray-500 mb-8 max-w-[260px] mx-auto leading-relaxed">
               Semua produk sudah Anda beri ulasan. Ulasan Anda sangat berarti
               bagi penjual! 🌟
             </p>
-            <button
-              onClick={() => router.replace(`/pesanan/${orderId}`)}
-              className="px-6 py-2.5 bg-primary-600 text-white rounded-full text-sm font-semibold shadow-sm"
-            >
-              Kembali ke Detail Pesanan
-            </button>
+            <div className="flex flex-col gap-3 w-full max-w-[260px]">
+              <button
+                onClick={() => router.replace("/pesanan")}
+                className="w-full py-3 bg-emerald-600 text-white rounded-xl font-medium text-[13px] hover:bg-emerald-700 transition-colors"
+              >
+                Riwayat Pesanan
+              </button>
+              <button
+                onClick={() => router.replace("/")}
+                className="w-full py-3 bg-white border border-gray-200 text-gray-600 rounded-xl font-medium text-[13px] hover:bg-gray-50 transition-colors"
+              >
+                Kembali ke Beranda
+              </button>
+            </div>
           </div>
         )}
 

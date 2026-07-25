@@ -2,7 +2,14 @@
 
 import React, { Suspense, useState } from "react";
 import { useRouter } from "next/navigation";
-import { ArrowLeft, ShieldAlert, Phone, Loader2, X } from "lucide-react";
+import {
+  ArrowLeft,
+  ShieldAlert,
+  Phone,
+  Loader2,
+  X,
+  CheckCircle2,
+} from "lucide-react";
 
 import { CheckoutSkeleton } from "@/src/components/ecommerce/Skeleton";
 import EmptyState from "@/src/components/ecommerce/EmptyState";
@@ -12,6 +19,7 @@ import {
   StoreOrderGroup,
   PaymentMethodSection,
   CheckoutSummary,
+  CheckoutSuccessModal,
 } from "@/src/components/checkout";
 import { useAuthStore } from "@/src/store/auth-store";
 import { useProfile } from "@/src/hooks/profil/useProfile";
@@ -30,6 +38,7 @@ const CheckoutContent: React.FC = () => {
   const [phoneModalOpen, setPhoneModalOpen] = useState(false);
   const [phoneInput, setPhoneInput] = useState("");
   const [savingPhone, setSavingPhone] = useState(false);
+  const [showToast, setShowToast] = useState(false);
 
   const handleSavePhone = async () => {
     if (!phoneInput) return;
@@ -44,6 +53,8 @@ const CheckoutContent: React.FC = () => {
       await authApi.updateProfile({ phoneNumber: formattedPhone });
       await refetchProfile();
       setPhoneModalOpen(false);
+      setShowToast(true);
+      setTimeout(() => setShowToast(false), 3000);
     } catch (err: any) {
       console.error(err);
       alert("Gagal menyimpan nomor telepon.");
@@ -73,6 +84,7 @@ const CheckoutContent: React.FC = () => {
     updateCatatan,
     errorModal,
     closeErrorModal,
+    successModal,
   } = useCheckout();
 
   if (loadingInitial) {
@@ -133,16 +145,16 @@ const CheckoutContent: React.FC = () => {
         <div className="flex-1 space-y-6">
           {/* Missing Phone Number Alert Card */}
           {profile && !profile.phone && (
-            <div className="bg-emerald-50 border border-emerald-200 rounded-2xl p-4 flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between">
+            <div className="bg-primary-50 border border-primary-200 rounded-2xl p-4 flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between">
               <div className="flex gap-3">
-                <div className="w-10 h-10 rounded-full bg-emerald-100 flex items-center justify-center shrink-0">
-                  <Phone className="w-5 h-5 text-emerald-600" />
+                <div className="w-10 h-10 rounded-full bg-primary-100 flex items-center justify-center shrink-0">
+                  <Phone className="w-5 h-5 text-primary-600" />
                 </div>
                 <div>
-                  <h3 className="font-semibold text-emerald-800 text-sm">
+                  <h3 className="font-semibold text-primary-800 text-sm">
                     Nomor WhatsApp Belum Ditambahkan
                   </h3>
-                  <p className="text-emerald-700/80 text-xs mt-0.5">
+                  <p className="text-primary-700/80 text-xs mt-0.5">
                     Kami membutuhkan nomor WhatsApp Anda agar kurir dapat
                     menghubungi Anda.
                   </p>
@@ -150,7 +162,7 @@ const CheckoutContent: React.FC = () => {
               </div>
               <button
                 onClick={() => setPhoneModalOpen(true)}
-                className="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white text-sm font-semibold rounded-xl transition-all whitespace-nowrap w-full sm:w-auto active:scale-[0.98]"
+                className="px-4 py-2 bg-primary-600 hover:bg-primary-700 text-white text-sm font-semibold rounded-xl transition-all whitespace-nowrap w-full sm:w-auto active:scale-[0.98]"
               >
                 Tambahkan Nomor
               </button>
@@ -246,7 +258,7 @@ const CheckoutContent: React.FC = () => {
           <div className="bg-white rounded-3xl w-full max-w-md relative z-10 overflow-hidden shadow-2xl animate-in zoom-in-95 duration-200">
             <div className="px-6 py-5 border-b border-slate-100 flex items-center justify-between bg-slate-50/50">
               <h3 className="font-semibold text-slate-800 flex items-center gap-2">
-                <Phone className="w-5 h-5 text-emerald-600" />
+                <Phone className="w-5 h-5 text-primary-600" />
                 Tambah Nomor WhatsApp
               </h3>
               <button
@@ -258,11 +270,6 @@ const CheckoutContent: React.FC = () => {
             </div>
 
             <div className="p-6">
-              <p className="text-sm text-slate-500 mb-4">
-                Masukkan nomor WhatsApp Anda agar kurir dan penjual dapat
-                menghubungi Anda terkait pesanan ini.
-              </p>
-
               <div className="flex mb-2">
                 <div className="bg-slate-100 border border-slate-200 border-r-0 rounded-l-xl px-4 py-3 flex items-center justify-center shrink-0">
                   <span className="font-bold text-slate-600">+62</span>
@@ -274,18 +281,15 @@ const CheckoutContent: React.FC = () => {
                   onChange={(e) =>
                     setPhoneInput(e.target.value.replace(/\D/g, ""))
                   }
-                  className="flex-1 w-full border border-slate-200 rounded-r-xl px-4 py-3 text-slate-800 font-medium focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 transition-colors"
+                  className="flex-1 w-full border border-slate-200 rounded-r-xl px-4 py-3 text-slate-800 font-medium focus:outline-none focus:border-primary-500 focus:ring-1 focus:ring-primary-500 transition-colors"
                   autoFocus
                 />
               </div>
-              <p className="text-[11px] text-slate-400">
-                Pastikan nomor aktif dan terdaftar di WhatsApp.
-              </p>
 
               <button
                 onClick={handleSavePhone}
                 disabled={!phoneInput || savingPhone}
-                className="w-full mt-6 py-3.5 bg-emerald-600 hover:bg-emerald-700 disabled:bg-slate-300 disabled:cursor-not-allowed text-white font-bold rounded-xl transition-all flex items-center justify-center gap-2 active:scale-[0.98]"
+                className="w-full mt-5 py-3.5 bg-primary-600 hover:bg-primary-700 disabled:bg-slate-300 disabled:cursor-not-allowed text-white font-semibold rounded-xl transition-all flex items-center justify-center gap-2 active:scale-[0.98] text-[15px]"
               >
                 {savingPhone ? (
                   <>
@@ -297,6 +301,22 @@ const CheckoutContent: React.FC = () => {
               </button>
             </div>
           </div>
+        </div>
+      )}
+
+      {/* Success Modal */}
+      <CheckoutSuccessModal
+        isOpen={successModal.isOpen}
+        orderIdsParam={successModal.orderIdsParam}
+      />
+
+      {/* Toast Notification */}
+      {showToast && (
+        <div className="fixed top-24 right-4 z-[200] bg-primary-600 text-white px-4 py-3 rounded-xl shadow-xl flex items-center gap-3 animate-in fade-in slide-in-from-top-4 duration-300">
+          <CheckCircle2 size={20} className="text-white shrink-0" />
+          <span className="font-medium text-sm">
+            Nomor WhatsApp berhasil ditambahkan!
+          </span>
         </div>
       )}
     </div>

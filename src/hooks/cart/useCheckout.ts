@@ -70,6 +70,7 @@ export const useCheckout = () => {
     handleSubmit,
     errorModal,
     closeErrorModal,
+    successModal,
   } = useCheckoutSubmit(
     selectedAddressId,
     paymentMethod,
@@ -135,5 +136,6 @@ export const useCheckout = () => {
     // Error Modal
     errorModal,
     closeErrorModal,
+    successModal,
   };
 };

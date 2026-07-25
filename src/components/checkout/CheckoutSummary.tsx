@@ -64,21 +64,12 @@ const CheckoutSummary: React.FC<CheckoutSummaryProps> = ({
         className="w-full mt-6 bg-primary-600 text-white font-medium py-3 rounded-xl hover:bg-primary-700 active:scale-[0.98] transition-all disabled:opacity-50 flex justify-center items-center gap-2"
       >
         {loadingSubmit ? (
-          <>
-            <Loader2 size={18} className="animate-spin" /> Memproses...
-          </>
+          <Loader2 size={18} className="animate-spin" />
         ) : (
-          <>
-            <CheckCircle2 size={18} /> Buat Pesanan
-          </>
+          <CheckCircle2 size={18} />
         )}
+        Buat Pesanan
       </button>
-
-      {shippingInfos && (
-        <div className="mt-4 p-2 bg-gray-100 text-xs rounded overflow-auto max-h-32">
-          <pre>{JSON.stringify(shippingInfos, null, 2)}</pre>
-        </div>
-      )}
     </div>
   );
 };

@@ -3,6 +3,7 @@
 import React from "react";
 import { useRouter } from "next/navigation";
 import { ArrowLeft } from "lucide-react";
+import Image from "next/image";
 
 import { CartGroupSkeleton } from "@/src/components/ecommerce/Skeleton";
 import EmptyState from "@/src/components/ecommerce/EmptyState";
@@ -32,6 +33,8 @@ const KeranjangPage: React.FC = () => {
   const [itemToDelete, setItemToDelete] = React.useState<
     import("@/types").ApiCartItem | null
   >(null);
+  const [isBulkDeleteModalOpen, setIsBulkDeleteModalOpen] =
+    React.useState(false);
 
   if (loading && cartItems.length === 0) {
     return (
@@ -145,7 +148,7 @@ const KeranjangPage: React.FC = () => {
                     total={total}
                     isSelectMode={isSelectMode}
                     selectedCount={selectedIds.length}
-                    onRemoveSelected={removeSelected}
+                    onRemoveSelected={() => setIsBulkDeleteModalOpen(true)}
                     variant="desktop"
                   />
                 </div>
@@ -159,7 +162,7 @@ const KeranjangPage: React.FC = () => {
             total={total}
             isSelectMode={isSelectMode}
             selectedCount={selectedIds.length}
-            onRemoveSelected={removeSelected}
+            onRemoveSelected={() => setIsBulkDeleteModalOpen(true)}
             variant="mobile"
           />
         </>
@@ -168,23 +171,28 @@ const KeranjangPage: React.FC = () => {
       {/* Delete Confirmation Modal (Root Level) */}
       {itemToDelete && (
         <div className="fixed inset-0 z-50 flex items-center justify-center px-4 bg-black/40 backdrop-blur-sm animate-fade-in">
-          <div className="bg-white rounded-2xl w-full max-w-sm overflow-hidden shadow-2xl animate-slide-up relative">
+          <div className="bg-white rounded-[2rem] w-full max-w-sm overflow-hidden shadow-2xl animate-slide-up relative">
             <div className="p-6 text-center">
-              <div className="w-16 h-16 bg-red-50 rounded-full flex items-center justify-center mx-auto mb-4">
-                <span className="text-3xl">🗑️</span>
+              <div className="flex justify-center -mt-10 -mb-8">
+                <Image
+                  src="/detele-cart.svg"
+                  alt="Delete Confirmation"
+                  width={260}
+                  height={260}
+                  className="object-contain w-[260px] h-[260px]"
+                />
               </div>
-              <h3 className="font-display text-lg font-bold text-gray-900 mb-2">
-                Hapus Produk?
+              <h3 className="font-display text-xl font-medium text-gray-900 mb-2">
+                Hapus dari Keranjang?
               </h3>
-              <p className="text-sm text-gray-500 mb-6 leading-relaxed">
-                Yakin ingin menghapus <strong>{itemToDelete.produkNama}</strong>{" "}
-                dari keranjang?
+              <p className="text-[13px] text-gray-500 mb-10 leading-relaxed px-2">
+                Yakin mau hapus produk ini dari keranjang belanja?
               </p>
 
               <div className="flex gap-3">
                 <button
                   onClick={() => setItemToDelete(null)}
-                  className="flex-1 py-3 px-4 rounded-xl font-bold text-gray-600 bg-gray-100 hover:bg-gray-200 transition-colors"
+                  className="flex-1 py-3 px-4 rounded-xl font-medium text-gray-600 bg-gray-100 hover:bg-gray-200 transition-all"
                 >
                   Batal
                 </button>
@@ -193,7 +201,51 @@ const KeranjangPage: React.FC = () => {
                     removeItem(itemToDelete.id);
                     setItemToDelete(null);
                   }}
-                  className="flex-1 py-3 px-4 rounded-xl font-bold text-white bg-red-500 hover:bg-red-600 shadow-md shadow-red-500/20 transition-all"
+                  className="flex-1 py-3 px-4 rounded-xl font-medium text-primary-600 border border-primary-600 bg-transparent hover:bg-primary-50 transition-all"
+                >
+                  Hapus
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Bulk Delete Confirmation Modal */}
+      {isBulkDeleteModalOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center px-4 bg-black/40 backdrop-blur-sm animate-fade-in">
+          <div className="bg-white rounded-[2rem] w-full max-w-sm overflow-hidden shadow-2xl animate-slide-up relative">
+            <div className="p-6 text-center">
+              <div className="flex justify-center -mt-10 -mb-8">
+                <Image
+                  src="/detele-cart.svg"
+                  alt="Delete Confirmation"
+                  width={260}
+                  height={260}
+                  className="object-contain w-[260px] h-[260px]"
+                />
+              </div>
+              <h3 className="font-display text-xl font-medium text-gray-900 mb-2">
+                Hapus dari Keranjang?
+              </h3>
+              <p className="text-[13px] text-gray-500 mb-10 leading-relaxed px-2">
+                Yakin mau hapus {selectedIds.length} produk pilihanmu dari
+                keranjang belanja?
+              </p>
+
+              <div className="flex gap-3">
+                <button
+                  onClick={() => setIsBulkDeleteModalOpen(false)}
+                  className="flex-1 py-3 px-4 rounded-xl font-medium text-gray-600 bg-gray-100 hover:bg-gray-200 transition-all"
+                >
+                  Batal
+                </button>
+                <button
+                  onClick={() => {
+                    removeSelected();
+                    setIsBulkDeleteModalOpen(false);
+                  }}
+                  className="flex-1 py-3 px-4 rounded-xl font-medium text-primary-600 border border-primary-600 bg-transparent hover:bg-primary-50 transition-all"
                 >
                   Hapus
                 </button>

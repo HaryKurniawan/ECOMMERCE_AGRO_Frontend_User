@@ -29,6 +29,10 @@ export function useCheckoutSubmit(
     title: "",
     message: "",
   });
+  const [successModal, setSuccessModal] = useState({
+    isOpen: false,
+    orderIdsParam: "",
+  });
   const { isAuthenticated, _hasHydrated, openPhoneVerificationModal } =
     useAuthStore();
   const { profile } = useProfile(isAuthenticated, _hasHydrated);
@@ -118,7 +122,10 @@ export function useCheckoutSubmit(
 
         // Ambil semua order ID untuk multi-checkout support di halaman pembayaran
         const orderIdsParam = orders.map((o: any) => o.id).join(",");
-        router.replace(`/pembayaran?orderIds=${orderIdsParam}`);
+        setSuccessModal({
+          isOpen: true,
+          orderIdsParam,
+        });
         return;
       }
 
@@ -155,5 +162,6 @@ export function useCheckoutSubmit(
     handleSubmit,
     errorModal,
     closeErrorModal: () => setErrorModal((p) => ({ ...p, isOpen: false })),
+    successModal,
   };
 }

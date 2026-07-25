@@ -47,8 +47,10 @@ const AddressSection: React.FC<AddressSectionProps> = ({
           <div className="w-14 h-14 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
             <MapPin size={24} className="text-gray-400" />
           </div>
-          <p className="font-bold text-gray-900 mb-1">Belum Ada Alamat</p>
-          <p className="text-sm text-gray-500 mb-4">
+          <p className="font-semibold text-lg text-gray-900 mb-1">
+            Belum Ada Alamat
+          </p>
+          <p className="text-sm text-gray-500 mb-6">
             Tambahkan alamat pengiriman terlebih dahulu agar pesanan bisa
             dikirim.
           </p>

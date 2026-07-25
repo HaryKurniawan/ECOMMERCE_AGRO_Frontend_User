@@ -36,17 +36,15 @@ export const useOrderDetail = (id: string) => {
   }, [_hasHydrated, isAuthenticated, fetchOrder, router]);
 
   const handleConfirm = useCallback(async () => {
-    if (!confirm("Konfirmasi bahwa Anda sudah menerima barang?")) return;
     setConfirming(true);
     try {
       await ordersApi.confirmReceived(id);
-      await fetchOrder();
+      router.push(`/pesanan/${id}/success`);
     } catch (err: any) {
       alert(err.message || "Gagal");
-    } finally {
       setConfirming(false);
     }
-  }, [id, fetchOrder]);
+  }, [id, router]);
 
   const handleChat = useCallback(async () => {
     if (!order) return;

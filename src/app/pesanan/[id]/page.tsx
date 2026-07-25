@@ -1,7 +1,8 @@
 "use client";
 
-import React from "react";
+import React, { useState } from "react";
 import { useRouter, useParams, useSearchParams } from "next/navigation";
+import { Modal, ConfigProvider } from "antd";
 import {
   ArrowLeft,
   Store,
@@ -24,6 +25,7 @@ import Image from "next/image";
 
 import { formatRupiah, formatTanggal } from "@/lib/ecommerce-api";
 import type { ApiOrderItem } from "@/types";
+import { useOrderEvents } from "@/src/hooks/order/useOrderEvents";
 import { OrderDetailSkeleton } from "@/src/components/ecommerce/Skeleton";
 import EmptyState from "@/src/components/ecommerce/EmptyState";
 import { useOrderDetail, useCountdown } from "@/hooks";
@@ -43,6 +45,9 @@ const OrderDetailContent = () => {
   const params = useParams();
   const id = params.id as string;
 
+  // Real-time order updates
+  useOrderEvents();
+
   const {
     order,
     loading,
@@ -54,6 +59,7 @@ const OrderDetailContent = () => {
     handleCopy,
   } = useOrderDetail(id);
 
+  const [isConfirmModalOpen, setIsConfirmModalOpen] = useState(false);
   const timeLeft = useCountdown(order?.createdAt);
 
   // Auto-konfirmasi ketika scan QR resi — URL ?konfirmasi=1
@@ -447,7 +453,7 @@ const OrderDetailContent = () => {
             ) : (order as any).pengiriman?.status === "ARRIVED" &&
               order.status !== "SELESAI" ? (
               <button
-                onClick={handleConfirm}
+                onClick={() => setIsConfirmModalOpen(true)}
                 disabled={confirming}
                 className="flex-1 py-3 bg-emerald-600 text-white rounded-2xl font-bold text-[13px] shadow-lg shadow-emerald-600/20 hover:bg-emerald-700 transition-all active:scale-[0.98] flex items-center justify-center gap-2 disabled:opacity-60"
               >
@@ -477,6 +483,60 @@ const OrderDetailContent = () => {
           </div>
         </div>
       )}
+
+      {/* Confirmation Modal */}
+      <ConfigProvider theme={{ components: { Modal: { borderRadiusLG: 32 } } }}>
+        <Modal
+          open={isConfirmModalOpen}
+          onCancel={() => setIsConfirmModalOpen(false)}
+          footer={null}
+          centered
+          closeIcon={false}
+          width={330}
+          styles={{
+            body: { padding: "64px 28px" },
+            mask: {
+              backdropFilter: "blur(4px)",
+              backgroundColor: "rgba(0, 0, 0, 0.65)",
+            },
+          }}
+        >
+          <div className="flex flex-col items-center text-center">
+            <div className="w-28 h-28 mb-8 relative">
+              <Image
+                src="/images/cart.svg"
+                alt="Konfirmasi"
+                fill
+                className="object-contain"
+              />
+            </div>
+            <h3 className="font-medium text-base text-gray-800 mb-3 mt-2">
+              Pesanan Sudah Tiba?
+            </h3>
+            <p className="text-xs text-gray-500 leading-relaxed mb-10 px-2">
+              Yuk pastikan pesananmu sudah diterima dengan baik agar dananya
+              bisa diteruskan ke penjual.
+            </p>
+            <div className="w-full flex gap-3">
+              <button
+                onClick={() => setIsConfirmModalOpen(false)}
+                className="flex-1 py-2.5 rounded-2xl border border-gray-200 text-gray-500 font-medium text-[12px] hover:bg-gray-50 hover:text-gray-700 transition-colors"
+              >
+                Batal
+              </button>
+              <button
+                onClick={() => {
+                  setIsConfirmModalOpen(false);
+                  handleConfirm();
+                }}
+                className="flex-1 py-2.5 rounded-2xl bg-emerald-600 text-white font-medium text-[12px] hover:bg-emerald-700 transition-colors"
+              >
+                Konfirmasi
+              </button>
+            </div>
+          </div>
+        </Modal>
+      </ConfigProvider>
     </div>
   );
 };

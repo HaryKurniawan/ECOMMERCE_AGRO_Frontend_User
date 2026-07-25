@@ -8,6 +8,7 @@ interface StarRatingProps {
   onChange?: (rating: number) => void;
   readonly?: boolean;
   size?: number;
+  justifyStart?: boolean;
 }
 
 const LABELS: Record<number, string> = {
@@ -23,13 +24,16 @@ const StarRating: React.FC<StarRatingProps> = ({
   onChange,
   readonly = false,
   size = 28,
+  justifyStart = false,
 }) => {
   const [hovered, setHovered] = useState(0);
 
   const active = hovered || value;
 
   return (
-    <div className="flex flex-col items-center gap-1">
+    <div
+      className={`flex flex-col gap-1 ${justifyStart ? "items-start" : "items-center"}`}
+    >
       <div className="flex gap-1">
         {[1, 2, 3, 4, 5].map((star) => (
           <button

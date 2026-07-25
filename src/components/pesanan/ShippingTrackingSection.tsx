@@ -1,6 +1,6 @@
-import React from "react";
+import React, { useState } from "react";
 import Image from "next/image";
-import { Truck, CheckCircle, Camera } from "lucide-react";
+import { Truck, CheckCircle, Camera, X } from "lucide-react";
 
 interface ShippingTrackingSectionProps {
   shipping: {
@@ -25,6 +25,7 @@ const STEPS = [
 const ShippingTrackingSection: React.FC<ShippingTrackingSectionProps> = ({
   shipping,
 }) => {
+  const [selectedImage, setSelectedImage] = useState<string | null>(null);
   const hist = shipping.trackingHistory || [];
   const buktiFoto = shipping.buktiKirimFoto || [];
   const buktiCatatan = shipping.buktiKirimCatatan;
@@ -125,12 +126,11 @@ const ShippingTrackingSection: React.FC<ShippingTrackingSectionProps> = ({
 
           <div className="grid grid-cols-3 gap-2">
             {buktiFoto.map((foto, idx) => (
-              <a
+              <button
                 key={idx}
-                href={foto}
-                target="_blank"
-                rel="noreferrer"
-                className="relative aspect-square rounded-xl overflow-hidden border border-gray-100 bg-gray-50"
+                type="button"
+                onClick={() => setSelectedImage(foto)}
+                className="relative aspect-square rounded-xl overflow-hidden border border-gray-100 bg-gray-50 cursor-pointer block w-full h-full"
               >
                 <Image
                   src={foto}
@@ -139,7 +139,7 @@ const ShippingTrackingSection: React.FC<ShippingTrackingSectionProps> = ({
                   className="object-cover"
                   unoptimized
                 />
-              </a>
+              </button>
             ))}
           </div>
 
@@ -166,6 +166,35 @@ const ShippingTrackingSection: React.FC<ShippingTrackingSectionProps> = ({
               })}
             </p>
           )}
+        </div>
+      )}
+
+      {/* Lightbox Modal */}
+      {selectedImage && (
+        <div
+          className="fixed inset-0 z-[9999] bg-black/80 flex items-center justify-center p-4 animate-in fade-in duration-200"
+          onClick={() => setSelectedImage(null)}
+        >
+          <div
+            className="relative w-full max-w-4xl max-h-[90vh] h-full flex items-center justify-center animate-in zoom-in-95 duration-200"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <button
+              onClick={() => setSelectedImage(null)}
+              className="absolute top-2 right-2 md:-top-6 md:-right-6 text-white/70 hover:text-white z-50 p-1.5 bg-white/10 hover:bg-white/20 rounded-full transition-all"
+            >
+              <X size={24} />
+            </button>
+            <div className="relative w-full h-full flex items-center justify-center">
+              <Image
+                src={selectedImage}
+                alt="Foto Full"
+                fill
+                className="object-contain"
+                unoptimized
+              />
+            </div>
+          </div>
         </div>
       )}
     </section>

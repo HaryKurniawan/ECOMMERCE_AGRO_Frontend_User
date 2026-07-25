@@ -48,7 +48,7 @@ const EmptyState: React.FC<EmptyStateProps> = ({
           {icon}
         </div>
       ) : illustration ? (
-        <div className="relative w-52 h-52 mb-4 select-none">
+        <div className="relative w-80 h-80 -mt-12 -mb-4 select-none">
           <Image
             src={illustration}
             alt={title}
