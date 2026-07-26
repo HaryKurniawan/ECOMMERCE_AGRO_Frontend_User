@@ -14,7 +14,6 @@ pipeline {
     }
 
     stages {
-
         stage('Notify Start') {
             steps {
                 withCredentials([
@@ -26,13 +25,13 @@ TOKEN=$(echo "$TG_TOKEN" | tr -d '\\r\\n ')
 CHAT=$(echo "$TG_CHAT" | tr -d '\\r\\n ')
 
 curl -sS -X POST \
-https://api.telegram.org/bot${TOKEN}/sendMessage \
--H "Content-Type: application/json" \
--d @- <<EOF
+  https://api.telegram.org/bot${TOKEN}/sendMessage \
+  -H "Content-Type: application/json" \
+  -d @- <<EOF
 {
-    "chat_id":"${CHAT}",
-    "parse_mode":"Markdown",
-    "text":"🚀 *Deploy Frontend User Dimulai*\\nBuild #${BUILD_NUMBER}"
+  "chat_id": "${CHAT}",
+  "parse_mode": "Markdown",
+  "text": "🚀 *Deploy Frontend User Dimulai*\\nBuild #${BUILD_NUMBER}"
 }
 EOF
 '''
@@ -50,14 +49,14 @@ EOF
             steps {
                 sh '''
 docker run --rm \
--u $(id -u):$(id -g) \
--v "$(pwd):/repo" \
-zricethezav/gitleaks:latest \
-detect \
---source=/repo \
---no-git \
---redact \
---exit-code=1
+  -u $(id -u):$(id -g) \
+  -v "$(pwd):/repo" \
+  zricethezav/gitleaks:latest \
+  detect \
+  --source=/repo \
+  --no-git \
+  --redact \
+  --exit-code=1
 '''
             }
         }
@@ -85,13 +84,14 @@ set -e
 docker image rm -f ${IMAGE_NAME} || true
 
 docker build \
-    --pull \
-    -f Dockerfile.prod \
-    -t ${IMAGE_NAME} .
+  --pull \
+  -f Dockerfile.prod \
+  -t ${IMAGE_NAME} .
 '''
             }
         }
-                stage('Deploy (Safe Restart)') {
+
+        stage('Deploy (Safe Restart)') {
             steps {
                 sh '''
 set -e
@@ -101,18 +101,16 @@ TEST_CONTAINER="${CONTAINER_NAME}-tester"
 echo "======================================="
 echo "Removing old tester container..."
 echo "======================================="
-
 docker rm -f $TEST_CONTAINER || true
 
 echo "======================================="
 echo "Starting tester container..."
 echo "======================================="
-
 docker run -d \
-    --name $TEST_CONTAINER \
-    --network agro-network \
-    --env-file .env.local \
-    ${IMAGE_NAME}
+  --name $TEST_CONTAINER \
+  --network agro-network \
+  --env-file .env.local \
+  ${IMAGE_NAME}
 
 echo "Waiting application..."
 sleep 5
@@ -120,7 +118,6 @@ sleep 5
 echo "======================================="
 echo "Running Health Check..."
 echo "======================================="
-
 for i in $(seq 1 30); do
     if docker exec $TEST_CONTAINER wget -qO- http://127.0.0.1:3000 >/dev/null 2>&1; then
         echo "Health Check Passed"
@@ -132,12 +129,9 @@ for i in $(seq 1 30); do
 
     if [ "$i" -eq 30 ]; then
         echo "Health Check Failed"
-
         echo "========== TEST CONTAINER LOG =========="
         docker logs $TEST_CONTAINER || true
-
         docker rm -f $TEST_CONTAINER || true
-
         exit 1
     fi
 done
@@ -145,23 +139,21 @@ done
 echo "======================================="
 echo "Stopping old production container..."
 echo "======================================="
-
 docker rm -f ${CONTAINER_NAME} || true
 
 echo "======================================="
 echo "Starting production container..."
 echo "======================================="
-
 docker run -d \
-    --name ${CONTAINER_NAME} \
-    --network agro-network \
-    --env-file .env.local \
-    --restart unless-stopped \
-    --log-driver json-file \
-    --log-opt max-size=20m \
-    --log-opt max-file=5 \
-    -p ${APP_PORT}:3000 \
-    ${IMAGE_NAME}
+  --name ${CONTAINER_NAME} \
+  --network agro-network \
+  --env-file .env.local \
+  --restart unless-stopped \
+  --log-driver json-file \
+  --log-opt max-size=20m \
+  --log-opt max-file=5 \
+  -p ${APP_PORT}:3000 \
+  ${IMAGE_NAME}
 
 echo "Waiting production container..."
 sleep 5
@@ -169,7 +161,6 @@ sleep 5
 echo "======================================="
 echo "Removing tester container..."
 echo "======================================="
-
 docker rm -f $TEST_CONTAINER || true
 
 echo "======================================="
@@ -185,33 +176,27 @@ echo "======================================="
 echo "======================================="
 echo "Running Containers"
 echo "======================================="
-
 docker ps
 
 echo ""
-
 echo "======================================="
 echo "Frontend Logs"
 echo "======================================="
-
 docker logs --tail 50 ${CONTAINER_NAME}
 
 echo ""
-
 echo "======================================="
 echo "Container Health"
 echo "======================================="
-
 docker inspect \
---format='{{json .State.Health}}' \
-${CONTAINER_NAME} || true
+  --format='{{json .State.Health}}' \
+  ${CONTAINER_NAME} || true
 '''
             }
         }
     }
 
-        post {
-
+    post {
         always {
             sh '''
 set -e
@@ -219,11 +204,8 @@ set -e
 echo "======================================="
 echo "Cleaning Workspace..."
 echo "======================================="
-
 rm -f .env.local || true
-
 docker rm -f ${CONTAINER_NAME}-tester || true
-
 docker image prune -f || true
 '''
         }
@@ -240,13 +222,13 @@ TOKEN=$(echo "$TG_TOKEN" | tr -d '\\r\\n ')
 CHAT=$(echo "$TG_CHAT" | tr -d '\\r\\n ')
 
 curl -sS -X POST \
-https://api.telegram.org/bot${TOKEN}/sendMessage \
--H "Content-Type: application/json" \
--d @- <<EOF
+  https://api.telegram.org/bot${TOKEN}/sendMessage \
+  -H "Content-Type: application/json" \
+  -d @- <<EOF
 {
-    "chat_id":"${CHAT}",
-    "parse_mode":"Markdown",
-    "text":"✅ *Deploy Frontend User Berhasil*\\nBuild #${BUILD_NUMBER}\\n${BUILD_URL}"
+  "chat_id": "${CHAT}",
+  "parse_mode": "Markdown",
+  "text": "✅ *Deploy Frontend User Berhasil*\\nBuild #${BUILD_NUMBER}\\n${BUILD_URL}"
 }
 EOF
 '''
@@ -260,15 +242,12 @@ EOF
 echo "======================================="
 echo "Production Container Log"
 echo "======================================="
-
 docker logs --tail 100 ${CONTAINER_NAME} || true
 
 echo ""
-
 echo "======================================="
 echo "Tester Container Log"
 echo "======================================="
-
 docker logs --tail 100 ${CONTAINER_NAME}-tester || true
 '''
 
@@ -281,13 +260,13 @@ TOKEN=$(echo "$TG_TOKEN" | tr -d '\\r\\n ')
 CHAT=$(echo "$TG_CHAT" | tr -d '\\r\\n ')
 
 curl -sS -X POST \
-https://api.telegram.org/bot${TOKEN}/sendMessage \
--H "Content-Type: application/json" \
--d @- <<EOF
+  https://api.telegram.org/bot${TOKEN}/sendMessage \
+  -H "Content-Type: application/json" \
+  -d @- <<EOF
 {
-    "chat_id":"${CHAT}",
-    "parse_mode":"Markdown",
-    "text":"❌ *Deploy Frontend User Gagal*\\nBuild #${BUILD_NUMBER}\\n${BUILD_URL}console"
+  "chat_id": "${CHAT}",
+  "parse_mode": "Markdown",
+  "text": "❌ *Deploy Frontend User Gagal*\\nBuild #${BUILD_NUMBER}\\n${BUILD_URL}console"
 }
 EOF
 '''
