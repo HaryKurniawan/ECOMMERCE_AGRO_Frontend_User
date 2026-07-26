@@ -8,10 +8,10 @@ import "./globals.css";
 export const metadata: Metadata = {
   metadataBase: new URL("https://agro-ecommerce.web.id"),
   title: "Agro Ecommerce",
-  description: "Mode testing pemenuhan skripsi",
+  description: "Mode testing pemenuhan skripsi By @hyverstudio",
   openGraph: {
     title: "Agro Ecommerce",
-    description: "Mode testing pemenuhan skripsi",
+    description: "Mode testing pemenuhan skripsi By @hyverstudio",
     url: "https://agro-ecommerce.web.id",
     siteName: "Agro Ecommerce",
     images: [
@@ -27,7 +27,7 @@ export const metadata: Metadata = {
   twitter: {
     card: "summary_large_image",
     title: "Agro Ecommerce",
-    description: "Mode testing pemenuhan skripsi @hyverstudio",
+    description: "Mode testing pemenuhan skripsi By @hyverstudio",
     images: ["/images/hyver.png"],
   },
 };
