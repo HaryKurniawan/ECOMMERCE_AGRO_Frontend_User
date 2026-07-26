@@ -6,7 +6,6 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useQueryClient } from "@tanstack/react-query";
 import { z } from "zod";
-import { Modal } from "antd";
 
 import { addressesApi, storesApi } from "@/lib/ecommerce-api";
 import { queryKeys } from "@/src/hooks/query-keys";
@@ -34,6 +33,9 @@ export function useAlamatForm() {
   const [mapValue, setMapValue] = useState<MapPickerValue | undefined>(
     undefined,
   );
+  // Custom success modal states
+  const [successOpen, setSuccessOpen] = useState(false);
+  const [successUrl, setSuccessUrl] = useState("/profil/alamat");
 
   // Cache hasil validasi kota agar tidak fetch ulang saat submit
   const cityValidationCache = useRef<Record<string, boolean>>({});
@@ -313,13 +315,9 @@ export function useAlamatForm() {
       const targetUrl = redirectTo
         ? decodeURIComponent(redirectTo)
         : "/profil/alamat";
-      Modal.success({
-        title: "Alamat Berhasil Disimpan",
-        content: "Data alamat Anda telah berhasil disimpan.",
-        centered: true,
-        okText: "Oke",
-        onOk: () => router.push(targetUrl),
-      });
+
+      setSuccessUrl(targetUrl);
+      setSuccessOpen(true);
     } catch (err: any) {
       const axiosError = err as { response?: { data?: { message?: string } } };
       setError(
@@ -352,5 +350,8 @@ export function useAlamatForm() {
     cityWarning,
     clearCityWarning: () => setCityWarning(""),
     defaultCity,
+    successOpen,
+    setSuccessOpen,
+    successUrl,
   };
 }

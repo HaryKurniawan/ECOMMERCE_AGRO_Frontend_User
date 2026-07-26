@@ -62,6 +62,9 @@ function AlamatFormPageContent() {
     cityWarning,
     clearCityWarning,
     defaultCity,
+    successOpen,
+    setSuccessOpen,
+    successUrl,
   } = useAlamatForm();
 
   // Removed Modal.warning useEffect as we are using ActionModal now
@@ -349,6 +352,48 @@ function AlamatFormPageContent() {
           onClick: clearCityWarning,
         }}
       />
+
+      {/* Custom Success Modal (Manual HTML/CSS) untuk mobile safety */}
+      {successOpen && (
+        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
+          {/* Backdrop */}
+          <div
+            className="absolute inset-0 bg-black/50 backdrop-blur-sm transition-opacity duration-300"
+            onClick={() => {
+              setSuccessOpen(false);
+              router.push(successUrl);
+            }}
+          />
+
+          {/* Modal Content Card */}
+          <div className="relative bg-white w-full max-w-[340px] rounded-[2rem] p-6 text-center shadow-2xl border border-gray-100 flex flex-col items-center justify-center transform scale-100 transition-all duration-300 animate-in zoom-in-95">
+            <div className="w-16 h-16 bg-primary-50 rounded-full flex items-center justify-center mb-4">
+              <CheckCircle2
+                size={32}
+                className="text-primary-600 animate-bounce"
+              />
+            </div>
+
+            <h3 className="font-display font-semibold text-lg text-gray-900 mb-2 leading-tight">
+              Alamat Berhasil Disimpan
+            </h3>
+
+            <p className="text-gray-500 mb-6 text-[13px] px-2 leading-relaxed font-normal">
+              Data alamat Anda telah berhasil disimpan.
+            </p>
+
+            <button
+              onClick={() => {
+                setSuccessOpen(false);
+                router.push(successUrl);
+              }}
+              className="w-full bg-primary-600 hover:bg-primary-500 active:bg-primary-700 text-white rounded-2xl font-semibold py-3.5 text-[13px] transition-colors shadow-none"
+            >
+              Oke
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
