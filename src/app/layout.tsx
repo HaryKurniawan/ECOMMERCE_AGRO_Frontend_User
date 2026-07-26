@@ -27,8 +27,8 @@ export const metadata: Metadata = {
   twitter: {
     card: "summary_large_image",
     title: "Agro Ecommerce",
-    description: "Mode testing pemenuhan skripsi",
-    images: ["/images/grosir-hero.png"],
+    description: "Mode testing pemenuhan skripsi @hyverstudio",
+    images: ["/images/hyver.png"],
   },
 };
 
