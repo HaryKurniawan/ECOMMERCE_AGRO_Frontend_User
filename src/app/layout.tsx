@@ -1,78 +1,47 @@
-"use client";
+import type { Metadata } from "next";
 
-import dynamic from "next/dynamic";
-import { usePathname } from "next/navigation";
-
-const Navbar = dynamic(() => import("@/src/components/ecommerce/Navbar"), {
-  ssr: false,
-  loading: () => (
-    <div className="h-[73px] bg-white border-b border-gray-200 hidden lg:block" />
-  ),
-});
-
-const BottomNav = dynamic(
-  () => import("@/src/components/ecommerce/BottomNav"),
-  {
-    ssr: false,
-    loading: () => null,
-  },
-);
-
-import AuthGuard from "@/src/components/AuthGuard";
-import OnboardingModal from "@/src/components/ecommerce/OnboardingModal";
-import { useAuthStore } from "@/src/store/auth-store";
-import { useRestoreAuth } from "@/src/hooks/auth";
+import ClientLayoutWrapper from "@/src/components/layout/ClientLayoutWrapper";
 
 import { Providers } from "./providers";
-
 import "./globals.css";
 
-const bottomNavPaths = ["/", "/booking", "/notifikasi", "/profil", "/chat"];
+export const metadata: Metadata = {
+  metadataBase: new URL("https://agro-ecommerce.web.id"),
+  title: "Agro Ecommerce",
+  description: "Mode testing pemenuhan skripsi",
+  openGraph: {
+    title: "Agro Ecommerce",
+    description: "Mode testing pemenuhan skripsi",
+    url: "https://agro-ecommerce.web.id",
+    siteName: "Agro Ecommerce",
+    images: [
+      {
+        url: "/images/hyver.png",
+        width: 1200,
+        height: 630,
+        alt: "Agro Ecommerce",
+      },
+    ],
+    type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Agro Ecommerce",
+    description: "Mode testing pemenuhan skripsi",
+    images: ["/images/grosir-hero.png"],
+  },
+};
 
 export default function RootLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
-  const pathname = usePathname();
-  const user = useAuthStore((s) => s.user);
-  const isVerifiedB2B = user?.isVerifiedB2B === true;
-
-  // Restore and validate auth on app load
-  useRestoreAuth();
-
-  const isAuth =
-    pathname?.startsWith("/login") ||
-    pathname?.startsWith("/register") ||
-    pathname?.startsWith("/forgot-password");
-
-  const isEcommerce = !isAuth;
-
-  let showBottomNav = bottomNavPaths.includes(pathname || "");
-  if (pathname === "/chat" && isVerifiedB2B) {
-    showBottomNav = false;
-  }
-
   return (
     <html lang="en" suppressHydrationWarning>
       <body className="antialiased" suppressHydrationWarning>
         <Providers>
-          {isEcommerce ? (
-            <AuthGuard>
-              <div className="min-h-screen bg-gray-50">
-                <Navbar />
-                <main
-                  className={`lg:pt-32 ${showBottomNav ? "pb-20" : ""} ${pathname?.startsWith("/chat") ? "lg:pb-0" : "lg:pb-6"}`}
-                >
-                  <div className="desktop-container">{children}</div>
-                </main>
-                {showBottomNav && <BottomNav />}
-                <OnboardingModal />
-              </div>
-            </AuthGuard>
-          ) : (
-            children
-          )}
+          <ClientLayoutWrapper>{children}</ClientLayoutWrapper>
         </Providers>
       </body>
     </html>
