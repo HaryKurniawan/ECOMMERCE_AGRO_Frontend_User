@@ -1,7 +1,7 @@
 "use client";
 
 import { useRouter, useSearchParams } from "next/navigation";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useQueryClient } from "@tanstack/react-query";
@@ -34,6 +34,10 @@ export function useAlamatForm() {
   const [mapValue, setMapValue] = useState<MapPickerValue | undefined>(
     undefined,
   );
+
+  // Cache hasil validasi kota agar tidak fetch ulang saat submit
+  const cityValidationCache = useRef<Record<string, boolean>>({});
+  const storesCacheRef = useRef<Store[] | null>(null);
 
   const { selectedCity, setCity } = useCityStore();
   const defaultCity = searchParams.get("city") || selectedCity;
@@ -123,79 +127,95 @@ export function useAlamatForm() {
     checkAddresses();
   }, [editId, reset, setValue]);
 
-  const checkCityAvailability = async (kotaToCheck: string) => {
-    if (!kotaToCheck) return true;
-    try {
-      const storesRes = await storesApi.getAll({ limit: 1000 });
-      let storesRaw = storesRes?.data?.data;
+  const checkCityAvailability = useCallback(
+    async (kotaToCheck: string): Promise<boolean> => {
+      if (!kotaToCheck) return true;
 
-      // Jika responsenya dibungkus pagination objek (e.g. { data: [...], total: ... })
-      if (
-        storesRaw &&
-        !Array.isArray(storesRaw) &&
-        Array.isArray(storesRaw.data)
-      ) {
-        storesRaw = storesRaw.data;
-      } else if (storesRes?.data && Array.isArray(storesRes.data)) {
-        storesRaw = storesRes.data;
+      // Kembalikan hasil cache jika sudah pernah dicek
+      const cached = cityValidationCache.current[kotaToCheck];
+      if (cached !== undefined) {
+        if (!cached) {
+          setCityWarning(
+            `Maaf, toko kami belum tersedia di alamat tersebut (${kotaToCheck}).`,
+          );
+        }
+        return cached;
       }
 
-      const stores: Store[] = Array.isArray(storesRaw) ? storesRaw : [];
-
-      const normalizeString = (str: string) => {
-        let s = str.toLowerCase().trim();
-        // Ubah format Inggris ke Indonesia
-        if (s.endsWith(" city")) s = "kota " + s.replace(/\s+city$/, "");
-        if (s.endsWith(" regency"))
-          s = "kabupaten " + s.replace(/\s+regency$/, "");
-        // Seragamkan awalan kab
-        s = s.replace(/^kab\.?\s+/i, "kabupaten ");
-        return s.trim();
-      };
-
-      const savedKotaNorm = normalizeString(kotaToCheck);
-      const isAmbiguous =
-        !savedKotaNorm.startsWith("kota ") &&
-        !savedKotaNorm.startsWith("kabupaten ");
-
-      const isKotaAvailable = stores.some((s: Store) => {
-        const match = (storeCity: string, userCity: string) => {
-          if (storeCity === userCity) return true;
-          // Jika map hanya mereturn "Bandung" (tanpa kota/kabupaten), kita izinkan keduanya (fallback)
+      try {
+        // Pakai cache stores jika sudah ada
+        let stores: Store[] = storesCacheRef.current || [];
+        if (!storesCacheRef.current) {
+          const storesRes = await storesApi.getAll({ limit: 1000 });
+          let storesRaw = storesRes?.data?.data;
           if (
-            isAmbiguous &&
-            (storeCity === "kota " + userCity ||
-              storeCity === "kabupaten " + userCity)
+            storesRaw &&
+            !Array.isArray(storesRaw) &&
+            Array.isArray(storesRaw.data)
           ) {
-            return true;
+            storesRaw = storesRaw.data;
+          } else if (storesRes?.data && Array.isArray(storesRes.data)) {
+            storesRaw = storesRes.data;
           }
-          return false;
+          stores = Array.isArray(storesRaw) ? storesRaw : [];
+          storesCacheRef.current = stores; // Simpan ke cache
+        }
+
+        const normalizeString = (str: string) => {
+          let s = str.toLowerCase().trim();
+          if (s.endsWith(" city")) s = "kota " + s.replace(/\s+city$/, "");
+          if (s.endsWith(" regency"))
+            s = "kabupaten " + s.replace(/\s+regency$/, "");
+          s = s.replace(/^kab\.?\s+/i, "kabupaten ");
+          return s.trim();
         };
 
-        const kabNorm = normalizeString(s.kabupaten || "");
-        if (match(kabNorm, savedKotaNorm)) return true;
+        const savedKotaNorm = normalizeString(kotaToCheck);
+        const isAmbiguous =
+          !savedKotaNorm.startsWith("kota ") &&
+          !savedKotaNorm.startsWith("kabupaten ");
 
-        if (s.areaCakupanKota && Array.isArray(s.areaCakupanKota)) {
-          return s.areaCakupanKota.some((c) => {
-            const cn = normalizeString(c);
-            return match(cn, savedKotaNorm);
-          });
+        const isKotaAvailable = stores.some((s: Store) => {
+          const match = (storeCity: string, userCity: string) => {
+            if (storeCity === userCity) return true;
+            if (
+              isAmbiguous &&
+              (storeCity === "kota " + userCity ||
+                storeCity === "kabupaten " + userCity)
+            ) {
+              return true;
+            }
+            return false;
+          };
+          const kabNorm = normalizeString(s.kabupaten || "");
+          if (match(kabNorm, savedKotaNorm)) return true;
+          if (s.areaCakupanKota && Array.isArray(s.areaCakupanKota)) {
+            return s.areaCakupanKota.some((c) => {
+              const cn = normalizeString(c);
+              return match(cn, savedKotaNorm);
+            });
+          }
+          return false;
+        });
+
+        // Simpan hasil ke cache
+        cityValidationCache.current[kotaToCheck] = isKotaAvailable;
+
+        if (!isKotaAvailable) {
+          setCityWarning(
+            `Maaf, toko kami belum tersedia di alamat tersebut (${kotaToCheck}).`,
+          );
+          return false;
         }
-        return false;
-      });
-
-      if (!isKotaAvailable) {
-        setCityWarning(
-          `Maaf, toko kami belum tersedia di alamat tersebut (${kotaToCheck}).`,
-        );
-        return false;
+        setCityWarning("");
+        return true;
+      } catch (err) {
+        console.error("Failed to validate city", err);
+        return true;
       }
-      return true;
-    } catch (err) {
-      console.error("Failed to validate city", err);
-      return true;
-    }
-  };
+    },
+    [],
+  );
 
   const handleMapChange = (val: MapPickerValue) => {
     setMapValue(val);
