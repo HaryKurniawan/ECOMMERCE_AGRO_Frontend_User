@@ -297,11 +297,19 @@ export const useMapPicker = (
 
       marker.on("dragend", async () => {
         const pos = marker.getLatLng();
+        // Set isPinMoved SEGERA (sebelum geocoding selesai)
+        setIsPinMoved(true);
+        onChangeRef.current({
+          lat: pos.lat,
+          lng: pos.lng,
+          displayName: displayName,
+          isPinMoved: true,
+        });
+        // Geocoding di background
         setGeocoding(true);
         const res = await reverseGeocode(pos.lat, pos.lng);
         setGeocoding(false);
         setDisplayName(res.name);
-        setIsPinMoved(true);
         onChangeRef.current({
           lat: pos.lat,
           lng: pos.lng,
@@ -313,11 +321,19 @@ export const useMapPicker = (
 
       map.on("click", async (e) => {
         marker.setLatLng([e.latlng.lat, e.latlng.lng]);
+        // Set isPinMoved SEGERA (sebelum geocoding selesai)
+        setIsPinMoved(true);
+        onChangeRef.current({
+          lat: e.latlng.lat,
+          lng: e.latlng.lng,
+          displayName: displayName,
+          isPinMoved: true,
+        });
+        // Geocoding di background
         setGeocoding(true);
         const res = await reverseGeocode(e.latlng.lat, e.latlng.lng);
         setGeocoding(false);
         setDisplayName(res.name);
-        setIsPinMoved(true);
         onChangeRef.current({
           lat: e.latlng.lat,
           lng: e.latlng.lng,
