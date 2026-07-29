@@ -90,6 +90,7 @@ export interface ApiOrderItem {
 export interface ApiOrderData {
   id: string;
   createdAt: string;
+  updatedAt?: string;
   status: string;
   tokoId?: string;
   storeName?: string;

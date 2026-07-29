@@ -20,6 +20,7 @@ import {
   Package,
   Tag,
   TrendingUp,
+  Truck,
 } from "lucide-react";
 import Image from "next/image";
 
@@ -164,6 +165,24 @@ const OrderDetailContent = () => {
     diskonGrosirPersen > 0
       ? Math.round((subtotal * diskonGrosirPersen) / 100)
       : 0;
+
+  const isPaidOrder = ["DIPROSES", "DIKIRIM", "SELESAI", "DITUTUP"].includes(
+    order.status?.toUpperCase() || "",
+  );
+  const baseReferenceDate = new Date(
+    isPaidOrder && order.updatedAt ? order.updatedAt : order.createdAt,
+  );
+  const estimasiMinDate = new Date(baseReferenceDate);
+  estimasiMinDate.setDate(estimasiMinDate.getDate() + 2);
+  const estimasiMaxDate = new Date(baseReferenceDate);
+  estimasiMaxDate.setDate(estimasiMaxDate.getDate() + 5);
+
+  const dateOpts: Intl.DateTimeFormatOptions = {
+    day: "numeric",
+    month: "short",
+    year: "numeric",
+  };
+  const estimasiTanggalTeks = `${estimasiMinDate.toLocaleDateString("id-ID", dateOpts)} – ${estimasiMaxDate.toLocaleDateString("id-ID", dateOpts)}`;
 
   return (
     <div className="min-h-screen bg-[#FAFAFA] pb-28">
@@ -353,6 +372,37 @@ const OrderDetailContent = () => {
             </span>
           </div>
         </section>
+
+        {/* Estimasi Pengiriman Grosir */}
+        {isGrosir && (
+          <section className="bg-emerald-50/70 rounded-2xl border border-emerald-200/80 p-5 space-y-3">
+            <div className="flex items-center gap-2.5">
+              <div className="w-8 h-8 bg-emerald-100 rounded-xl flex items-center justify-center shrink-0">
+                <Truck size={16} className="text-emerald-700" />
+              </div>
+              <div className="min-w-0 flex-1">
+                <h2 className="font-bold text-xs text-emerald-900 uppercase tracking-wider">
+                  Estimasi Pengiriman Grosir
+                </h2>
+                <p className="text-[11px] text-emerald-700 font-medium">
+                  2 – 5 Hari Kerja{" "}
+                  {isPaidOrder
+                    ? "dari pembayaran berhasil"
+                    : "setelah pembayaran berhasil"}
+                </p>
+              </div>
+            </div>
+            <div className="bg-white/90 rounded-xl p-3 border border-emerald-100 flex flex-wrap items-center justify-between gap-2 text-xs">
+              <span className="text-emerald-800 font-medium flex items-center gap-1.5">
+                <Calendar size={13} className="text-emerald-600 shrink-0" />
+                Estimasi Tanggal Tiba:
+              </span>
+              <span className="font-bold text-emerald-900 bg-emerald-100/70 px-2.5 py-1 rounded-lg">
+                {estimasiTanggalTeks}
+              </span>
+            </div>
+          </section>
+        )}
 
         {/* Foto Sebelum Kirim */}
         {order.fotoSebelumKirimUrl && (

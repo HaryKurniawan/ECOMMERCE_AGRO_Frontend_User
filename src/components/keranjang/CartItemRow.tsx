@@ -11,7 +11,7 @@ interface CartItemRowProps {
   isSelectMode: boolean;
   isSelected: boolean;
   onToggleSelection: () => void;
-  onUpdateQuantity: (delta: number) => void;
+  onUpdateQuantity: (deltaOrTarget: number, isAbsolute?: boolean) => void;
   onUpdateVariant?: (newVarianId: string) => void;
   onPromptDelete?: () => void;
 }
@@ -27,6 +27,14 @@ const CartItemRow: React.FC<CartItemRowProps> = ({
 }) => {
   const [showDropdown, setShowDropdown] = React.useState(false);
   const dropdownRef = React.useRef<HTMLDivElement>(null);
+
+  const [localJumlah, setLocalJumlah] = React.useState<string>(
+    String(item.jumlah),
+  );
+
+  React.useEffect(() => {
+    setLocalJumlah(String(item.jumlah));
+  }, [item.jumlah]);
 
   React.useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -55,6 +63,31 @@ const CartItemRow: React.FC<CartItemRowProps> = ({
       onPromptDelete?.();
     } else {
       onUpdateQuantity(-1);
+    }
+  };
+
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const val = e.target.value.replace(/\D/g, ""); // hanya menerima angka 0-9
+    setLocalJumlah(val);
+    if (val !== "") {
+      const num = parseInt(val, 10);
+      if (!isNaN(num) && num >= 1) {
+        const clamped = maxStock > 0 ? Math.min(num, maxStock) : num;
+        onUpdateQuantity(clamped, true);
+      }
+    }
+  };
+
+  const handleInputBlur = () => {
+    let num = parseInt(localJumlah, 10);
+    if (isNaN(num) || num < 1) {
+      num = 1;
+    } else if (maxStock > 0 && num > maxStock) {
+      num = maxStock;
+    }
+    setLocalJumlah(String(num));
+    if (num !== item.jumlah) {
+      onUpdateQuantity(num, true);
     }
   };
 
@@ -220,9 +253,20 @@ const CartItemRow: React.FC<CartItemRowProps> = ({
                   >
                     <Minus size={14} className="text-gray-400" />
                   </button>
-                  <span className="font-display text-sm font-semibold w-10 text-center text-gray-900 cursor-default">
-                    {item.jumlah}
-                  </span>
+                  <input
+                    type="text"
+                    inputMode="numeric"
+                    pattern="[0-9]*"
+                    value={localJumlah}
+                    onChange={handleInputChange}
+                    onBlur={handleInputBlur}
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter") {
+                        handleInputBlur();
+                      }
+                    }}
+                    className="font-display text-sm font-semibold w-12 text-center text-gray-900 bg-transparent focus:outline-none focus:ring-1 focus:ring-primary-500 py-1"
+                  />
                   <button
                     onClick={() => onUpdateQuantity(1)}
                     disabled={isMaxStock}

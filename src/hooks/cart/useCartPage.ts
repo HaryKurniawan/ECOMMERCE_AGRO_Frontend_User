@@ -141,7 +141,11 @@ export const useCartPage = () => {
 
   const timeoutRefs = useRef<Record<string, NodeJS.Timeout>>({});
 
-  const updateQuantity = async (id: string, delta: number) => {
+  const updateQuantity = async (
+    id: string,
+    deltaOrTarget: number,
+    isAbsolute = false,
+  ) => {
     const item = cartItems.find((i) => i.id === id);
     if (!item) return;
 
@@ -151,12 +155,14 @@ export const useCartPage = () => {
     // fallback to item.stok if there are no variants, assuming it exists or default to 0 (unlimited if 0 but our UI treats 0 as out of stock, wait, let's just not block here if maxStock is 0 just in case)
     const maxStock = selectedVariant?.stokKemasan ?? 0;
 
-    const newJumlah = Math.max(1, item.jumlah + delta);
-    if (newJumlah === item.jumlah) return;
+    let newJumlah = isAbsolute ? deltaOrTarget : item.jumlah + deltaOrTarget;
+    newJumlah = Math.max(1, newJumlah);
 
     if (maxStock > 0 && newJumlah > maxStock) {
-      return;
+      newJumlah = maxStock;
     }
+
+    if (newJumlah === item.jumlah) return;
 
     // Optimistic UI update
     setCartItems((prev) =>

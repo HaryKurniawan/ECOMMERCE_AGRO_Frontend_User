@@ -31,7 +31,7 @@ const STATUS_CONFIG: Record<
     dot: "bg-amber-400",
   },
   DIPROSES: {
-    label: "Dikemas",
+    label: "Diproses",
     bg: "bg-blue-50",
     text: "text-blue-700",
     dot: "bg-blue-400",

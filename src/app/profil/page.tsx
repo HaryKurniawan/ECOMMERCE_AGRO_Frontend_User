@@ -102,7 +102,7 @@ const ProfilPage: React.FC = () => {
 
   const orderStatuses = [
     { id: "menunggu_bayar", label: "Belum Bayar", icon: CreditCard },
-    { id: "diproses", label: "Dikemas", icon: Package },
+    { id: "diproses", label: "Diproses", icon: Package },
     { id: "dikirim", label: "Dikirim", icon: Truck },
     { id: "tiba", label: "Tiba", icon: MapPin },
   ];

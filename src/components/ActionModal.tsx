@@ -15,6 +15,7 @@ export interface ActionModalProps {
     label: string;
     onClick: () => void;
     danger?: boolean;
+    isNeutral?: boolean;
   };
   secondaryButton?: {
     label: string;
@@ -84,11 +85,17 @@ const ActionModal: React.FC<ActionModalProps> = ({
           className={`flex ${variant === "horizontal" ? "flex-row-reverse" : "flex-col"} gap-2 w-full`}
         >
           <Button
-            type="primary"
+            type={primaryButton.isNeutral ? "default" : "primary"}
             danger={primaryButton.danger}
             size="large"
             onClick={primaryButton.onClick}
-            className={`flex-1 rounded-2xl font-semibold !py-3.5 h-auto leading-none text-[13px] shadow-none ${!primaryButton.danger ? "!bg-primary-600 hover:!bg-primary-500 active:!bg-primary-700 !border-none" : ""}`}
+            className={`flex-1 rounded-2xl font-semibold !py-3.5 h-auto leading-none text-[13px] shadow-none ${
+              primaryButton.isNeutral
+                ? "!text-primary-600 !border-primary-200 bg-white hover:!bg-primary-50 hover:!text-primary-700 hover:!border-primary-400"
+                : !primaryButton.danger
+                  ? "!bg-primary-600 hover:!bg-primary-500 active:!bg-primary-700 !border-none"
+                  : ""
+            }`}
           >
             {primaryButton.label}
           </Button>
@@ -98,7 +105,11 @@ const ActionModal: React.FC<ActionModalProps> = ({
               type="default"
               size="large"
               onClick={secondaryButton.onClick || onClose}
-              className="flex-1 rounded-2xl font-semibold !py-3.5 h-auto leading-none text-[13px] text-gray-500 border border-gray-200 bg-white hover:!bg-primary-50 hover:!text-primary-600 hover:!border-primary-600 shadow-none"
+              className={`flex-1 rounded-2xl font-semibold !py-3.5 h-auto leading-none text-[13px] shadow-none ${
+                primaryButton.isNeutral
+                  ? "!text-primary-600 !border-primary-200 bg-white hover:!bg-primary-50 hover:!text-primary-700 hover:!border-primary-400"
+                  : "text-gray-500 border border-gray-200 bg-white hover:!bg-primary-50 hover:!text-primary-600 hover:!border-primary-600"
+              }`}
             >
               {secondaryButton.label}
             </Button>

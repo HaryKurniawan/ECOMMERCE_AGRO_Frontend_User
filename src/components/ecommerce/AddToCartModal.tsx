@@ -31,6 +31,7 @@ const AddToCartModal: React.FC<AddToCartModalProps> = ({
 }) => {
   const router = useRouter();
   const [quantity, setQuantity] = useState(1);
+  const [quantityInput, setQuantityInput] = useState("1");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isClosing, setIsClosing] = useState(false);
   const [selectedVarianId, setSelectedVarianId] = useState<string | undefined>(
@@ -65,6 +66,7 @@ const AddToCartModal: React.FC<AddToCartModalProps> = ({
     }
 
     setQuantity(newQuantity);
+    setQuantityInput(String(newQuantity));
     setSelectedVarianId(newVarianId);
   }, [isOpen, product?.id, initialVarianId, variants.length]);
 
@@ -80,6 +82,35 @@ const AddToCartModal: React.FC<AddToCartModalProps> = ({
     ? selectedVarian.stokKemasan
     : product.stok;
   const subtotal = displayPrice * quantity;
+
+  const handleQuantityChange = (newQty: number) => {
+    const clamped = Math.max(1, Math.min(newQty, displayStock || 1));
+    setQuantity(clamped);
+    setQuantityInput(String(clamped));
+  };
+
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const val = e.target.value.replace(/\D/g, ""); // hanya menerima angka 0-9
+    setQuantityInput(val);
+    if (val !== "") {
+      const num = parseInt(val, 10);
+      if (!isNaN(num)) {
+        const clamped = Math.max(1, Math.min(num, displayStock || 1));
+        setQuantity(clamped);
+      }
+    }
+  };
+
+  const handleInputBlur = () => {
+    let num = parseInt(quantityInput, 10);
+    if (isNaN(num) || num < 1) {
+      num = 1;
+    } else if (displayStock && num > displayStock) {
+      num = displayStock;
+    }
+    setQuantity(num);
+    setQuantityInput(String(num));
+  };
 
   const handleConfirm = async () => {
     setIsSubmitting(true);
@@ -170,6 +201,7 @@ const AddToCartModal: React.FC<AddToCartModalProps> = ({
                       onClick={() => {
                         setSelectedVarianId(k.id);
                         setQuantity(1);
+                        setQuantityInput("1");
                       }}
                       className={`flex flex-col items-start px-4 py-2.5 rounded-2xl border-2 transition-all text-left relative ${
                         isSelected
@@ -203,21 +235,34 @@ const AddToCartModal: React.FC<AddToCartModalProps> = ({
               <span className="font-display text-sm font-semibold text-gray-700">
                 Jumlah
               </span>
-              <div className="flex items-center gap-4">
+              <div className="flex items-center gap-3">
                 <button
-                  onClick={() => setQuantity(Math.max(1, quantity - 1))}
+                  type="button"
+                  onClick={() => handleQuantityChange(quantity - 1)}
                   disabled={quantity <= 1}
-                  className="w-10 h-10 rounded-xl border border-gray-200 flex items-center justify-center hover:bg-gray-50 disabled:opacity-40 transition-colors"
+                  className="w-10 h-10 rounded-xl border border-gray-200 flex items-center justify-center hover:bg-gray-50 disabled:opacity-40 transition-colors shrink-0"
                 >
                   <Minus size={18} className="text-gray-600" />
                 </button>
-                <span className="w-8 text-center font-semibold text-xl text-gray-900">
-                  {quantity}
-                </span>
+                <input
+                  type="text"
+                  inputMode="numeric"
+                  pattern="[0-9]*"
+                  value={quantityInput}
+                  onChange={handleInputChange}
+                  onBlur={handleInputBlur}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter") {
+                      handleInputBlur();
+                    }
+                  }}
+                  className="w-16 h-10 text-center font-semibold text-lg text-gray-900 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent bg-white shadow-inner"
+                />
                 <button
-                  onClick={() => setQuantity(quantity + 1)}
+                  type="button"
+                  onClick={() => handleQuantityChange(quantity + 1)}
                   disabled={quantity >= displayStock}
-                  className="w-10 h-10 rounded-xl border border-gray-300 text-primary-600 flex items-center justify-center hover:bg-primary-50 disabled:opacity-40 transition-colors"
+                  className="w-10 h-10 rounded-xl border border-gray-300 text-primary-600 flex items-center justify-center hover:bg-primary-50 disabled:opacity-40 transition-colors shrink-0"
                 >
                   <Plus size={18} className="text-primary-600" />
                 </button>

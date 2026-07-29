@@ -11,6 +11,7 @@ interface CheckoutSummaryProps {
   loadingShipping: boolean;
   loadingSubmit: boolean;
   disabled: boolean;
+  disabledReason?: string;
   onSubmit: () => void;
   shippingInfos?: any;
 }
@@ -23,8 +24,8 @@ const CheckoutSummary: React.FC<CheckoutSummaryProps> = ({
   loadingShipping,
   loadingSubmit,
   disabled,
+  disabledReason,
   onSubmit,
-  shippingInfos,
 }) => {
   return (
     <div className="bg-white border border-gray-200 rounded-2xl p-6">
@@ -60,8 +61,12 @@ const CheckoutSummary: React.FC<CheckoutSummaryProps> = ({
 
       <button
         onClick={onSubmit}
-        disabled={disabled || loadingSubmit || loadingShipping}
-        className="w-full mt-6 bg-primary-600 text-white font-medium py-3 rounded-xl hover:bg-primary-700 active:scale-[0.98] transition-all disabled:opacity-50 flex justify-center items-center gap-2"
+        disabled={loadingSubmit || loadingShipping}
+        className={`w-full mt-6 text-white font-semibold py-3 rounded-xl transition-all flex justify-center items-center gap-2 ${
+          disabled
+            ? "bg-slate-300 text-slate-600 hover:bg-slate-400 active:scale-[0.98] cursor-pointer"
+            : "bg-primary-600 hover:bg-primary-700 text-white active:scale-[0.98] shadow-md shadow-primary-600/20"
+        } ${loadingSubmit || loadingShipping ? "opacity-50 cursor-not-allowed" : ""}`}
       >
         {loadingSubmit ? (
           <Loader2 size={18} className="animate-spin" />
@@ -70,6 +75,14 @@ const CheckoutSummary: React.FC<CheckoutSummaryProps> = ({
         )}
         Buat Pesanan
       </button>
+      {disabled && disabledReason && !loadingShipping && !loadingSubmit && (
+        <p
+          className="text-xs text-amber-600 text-center mt-2.5 font-medium bg-amber-50 py-1.5 px-3 rounded-lg border border-amber-200/60 cursor-pointer"
+          onClick={onSubmit}
+        >
+          ⚠️ {disabledReason} (Klik untuk melengkapi)
+        </p>
+      )}
     </div>
   );
 };

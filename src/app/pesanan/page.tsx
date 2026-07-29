@@ -133,7 +133,7 @@ const PesananContent = () => {
 
   const tabs = [
     { id: "menunggu_bayar", label: "Belum Bayar" },
-    { id: "diproses", label: "Dikemas" },
+    { id: "diproses", label: "Diproses" },
     { id: "dikirim", label: "Dikirim" },
     { id: "tiba", label: "Tiba" },
     { id: "selesai", label: "Selesai" },

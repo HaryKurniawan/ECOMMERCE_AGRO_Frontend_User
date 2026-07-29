@@ -13,7 +13,11 @@ interface CartStoreGroupProps {
   selectedIds: string[];
   onToggleStore: () => void;
   onToggleItem: (id: string) => void;
-  onUpdateQuantity: (id: string, delta: number) => void;
+  onUpdateQuantity: (
+    id: string,
+    deltaOrTarget: number,
+    isAbsolute?: boolean,
+  ) => void;
   onUpdateVariant: (id: string, newVarianId: string) => void;
   onPromptDelete: (item: import("@/types").ApiCartItem) => void;
 }
@@ -69,7 +73,9 @@ const CartStoreGroup: React.FC<CartStoreGroupProps> = ({
             isSelectMode={isSelectMode}
             isSelected={selectedIds.includes(item.id)}
             onToggleSelection={() => onToggleItem(item.id)}
-            onUpdateQuantity={(delta) => onUpdateQuantity(item.id, delta)}
+            onUpdateQuantity={(deltaOrTarget, isAbsolute) =>
+              onUpdateQuantity(item.id, deltaOrTarget, isAbsolute)
+            }
             onUpdateVariant={(newVarianId) =>
               onUpdateVariant(item.id, newVarianId)
             }

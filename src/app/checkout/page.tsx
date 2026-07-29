@@ -40,6 +40,14 @@ const CheckoutContent: React.FC = () => {
   const [savingPhone, setSavingPhone] = useState(false);
   const [showToast, setShowToast] = useState(false);
 
+  const [validationModal, setValidationModal] = useState<{
+    isOpen: boolean;
+    type: "both" | "address" | "phone" | null;
+  }>({
+    isOpen: false,
+    type: null,
+  });
+
   const handleSavePhone = async () => {
     if (!phoneInput) return;
     setSavingPhone(true);
@@ -86,6 +94,28 @@ const CheckoutContent: React.FC = () => {
     closeErrorModal,
     successModal,
   } = useCheckout();
+
+  const handlePressSubmit = () => {
+    const isMissingAddress = !selectedAddressId;
+    const isMissingPhone = !!(profile && !profile.phone);
+
+    if (isMissingAddress && isMissingPhone) {
+      setValidationModal({ isOpen: true, type: "both" });
+      return;
+    }
+
+    if (isMissingAddress) {
+      setValidationModal({ isOpen: true, type: "address" });
+      return;
+    }
+
+    if (isMissingPhone) {
+      setValidationModal({ isOpen: true, type: "phone" });
+      return;
+    }
+
+    handleSubmit();
+  };
 
   if (loadingInitial) {
     return <CheckoutSkeleton />;
@@ -211,24 +241,115 @@ const CheckoutContent: React.FC = () => {
               onSelect={setPaymentMethod}
             />
 
-            <CheckoutSummary
-              itemCount={items.length}
-              totalBarang={totalBarang}
-              totalOngkir={totalOngkir}
-              grandTotal={grandTotal}
-              loadingShipping={loadingShipping}
-              loadingSubmit={loadingSubmit}
-              disabled={
-                !allDeliverable ||
-                !selectedAddressId ||
-                !!(profile && !profile.phone)
+            {(() => {
+              const isMissingAddress = !selectedAddressId;
+              const isMissingPhone = !!(profile && !profile.phone);
+              const isMissingPayment = !paymentMethod;
+              const isFormComplete =
+                !isMissingAddress &&
+                !isMissingPhone &&
+                !isMissingPayment &&
+                allDeliverable;
+
+              let disabledReason = "";
+              if (isMissingAddress) {
+                disabledReason = "Pilih alamat pengiriman terlebih dahulu";
+              } else if (isMissingPhone) {
+                disabledReason = "Lengkapi nomor WhatsApp terlebih dahulu";
+              } else if (isMissingPayment) {
+                disabledReason = "Pilih metode pembayaran terlebih dahulu";
+              } else if (!allDeliverable) {
+                disabledReason =
+                  "Pengiriman tidak tersedia untuk alamat terpilih";
               }
-              onSubmit={handleSubmit}
-              shippingInfos={shippingInfos}
-            />
+
+              return (
+                <CheckoutSummary
+                  itemCount={items.length}
+                  totalBarang={totalBarang}
+                  totalOngkir={totalOngkir}
+                  grandTotal={grandTotal}
+                  loadingShipping={loadingShipping}
+                  loadingSubmit={loadingSubmit}
+                  disabled={!isFormComplete}
+                  disabledReason={disabledReason}
+                  onSubmit={handlePressSubmit}
+                  shippingInfos={shippingInfos}
+                />
+              );
+            })()}
           </div>
         </div>
       </div>
+
+      {/* Validation Modal for Missing Address / Phone */}
+      <ActionModal
+        isOpen={validationModal.isOpen}
+        onClose={() => setValidationModal({ isOpen: false, type: null })}
+        title={
+          validationModal.type === "both"
+            ? "Alamat & No. WhatsApp Belum Lengkap"
+            : validationModal.type === "address"
+              ? "Alamat Pengiriman Belum Dipilih"
+              : "Nomor WhatsApp Belum Ditambahkan"
+        }
+        description={
+          validationModal.type === "both"
+            ? "Silakan isi alamat pengiriman dan nomor WhatsApp Anda terlebih dahulu sebelum membuat pesanan."
+            : validationModal.type === "address"
+              ? "Silakan isi atau pilih alamat pengiriman terlebih dahulu sebelum membuat pesanan."
+              : "Silakan tambahkan nomor WhatsApp Anda terlebih dahulu agar kurir dapat mengonfirmasi pengiriman."
+        }
+        icon={
+          validationModal.type === "phone" ? (
+            <Phone size={28} className="text-primary-600" />
+          ) : (
+            <ShieldAlert size={28} className="text-amber-500" />
+          )
+        }
+        variant={validationModal.type === "both" ? "horizontal" : "vertical"}
+        primaryButton={{
+          label:
+            validationModal.type === "address"
+              ? addresses.length === 0
+                ? "Tambah Alamat"
+                : "Tambah / Pilih Alamat"
+              : "Isi No. WhatsApp",
+          isNeutral: validationModal.type === "both",
+          onClick: () => {
+            const currentType = validationModal.type;
+            setValidationModal({ isOpen: false, type: null });
+            if (currentType === "address") {
+              const currentUrl =
+                window.location.pathname + window.location.search;
+              const path =
+                addresses.length === 0
+                  ? `/profil/alamat/form?redirect=${encodeURIComponent(currentUrl)}`
+                  : `/profil/alamat?redirect=${encodeURIComponent(currentUrl)}`;
+              router.push(path);
+            } else {
+              setPhoneModalOpen(true);
+            }
+          },
+        }}
+        secondaryButton={
+          validationModal.type === "both"
+            ? {
+                label: "Tambah Alamat",
+                onClick: () => {
+                  setValidationModal({ isOpen: false, type: null });
+                  const currentUrl =
+                    window.location.pathname + window.location.search;
+                  const path =
+                    addresses.length === 0
+                      ? `/profil/alamat/form?redirect=${encodeURIComponent(currentUrl)}`
+                      : `/profil/alamat?redirect=${encodeURIComponent(currentUrl)}`;
+                  router.push(path);
+                },
+              }
+            : undefined
+        }
+      />
 
       {/* Error Modal */}
       <ActionModal
@@ -244,7 +365,13 @@ const CheckoutContent: React.FC = () => {
         }}
         secondaryButton={{
           label: "Ubah Alamat",
-          onClick: () => router.push("/profil/alamat"),
+          onClick: () => {
+            const currentUrl =
+              window.location.pathname + window.location.search;
+            router.push(
+              `/profil/alamat?redirect=${encodeURIComponent(currentUrl)}`,
+            );
+          },
         }}
       />
 
