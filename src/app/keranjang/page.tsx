@@ -128,7 +128,9 @@ const KeranjangPage: React.FC = () => {
                       isSelectMode={isSelectMode}
                       selectedIds={selectedIds}
                       onToggleStore={() =>
-                        toggleStoreSelection(items.map((i) => i.id))
+                        toggleStoreSelection(
+                          items.map((i) => i.id_itemKeranjang),
+                        )
                       }
                       onToggleItem={toggleItemSelection}
                       onUpdateQuantity={updateQuantity}
@@ -198,7 +200,7 @@ const KeranjangPage: React.FC = () => {
                 </button>
                 <button
                   onClick={() => {
-                    removeItem(itemToDelete.id);
+                    removeItem(itemToDelete.id_itemKeranjang);
                     setItemToDelete(null);
                   }}
                   className="flex-1 py-3 px-4 rounded-xl font-medium text-primary-600 border border-primary-600 bg-transparent hover:bg-primary-50 transition-all"

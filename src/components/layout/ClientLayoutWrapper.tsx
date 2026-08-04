@@ -4,6 +4,7 @@ import dynamic from "next/dynamic";
 import { usePathname } from "next/navigation";
 
 import AuthGuard from "@/src/components/AuthGuard";
+import MandatoryAddressModal from "@/src/components/ecommerce/MandatoryAddressModal";
 import OnboardingModal from "@/src/components/ecommerce/OnboardingModal";
 import { useAuthStore } from "@/src/store/auth-store";
 import { useRestoreAuth } from "@/src/hooks/auth";
@@ -32,6 +33,7 @@ export default function ClientLayoutWrapper({
 }) {
   const pathname = usePathname();
   const user = useAuthStore((s) => s.user);
+  const showOnboarding = useAuthStore((s) => s.showOnboarding);
   const isVerifiedB2B = user?.isVerifiedB2B === true;
 
   // Restore and validate auth on app load
@@ -59,7 +61,7 @@ export default function ClientLayoutWrapper({
           <div className="desktop-container">{children}</div>
         </main>
         {showBottomNav && <BottomNav />}
-        <OnboardingModal />
+        {showOnboarding ? <OnboardingModal /> : <MandatoryAddressModal />}
       </div>
     </AuthGuard>
   ) : (

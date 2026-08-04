@@ -13,6 +13,7 @@ import { ordersApi, cartApi } from "@/lib/ecommerce-api";
 import type { ApiShippingInfo } from "@/types";
 
 import type { StoreGroup } from "./checkout-helpers";
+import { useCheckoutData } from "./useCheckoutData";
 
 export function useCheckoutSubmit(
   selectedAddressId: string,
@@ -21,6 +22,7 @@ export function useCheckoutSubmit(
   shippingInfos: ApiShippingInfo[],
   catatanPerStore: { tokoId: string; text: string }[],
   allDeliverable: boolean,
+  addresses: any[],
 ) {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
@@ -90,6 +92,12 @@ export function useCheckoutSubmit(
         finalMobileNumber = hp.startsWith("0") ? `+62${hp.substring(1)}` : hp;
         if (!finalMobileNumber.startsWith("+62"))
           finalMobileNumber = `+62${finalMobileNumber}`;
+      } else {
+        // Fallback to address phone number if profile doesn't have one
+        const addr = addresses.find((a) => a.id === selectedAddressId);
+        if (!profile?.phone && addr?.telepon) {
+          finalMobileNumber = addr.telepon;
+        }
       }
 
       const payload = {
@@ -106,22 +114,13 @@ export function useCheckoutSubmit(
       const orders = Array.isArray(orderData) ? orderData : [orderData];
 
       if (orders.length > 0) {
-        // Hapus item cart yang sudah di-checkout
-        try {
-          const cartItemIds = groupedByStore.flatMap((g) =>
-            g.items.map((i) => i.id).filter((id): id is string => Boolean(id)),
-          );
-          if (cartItemIds.length > 0) {
-            await Promise.allSettled(
-              cartItemIds.map((id) => cartApi.removeItem(id)),
-            );
-          }
-        } catch (clearErr) {
-          console.warn("Failed to clear cart items after checkout:", clearErr);
-        }
+        // Keranjang sudah otomatis dibersihkan oleh backend (create-pesanan.usecase.ts)
+        // Jadi kita tidak perlu memanggil API delete item lagi di frontend.
 
         // Ambil semua order ID untuk multi-checkout support di halaman pembayaran
-        const orderIdsParam = orders.map((o: any) => o.id).join(",");
+        const orderIdsParam = orders
+          .map((o: any) => o.id_pesanan || o.id)
+          .join(",");
         setSuccessModal({
           isOpen: true,
           orderIdsParam,

@@ -36,9 +36,9 @@ const FilterSidebar: React.FC<FilterSidebarProps> = ({
           </button>
           {categories.map((cat) => (
             <button
-              key={cat.id}
-              onClick={() => onCategoryChange(cat.id)}
-              className={`w-full text-left py-1.5 text-[14px] transition-colors ${selectedCategory === cat.id ? "font-semibold text-primary-600" : "text-gray-600 hover:text-primary-600"}`}
+              key={cat.id_kategoriToko}
+              onClick={() => onCategoryChange(cat.id_kategoriToko)}
+              className={`w-full text-left py-1.5 text-[14px] transition-colors ${selectedCategory === cat.id_kategoriToko ? "font-semibold text-primary-600" : "text-gray-600 hover:text-primary-600"}`}
             >
               {cat.nama}
             </button>
@@ -59,9 +59,9 @@ const FilterSidebar: React.FC<FilterSidebarProps> = ({
           </button>
           {stores.slice(0, 8).map((store) => (
             <button
-              key={store.id}
-              onClick={() => onStoreChange(store.id)}
-              className={`w-full text-left py-1.5 text-[14px] transition-colors truncate ${selectedStore === store.id ? "font-semibold text-primary-600" : "text-gray-600 hover:text-primary-600"}`}
+              key={store.id_toko}
+              onClick={() => onStoreChange(store.id_toko)}
+              className={`w-full text-left py-1.5 text-[14px] transition-colors truncate ${selectedStore === store.id_toko ? "font-semibold text-primary-600" : "text-gray-600 hover:text-primary-600"}`}
             >
               {store.nama}
             </button>

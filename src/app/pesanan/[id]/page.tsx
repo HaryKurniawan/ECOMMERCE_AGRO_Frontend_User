@@ -90,14 +90,14 @@ const OrderDetailContent = () => {
     ) {
       const expiry = new Date(order.createdAt).getTime() + 1 * 60 * 60 * 1000;
       if (Date.now() >= expiry) {
-        const reloadKey = `reloaded_${order.id}`;
+        const reloadKey = `reloaded_${order.id_pesanan}`;
         if (!sessionStorage.getItem(reloadKey)) {
           sessionStorage.setItem(reloadKey, "true");
           window.location.reload();
         }
       }
     }
-  }, [order?.status, order?.createdAt, order?.id, timeLeft]);
+  }, [order?.status, order?.createdAt, order?.id_pesanan, timeLeft]);
 
   if (loading) return <OrderDetailSkeleton />;
   if (!order)
@@ -169,20 +169,26 @@ const OrderDetailContent = () => {
   const isPaidOrder = ["DIPROSES", "DIKIRIM", "SELESAI", "DITUTUP"].includes(
     order.status?.toUpperCase() || "",
   );
-  const baseReferenceDate = new Date(
-    isPaidOrder && order.updatedAt ? order.updatedAt : order.createdAt,
-  );
-  const estimasiMinDate = new Date(baseReferenceDate);
-  estimasiMinDate.setDate(estimasiMinDate.getDate() + 2);
-  const estimasiMaxDate = new Date(baseReferenceDate);
-  estimasiMaxDate.setDate(estimasiMaxDate.getDate() + 5);
 
-  const dateOpts: Intl.DateTimeFormatOptions = {
-    day: "numeric",
-    month: "short",
-    year: "numeric",
-  };
-  const estimasiTanggalTeks = `${estimasiMinDate.toLocaleDateString("id-ID", dateOpts)} – ${estimasiMaxDate.toLocaleDateString("id-ID", dateOpts)}`;
+  let estimasiTanggalTeks = "Menunggu Pembayaran";
+  if (order.status?.toUpperCase() === "MENUNGGU_KONFIRMASI_SELLER") {
+    estimasiTanggalTeks = "Menunggu Konfirmasi Seller";
+  }
+
+  if (isPaidOrder && order.updatedAt) {
+    const baseReferenceDate = new Date(order.updatedAt);
+    const estimasiMinDate = new Date(baseReferenceDate);
+    estimasiMinDate.setDate(estimasiMinDate.getDate() + 2);
+    const estimasiMaxDate = new Date(baseReferenceDate);
+    estimasiMaxDate.setDate(estimasiMaxDate.getDate() + 5);
+
+    const dateOpts: Intl.DateTimeFormatOptions = {
+      day: "numeric",
+      month: "short",
+      year: "numeric",
+    };
+    estimasiTanggalTeks = `${estimasiMinDate.toLocaleDateString("id-ID", dateOpts)} – ${estimasiMaxDate.toLocaleDateString("id-ID", dateOpts)}`;
+  }
 
   return (
     <div className="min-h-screen bg-[#FAFAFA] pb-28">
@@ -223,7 +229,7 @@ const OrderDetailContent = () => {
 
         {/* Order ID Strip */}
         <OrderIdStrip
-          orderId={order.id}
+          orderId={order.id_pesanan}
           createdAt={order.createdAt}
           copied={copied}
           onCopy={handleCopy}
@@ -367,7 +373,9 @@ const OrderDetailContent = () => {
               <span className="font-semibold text-gray-600">
                 {order.jadwalKirim
                   ? formatTanggal(String(order.jadwalKirim))
-                  : "Segera"}
+                  : isGrosir
+                    ? "Menyesuaikan Pembayaran"
+                    : "Segera"}
               </span>
             </span>
           </div>
@@ -494,7 +502,7 @@ const OrderDetailContent = () => {
             {statusKey === "MENUNGGU_BAYAR" ? (
               <button
                 onClick={() => {
-                  router.push(`/pembayaran?orderId=${order.id}`);
+                  router.push(`/pembayaran?orderId=${order.id_pesanan}`);
                 }}
                 className="flex-1 py-3 bg-primary-600 text-white rounded-2xl font-bold text-[13px] shadow-lg shadow-primary-600/20 hover:bg-primary-700 transition-all active:scale-[0.98] flex items-center justify-center gap-2"
               >
@@ -517,7 +525,9 @@ const OrderDetailContent = () => {
             ) : statusKey === "SELESAI" ? (
               <div className="flex-1 flex gap-2">
                 <button
-                  onClick={() => router.push(`/pesanan/${order.id}/rating`)}
+                  onClick={() =>
+                    router.push(`/pesanan/${order.id_pesanan}/rating`)
+                  }
                   className="flex-1 py-3 border border-amber-300 text-amber-600 rounded-2xl font-bold text-[13px] hover:bg-amber-50 transition-all flex items-center justify-center gap-1.5 active:scale-[0.97]"
                 >
                   <Star size={14} className="fill-amber-400" /> Ulasan

@@ -72,7 +72,7 @@ export default function OrderCard({
 
   const handleClick = () => {
     if (onClick) onClick();
-    else router.push(`/pesanan/${order.id}`);
+    else router.push(`/pesanan/${order.id_pesanan}`);
   };
 
   const statusKey = order.status?.toUpperCase() ?? "";

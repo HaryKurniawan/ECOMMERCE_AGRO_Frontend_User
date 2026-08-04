@@ -54,6 +54,15 @@ export function useCheckoutData() {
             ? addressRes.data
             : [];
 
+        // STRICT GUARD: If no valid address with a city, force redirect to address form
+        const hasValidAddress = rawAddresses.some((a) => a.alamat && a.kota);
+        if (!hasValidAddress) {
+          if (typeof window !== "undefined") {
+            window.location.href = "/profil/alamat/form";
+            return;
+          }
+        }
+
         setAddresses(rawAddresses);
 
         // Set default address or read from searchParams

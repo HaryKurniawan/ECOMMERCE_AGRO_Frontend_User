@@ -7,7 +7,7 @@ export type WilayahType =
   | "Ciayumajakuning";
 
 export interface Store {
-  id: string;
+  id_toko: string;
   nama: string;
   kabupaten: string;
   wilayah: WilayahType;
@@ -28,21 +28,21 @@ export interface Store {
 }
 
 export interface Category {
-  id: string;
+  id_kategoriToko: string;
   nama: string;
   icon: string;
   jumlahProduk: number;
 }
 
 export interface EcomProductGrade {
-  id: string;
+  id_grade: string;
   grade: "A" | "B" | "C";
   harga: number;
   stok: number;
 }
 
 export interface VarianKemasan {
-  id: string;
+  id_varianKemasan: string;
   produkId: string;
   ukuranKg: number;
   stokKemasan: number;
@@ -53,7 +53,7 @@ export interface VarianKemasan {
 }
 
 export interface EcomProduct {
-  id: string;
+  id_produk: string;
   tokoId: string;
   storeName: string;
   nama: string;
@@ -81,7 +81,7 @@ export interface EcomProduct {
   varian?: VarianKemasan[];
   // Lokasi seller (dari relasi toko / hasil enrichment)
   toko?: {
-    id: string;
+    id_toko: string;
     nama: string;
     kabupaten?: string;
   };
@@ -89,7 +89,7 @@ export interface EcomProduct {
 }
 
 export interface CartItem {
-  id: string;
+  id_itemKeranjang: string;
   produkId: string;
   tokoId: string;
   storeName: string;
@@ -101,6 +101,8 @@ export interface CartItem {
   varian?: string;
   varianId?: string;
   availableVariants?: VarianKemasan[];
+  stok?: number;
+  stokTersediaKg?: number;
 }
 
 export type EcomOrderStatus =
@@ -111,7 +113,7 @@ export type EcomOrderStatus =
   | "dibatalkan";
 
 export interface EcomOrder {
-  id: string;
+  id_pesanan: string;
   item: CartItem[];
   totalHarga: number;
   ongkir: number;
@@ -123,7 +125,7 @@ export interface EcomOrder {
 }
 
 export interface CustomerProfile {
-  id: string;
+  id_pengguna: string;
   nama: string;
   email: string;
   telepon: string;

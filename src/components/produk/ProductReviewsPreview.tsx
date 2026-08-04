@@ -72,7 +72,7 @@ const ProductReviewsPreview: React.FC<ProductReviewsPreviewProps> = ({
         ) : (
           <div className="divide-y divide-gray-50 border-t border-gray-50">
             {reviews.slice(0, 3).map((rev) => (
-              <div key={rev.id} className="px-5 py-4">
+              <div key={rev.id_ulasanProduk} className="px-5 py-4">
                 <div className="flex items-start gap-3">
                   {/* Avatar */}
                   <div className="w-9 h-9 rounded-full bg-gradient-to-br from-primary-100 to-primary-200 flex items-center justify-center text-primary-700 font-bold text-sm flex-shrink-0">

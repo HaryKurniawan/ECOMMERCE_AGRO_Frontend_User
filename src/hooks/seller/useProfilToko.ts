@@ -54,7 +54,7 @@ export const useProfilToko = () => {
 
   const updateMutation = useMutation({
     mutationFn: (payload: typeof formData & { lat?: number; lng?: number }) =>
-      storesApi.update(store?.id as string, payload),
+      storesApi.update(store?.id_toko as string, payload),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: queryKeys.stores.myStore() });
       setIsEditing(false);
@@ -64,7 +64,7 @@ export const useProfilToko = () => {
   });
 
   const handleSave = async () => {
-    if (!store?.id) return;
+    if (!store?.id_toko) return;
     updateMutation.mutate({
       ...formData,
       lat: mapValue?.lat,

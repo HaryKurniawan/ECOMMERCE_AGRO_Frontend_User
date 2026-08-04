@@ -45,7 +45,12 @@ export function useFetchProducts(params: UseFetchProductsParams = {}) {
   });
 
   const products =
-    query.data?.pages.flatMap((page) => extractArray<EcomProduct>(page)) ?? [];
+    query.data?.pages.flatMap((page) =>
+      extractArray<EcomProduct>(page).map((p: any) => ({
+        ...p,
+        id: p.id_produk || p.id_produk,
+      })),
+    ) ?? [];
   const rawFirstPage = query.data?.pages[0]?.data;
   const total =
     rawFirstPage?.data?.total || rawFirstPage?.total || products.length;

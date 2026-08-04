@@ -64,15 +64,15 @@ export default function GroupedOrderCard({
 
           return (
             <div
-              key={order.id}
+              key={order.id_pesanan}
               className="flex items-center gap-3 py-3 cursor-pointer hover:bg-gray-50 -mx-4 px-4 transition-colors rounded-xl"
-              onClick={() => router.push(`/pesanan/${order.id}`)}
+              onClick={() => router.push(`/pesanan/${order.id_pesanan}`)}
               role="button"
               tabIndex={0}
               onKeyDown={(e) => {
                 if (e.key === "Enter" || e.key === " ") {
                   e.preventDefault();
-                  router.push(`/pesanan/${order.id}`);
+                  router.push(`/pesanan/${order.id_pesanan}`);
                 }
               }}
             >

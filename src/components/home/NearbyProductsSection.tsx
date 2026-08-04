@@ -41,7 +41,7 @@ const NearbyProductsSection: React.FC<NearbyProductsSectionProps> = ({
         <div className="flex gap-3 lg:grid lg:grid-cols-4 items-stretch pb-2">
           {nearbyProducts.map((product) => (
             <div
-              key={product.id}
+              key={product.id_produk}
               className="flex-shrink-0 w-[190px] lg:w-auto flex"
             >
               <ProductCard

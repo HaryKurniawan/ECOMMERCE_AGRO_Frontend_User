@@ -25,31 +25,33 @@ function groupCheckoutOrders(
   const used = new Set<string>();
 
   for (let i = 0; i < orders.length; i++) {
-    if (used.has(orders[i].id)) continue;
+    const currentId = orders[i].id_pesanan;
+    if (used.has(currentId)) continue;
 
     const current = orders[i];
     const isUnpaid = current.status?.toUpperCase() === "MENUNGGU_BAYAR";
 
     if (!isUnpaid) {
       result.push(current);
-      used.add(current.id);
+      used.add(currentId);
       continue;
     }
 
     // Try to find orders created within 10s of this one (same checkout session)
     const currentTime = new Date(current.createdAt).getTime();
     const group: ApiOrderData[] = [current];
-    used.add(current.id);
+    used.add(currentId);
 
     for (let j = i + 1; j < orders.length; j++) {
-      if (used.has(orders[j].id)) continue;
+      const otherId = orders[j].id_pesanan;
+      if (used.has(otherId)) continue;
       const other = orders[j];
       if (other.status?.toUpperCase() !== "MENUNGGU_BAYAR") continue;
       if (other.metodeBayar !== current.metodeBayar) continue;
       const otherTime = new Date(other.createdAt).getTime();
       if (Math.abs(otherTime - currentTime) <= 10000) {
         group.push(other);
-        used.add(other.id);
+        used.add(otherId);
       }
     }
 
@@ -201,7 +203,7 @@ const PesananContent = () => {
   };
 
   const handlePay = (ordersToPay: ApiOrderData[]) => {
-    const orderIds = ordersToPay.map((o) => o.id);
+    const orderIds = ordersToPay.map((o: any) => o.id_pesanan || o.id);
     if (orderIds.length === 1) {
       router.push(`/pembayaran?orderId=${orderIds[0]}`);
     } else {
@@ -297,12 +299,12 @@ const PesananContent = () => {
           </div>
         ) : (
           <div className="space-y-3">
-            {displayItems.map((item) => {
+            {displayItems.map((item, index) => {
               // Multi-store group
               if (Array.isArray(item)) {
                 return (
                   <GroupedOrderCard
-                    key={item.map((o) => o.id).join("-")}
+                    key={`group-${index}-${item.map((o: any) => o.id_pesanan || o.id).join("-")}`}
                     orders={item}
                     onPay={() => handlePay(item)}
                   />
@@ -311,10 +313,11 @@ const PesananContent = () => {
 
               // Single order
               const order = item as ApiOrderData;
+              const orderId = (order as any).id_pesanan || order.id_pesanan;
               return (
                 <SingleOrderCard
-                  key={order.id}
-                  order={order}
+                  key={`single-${index}-${orderId}`}
+                  order={{ ...order, id_pesanan: orderId }} // Override id explicitly for the card
                   onPay={
                     order.status?.toUpperCase() === "MENUNGGU_BAYAR"
                       ? () => handlePay([order])
@@ -323,10 +326,10 @@ const PesananContent = () => {
                   onConfirmReceived={
                     order.status?.toUpperCase() === "DIKIRIM" &&
                     (order as any).pengiriman?.status === "ARRIVED"
-                      ? (e) => handleConfirmReceived(e, order.id)
+                      ? (e) => handleConfirmReceived(e, orderId)
                       : undefined
                   }
-                  isConfirming={confirmingId === order.id}
+                  isConfirming={confirmingId === orderId}
                 />
               );
             })}

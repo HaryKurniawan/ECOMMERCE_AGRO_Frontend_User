@@ -6,7 +6,8 @@ import { useAuthStore } from "@/src/store/auth-store";
 import type { ApiCartItem, VarianKemasan } from "@/types";
 
 interface RawCartItem {
-  id: string;
+  id?: string;
+  id_itemKeranjang?: string;
   produkId?: string;
   jumlah: number | string;
   produk?: {
@@ -17,6 +18,8 @@ interface RawCartItem {
     beratGram?: number | string;
     toko?: { id: string; nama: string };
     varian?: VarianKemasan[];
+    stok?: number;
+    stokTersediaKg?: number;
   };
   varianKemasan?: {
     id: string;
@@ -72,7 +75,10 @@ export const useCartPage = () => {
           const availableVariants = productData?.varian || [];
 
           return {
-            id: item.id,
+            id_itemKeranjang:
+              item.id_itemKeranjang ||
+              item.id_itemKeranjang ||
+              `temp-${Math.random()}`,
             produkId: item.produkId || "",
             produkNama: productData?.nama || "Unknown Product",
             harga: Number(displayPrice),
@@ -85,6 +91,8 @@ export const useCartPage = () => {
             varian: varianDeskripsi,
             varianId: item.varianKemasanId,
             availableVariants,
+            stok: productData?.stok || 0,
+            stokTersediaKg: productData?.stokTersediaKg || 0,
           };
         });
 
@@ -146,14 +154,16 @@ export const useCartPage = () => {
     deltaOrTarget: number,
     isAbsolute = false,
   ) => {
-    const item = cartItems.find((i) => i.id === id);
+    const item = cartItems.find((i) => i.id_itemKeranjang === id);
     if (!item) return;
 
     const selectedVariant = item.availableVariants?.find(
-      (v) => v.id === item.varianId,
+      (v) => v.id_varianKemasan === item.varianId,
     );
-    // fallback to item.stok if there are no variants, assuming it exists or default to 0 (unlimited if 0 but our UI treats 0 as out of stock, wait, let's just not block here if maxStock is 0 just in case)
-    const maxStock = selectedVariant?.stokKemasan ?? 0;
+    // fallback to item.stok if there are no variants
+    const maxStock = selectedVariant
+      ? selectedVariant.stokKemasan
+      : item.stok || item.stokTersediaKg || 0;
 
     let newJumlah = isAbsolute ? deltaOrTarget : item.jumlah + deltaOrTarget;
     newJumlah = Math.max(1, newJumlah);
@@ -166,7 +176,9 @@ export const useCartPage = () => {
 
     // Optimistic UI update
     setCartItems((prev) =>
-      prev.map((i) => (i.id === id ? { ...i, jumlah: newJumlah } : i)),
+      prev.map((i) =>
+        i.id_itemKeranjang === id ? { ...i, jumlah: newJumlah } : i,
+      ),
     );
 
     // Debounce API call
@@ -191,7 +203,7 @@ export const useCartPage = () => {
   };
 
   const updateVariant = async (id: string, newVarianId: string) => {
-    const item = cartItems.find((i) => i.id === id);
+    const item = cartItems.find((i) => i.id_itemKeranjang === id);
     if (!item) return;
     try {
       await cartApi.updateItem(id, item.jumlah, newVarianId);
@@ -237,7 +249,7 @@ export const useCartPage = () => {
 
   // Totals based on selection
   const activeItems = isSelectMode
-    ? cartItems.filter((item) => selectedIds.includes(item.id))
+    ? cartItems.filter((item) => selectedIds.includes(item.id_itemKeranjang))
     : cartItems;
 
   const subtotal = activeItems.reduce(

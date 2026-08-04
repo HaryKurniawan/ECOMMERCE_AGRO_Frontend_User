@@ -174,7 +174,7 @@ const KatalogContent: React.FC = () => {
               <div className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-3 lg:gap-5">
                 {displayProducts.map((product) => (
                   <ProductCard
-                    key={product.id}
+                    key={product.id_produk}
                     product={product}
                     onAddToCart={handleAddToCart}
                     showCart={false}

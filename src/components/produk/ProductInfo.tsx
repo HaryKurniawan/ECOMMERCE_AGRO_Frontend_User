@@ -8,7 +8,7 @@ import type { ApiAddressData } from "@/types";
 
 interface ProductInfoProps {
   product: {
-    id: string;
+    id_produk: string;
     nama?: string;
     namaEtalase?: string;
     masterProdukId?: string;
@@ -16,8 +16,16 @@ interface ProductInfoProps {
     satuan?: string;
     terjual?: number;
     rating?: number;
-    varian?: { id: string; ukuranKg: number; stokKemasan: number }[];
-    kemasan?: { id: string; ukuranKg: number; stokKemasan: number }[];
+    varian?: {
+      id_varianKemasan: string;
+      ukuranKg: number;
+      stokKemasan: number;
+    }[];
+    kemasan?: {
+      id_varianKemasan: string;
+      ukuranKg: number;
+      stokKemasan: number;
+    }[];
   };
   displayHarga: number;
   totalStok: number;
@@ -56,11 +64,11 @@ const ProductInfo: React.FC<ProductInfoProps> = ({
             role="group"
           >
             {(product.varian || product.kemasan)?.map((k) => {
-              const isSelected = selectedVarianId === k.id;
+              const isSelected = selectedVarianId === k.id_varianKemasan;
               return (
                 <button
-                  key={k.id}
-                  onClick={() => onSelectVarian?.(k.id)}
+                  key={k.id_varianKemasan}
+                  onClick={() => onSelectVarian?.(k.id_varianKemasan)}
                   className={`px-4 py-1 border rounded-lg text-xs font-medium transition-all ${
                     isSelected
                       ? "bg-white border-primary-600 text-primary-600 shadow-sm"

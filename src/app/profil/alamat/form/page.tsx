@@ -165,7 +165,52 @@ function AlamatFormPageContent() {
             </div>
           </div>
 
-          {/* Removed Penerima and Telepon inputs to simplify form */}
+          {/* Nama Penerima & Telepon */}
+          <div className="grid grid-cols-2 gap-4 mt-6">
+            <div>
+              <label
+                htmlFor="penerima"
+                className="text-sm font-semibold text-gray-700 mb-2 block ml-1 flex items-center gap-2"
+              >
+                <User size={16} className="text-gray-400" />
+                Nama Penerima *
+              </label>
+              <input
+                id="penerima"
+                type="text"
+                {...register("penerima")}
+                placeholder="Contoh: Budi Santoso"
+                className={`w-full border ${errors.penerima ? "border-red-300 ring-red-50" : "border-gray-200 focus:ring-primary-300"} rounded-2xl px-4 py-3.5 text-sm outline-none transition-all`}
+              />
+              {errors.penerima && (
+                <p className="mt-1.5 text-[10px] text-red-500 italic font-medium ml-1">
+                  {errors.penerima.message}
+                </p>
+              )}
+            </div>
+            <div>
+              <label
+                htmlFor="telepon"
+                className="text-sm font-semibold text-gray-700 mb-2 block ml-1 flex items-center gap-2"
+              >
+                <Phone size={16} className="text-gray-400" />
+                No. HP / WA *
+              </label>
+              <input
+                id="telepon"
+                type="text"
+                {...register("telepon")}
+                onKeyDown={blockNonNumbers}
+                placeholder="08xxxxxxxxxx"
+                className={`w-full border ${errors.telepon ? "border-red-300 ring-red-50" : "border-gray-200 focus:ring-primary-300"} rounded-2xl px-4 py-3.5 text-sm outline-none transition-all`}
+              />
+              {errors.telepon && (
+                <p className="mt-1.5 text-[10px] text-red-500 italic font-medium ml-1">
+                  {errors.telepon.message}
+                </p>
+              )}
+            </div>
+          </div>
 
           <div className="grid grid-cols-2 gap-4">
             <div>

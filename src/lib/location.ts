@@ -49,7 +49,7 @@ export const storeIdsForCity = (
   city: string,
 ): Set<string> => {
   return new Set(
-    stores.filter((s) => storeMatchesCity(s, city)).map((s) => s.id),
+    stores.filter((s) => storeMatchesCity(s, city)).map((s) => s.id_toko),
   );
 };
 
@@ -85,7 +85,7 @@ export const enrichProductsWithCity = (
 
   const cityByTokoId = new Map<string, string>();
   stores.forEach((s) => {
-    if (s.id && s.kabupaten) cityByTokoId.set(s.id, s.kabupaten);
+    if (s.id_toko && s.kabupaten) cityByTokoId.set(s.id_toko, s.kabupaten);
   });
 
   return products.map((p) => {

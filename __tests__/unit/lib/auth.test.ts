@@ -52,7 +52,7 @@ describe("auth lib", () => {
       nama: "N",
       peran: UserRole.KONSUMEN,
     });
-    expect(result.user.id).toBe("user-1");
+    expect(result.email).toBe("r@r.com");
   });
 
   it("logout should call logout endpoint", async () => {

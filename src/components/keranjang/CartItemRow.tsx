@@ -50,9 +50,11 @@ const CartItemRow: React.FC<CartItemRowProps> = ({
   }, []);
 
   const selectedVariant = item.availableVariants?.find(
-    (v) => v.id === item.varianId,
+    (v) => v.id_varianKemasan === item.varianId,
   );
-  const maxStock = selectedVariant?.stokKemasan ?? 0;
+  const maxStock = selectedVariant
+    ? selectedVariant.stokKemasan
+    : item.stok || item.stokTersediaKg || 0;
   const isOutOfStock = maxStock === 0;
   const isInvalidStock = maxStock > 0 && item.jumlah > maxStock;
   const isDisabledCheckbox = isOutOfStock || isInvalidStock;
@@ -184,20 +186,20 @@ const CartItemRow: React.FC<CartItemRowProps> = ({
                   <div className="absolute top-full left-0 mt-1 w-48 bg-white rounded-xl shadow-lg border border-gray-100 overflow-hidden z-20 py-1">
                     {item.availableVariants.map((v) => (
                       <button
-                        key={v.id}
+                        key={v.id_varianKemasan}
                         onClick={() => {
-                          onUpdateVariant?.(v.id);
+                          onUpdateVariant?.(v.id_varianKemasan);
                           setShowDropdown(false);
                         }}
                         className={`w-full text-left px-4 py-2 text-[11px] font-medium flex items-center justify-between transition-colors ${
-                          item.varianId === v.id
+                          item.varianId === v.id_varianKemasan
                             ? "bg-primary-50 text-primary-700"
                             : "text-gray-600 hover:bg-gray-50"
                         }`}
                       >
                         <span>Kemasan {v.ukuranKg} kg</span>
                         <span
-                          className={`text-[10px] ${item.varianId === v.id ? "text-primary-500" : "text-gray-400"}`}
+                          className={`text-[10px] ${item.varianId === v.id_varianKemasan ? "text-primary-500" : "text-gray-400"}`}
                         >
                           Sisa {v.stokKemasan}
                         </span>

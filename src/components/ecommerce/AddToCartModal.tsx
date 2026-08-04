@@ -62,18 +62,22 @@ const AddToCartModal: React.FC<AddToCartModalProps> = ({
       const availableVariant = variants.find(
         (v) => v.isActive && v.stokKemasan > 0,
       );
-      newVarianId = availableVariant ? availableVariant.id : undefined;
+      newVarianId = availableVariant
+        ? availableVariant.id_varianKemasan
+        : undefined;
     }
 
     setQuantity(newQuantity);
     setQuantityInput(String(newQuantity));
     setSelectedVarianId(newVarianId);
-  }, [isOpen, product?.id, initialVarianId, variants.length]);
+  }, [isOpen, product?.id_produk, initialVarianId, variants.length]);
 
   if (!isOpen || !product) return null;
 
   const hasVariants = variants.length > 0;
-  const selectedVarian = variants.find((k) => k.id === selectedVarianId);
+  const selectedVarian = variants.find(
+    (k) => k.id_varianKemasan === selectedVarianId,
+  );
   const displayPrice = selectedVarian
     ? product.harga * selectedVarian.ukuranKg +
       (selectedVarian.biayaTambahan || 0)
@@ -115,7 +119,7 @@ const AddToCartModal: React.FC<AddToCartModalProps> = ({
   const handleConfirm = async () => {
     setIsSubmitting(true);
     try {
-      await onConfirm(product.id, quantity, selectedVarianId);
+      await onConfirm(product.id_produk, quantity, selectedVarianId);
 
       // If buy mode, redirect to checkout after adding to cart
       if (mode === "buy") {
@@ -191,15 +195,15 @@ const AddToCartModal: React.FC<AddToCartModalProps> = ({
               </div>
               <div className="flex flex-wrap gap-2.5">
                 {variants.map((k) => {
-                  const isSelected = selectedVarianId === k.id;
+                  const isSelected = selectedVarianId === k.id_varianKemasan;
                   const isOutOfStock = k.stokKemasan <= 0;
                   return (
                     <button
-                      key={k.id}
+                      key={k.id_varianKemasan}
                       type="button"
                       disabled={!k.isActive || isOutOfStock}
                       onClick={() => {
-                        setSelectedVarianId(k.id);
+                        setSelectedVarianId(k.id_varianKemasan);
                         setQuantity(1);
                         setQuantityInput("1");
                       }}

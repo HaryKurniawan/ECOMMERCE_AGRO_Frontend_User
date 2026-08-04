@@ -6,7 +6,7 @@ import Image from "next/image";
 
 interface BulkOrderStep1QuantityProps {
   product: {
-    id: string;
+    id_produk: string;
     nama?: string;
     gambarUrl?: string;
     harga: number;

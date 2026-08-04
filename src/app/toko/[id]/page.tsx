@@ -105,7 +105,7 @@ const DetailTokoPage: React.FC = () => {
   const availableCategories = useMemo(() => {
     const catsMap = new Map<
       string,
-      { id: string; nama: string; count: number }
+      { id_kategoriToko: string; nama: string; count: number }
     >();
     storeProducts.forEach((p) => {
       const catId = p.kategoriId || "uncategorized";
@@ -114,7 +114,7 @@ const DetailTokoPage: React.FC = () => {
         const existing = catsMap.get(catId)!;
         catsMap.set(catId, { ...existing, count: existing.count + 1 });
       } else {
-        catsMap.set(catId, { id: catId, nama: catNama, count: 1 });
+        catsMap.set(catId, { id_kategoriToko: catId, nama: catNama, count: 1 });
       }
     });
     return Array.from(catsMap.values()).sort((a, b) => b.count - a.count);
@@ -123,8 +123,8 @@ const DetailTokoPage: React.FC = () => {
   const selectedCategoryNama = useMemo(() => {
     if (!selectedCategoryId) return null;
     return (
-      availableCategories.find((c) => c.id === selectedCategoryId)?.nama ||
-      "Kategori"
+      availableCategories.find((c) => c.id_kategoriToko === selectedCategoryId)
+        ?.nama || "Kategori"
     );
   }, [selectedCategoryId, availableCategories]);
 
@@ -456,7 +456,7 @@ const DetailTokoPage: React.FC = () => {
                     <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
                       {filteredProducts.map((product) => (
                         <ProductCard
-                          key={product.id}
+                          key={product.id_produk}
                           product={product}
                           hideCartOnMobile={true}
                         />
@@ -486,8 +486,10 @@ const DetailTokoPage: React.FC = () => {
                     <div className="space-y-2.5">
                       {availableCategories.map((cat, idx) => (
                         <button
-                          key={cat.id}
-                          onClick={() => handleSelectCategory(cat.id)}
+                          key={cat.id_kategoriToko}
+                          onClick={() =>
+                            handleSelectCategory(cat.id_kategoriToko)
+                          }
                           className="w-full flex items-center gap-4 p-4 bg-gray-50 hover:bg-primary-50 border border-transparent hover:border-primary-100 rounded-2xl transition-all group text-left active:scale-[0.98]"
                         >
                           <div className="w-11 h-11 bg-white rounded-xl shadow-sm flex items-center justify-center text-lg flex-shrink-0 group-hover:scale-110 transition-transform border border-gray-100">

@@ -24,15 +24,15 @@ export const useSellerDashboard = () => {
   const store = storeQuery.data ?? null;
 
   const ordersQuery = useQuery({
-    queryKey: queryKeys.sellerDashboard.orders(store?.id ?? ""),
-    queryFn: () => ordersApi.sellerGetOrders(store?.id as string),
+    queryKey: queryKeys.sellerDashboard.orders(store?.id_toko ?? ""),
+    queryFn: () => ordersApi.sellerGetOrders(store?.id_toko as string),
     select: (res): ApiOrderItem[] => {
       const inner = res?.data?.data;
       if (inner && Array.isArray(inner.data)) return inner.data;
       if (Array.isArray(inner)) return inner;
       return [];
     },
-    enabled: !!store?.id,
+    enabled: !!store?.id_toko,
     staleTime: 2 * 60 * 1000,
   });
 

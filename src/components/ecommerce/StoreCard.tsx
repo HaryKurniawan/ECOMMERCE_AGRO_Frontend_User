@@ -23,7 +23,7 @@ const StoreCard: React.FC<StoreCardProps> = ({
   if (variant === "compact") {
     return (
       <button
-        onClick={() => router.push(`/toko/${store.id}`)}
+        onClick={() => router.push(`/toko/${store.id_toko}`)}
         className="flex-shrink-0 w-44 bg-white rounded-2xl border border-gray-100 p-4 hover:shadow-lg transition-all duration-300 hover:-translate-y-1 text-left group"
       >
         <div className="w-10 h-10 bg-primary-50 text-primary-600 rounded-xl flex items-center justify-center mb-2">
@@ -49,7 +49,7 @@ const StoreCard: React.FC<StoreCardProps> = ({
 
   return (
     <button
-      onClick={() => router.push(`/toko/${store.id}`)}
+      onClick={() => router.push(`/toko/${store.id_toko}`)}
       className="bg-white rounded-2xl border border-gray-100 p-5 hover:shadow-lg transition-all duration-300 hover:-translate-y-1 text-left group w-full"
     >
       <div className="flex items-start gap-4">

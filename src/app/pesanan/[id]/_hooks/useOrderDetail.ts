@@ -69,7 +69,7 @@ export const useOrderDetail = (id: string) => {
       const conv = res.data?.data || res.data;
       if (conv?.id) {
         const p = new URLSearchParams({
-          orderId: order.id,
+          orderId: order.id_pesanan,
           orderStatus: order.status,
         });
         router.push(`/chat/${conv.id}?${p.toString()}`);
@@ -83,7 +83,7 @@ export const useOrderDetail = (id: string) => {
 
   const handleCopy = useCallback(() => {
     if (!order) return;
-    navigator.clipboard.writeText(order.id);
+    navigator.clipboard.writeText(order.id_pesanan);
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);
   }, [order]);

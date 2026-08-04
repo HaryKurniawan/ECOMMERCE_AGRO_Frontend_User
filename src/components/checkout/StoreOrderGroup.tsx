@@ -37,8 +37,11 @@ const StoreOrderGroup: React.FC<StoreOrderGroupProps> = ({
 
       {/* Items list */}
       <div className="divide-y divide-gray-100 font-normal">
-        {items.map((item) => (
-          <div key={item.id} className="p-5 flex gap-4 font-normal">
+        {items.map((item, index) => (
+          <div
+            key={item.id_itemPesanan || item.produkId || index}
+            className="p-5 flex gap-4 font-normal"
+          >
             <div className="relative w-20 h-20 bg-gray-50 rounded-2xl overflow-hidden flex-shrink-0 border border-gray-100 font-normal">
               {item.gambar ? (
                 <Image

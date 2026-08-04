@@ -86,6 +86,8 @@ const CheckoutContent: React.FC = () => {
     groupedByStore,
     totalBarang,
     totalOngkir,
+    totalPPN,
+    persenPPN,
     grandTotal,
     allDeliverable,
     handleSubmit,
@@ -96,8 +98,9 @@ const CheckoutContent: React.FC = () => {
   } = useCheckout();
 
   const handlePressSubmit = () => {
+    const selectedAddress = addresses.find((a) => a.id === selectedAddressId);
     const isMissingAddress = !selectedAddressId;
-    const isMissingPhone = !!(profile && !profile.phone);
+    const isMissingPhone = !(profile?.phone || selectedAddress?.telepon);
 
     if (isMissingAddress && isMissingPhone) {
       setValidationModal({ isOpen: true, type: "both" });
@@ -174,30 +177,31 @@ const CheckoutContent: React.FC = () => {
         {/* Left Column - Details */}
         <div className="flex-1 space-y-6">
           {/* Missing Phone Number Alert Card */}
-          {profile && !profile.phone && (
-            <div className="bg-primary-50 border border-primary-200 rounded-2xl p-4 flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between">
-              <div className="flex gap-3">
-                <div className="w-10 h-10 rounded-full bg-primary-100 flex items-center justify-center shrink-0">
-                  <Phone className="w-5 h-5 text-primary-600" />
+          {!profile?.phone &&
+            !addresses.find((a) => a.id === selectedAddressId)?.telepon && (
+              <div className="bg-primary-50 border border-primary-200 rounded-2xl p-4 flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between">
+                <div className="flex gap-3">
+                  <div className="w-10 h-10 rounded-full bg-primary-100 flex items-center justify-center shrink-0">
+                    <Phone className="w-5 h-5 text-primary-600" />
+                  </div>
+                  <div>
+                    <h3 className="font-semibold text-primary-800 text-sm">
+                      Nomor WhatsApp Belum Ditambahkan
+                    </h3>
+                    <p className="text-primary-700/80 text-xs mt-0.5">
+                      Kami membutuhkan nomor WhatsApp Anda agar kurir dapat
+                      menghubungi Anda.
+                    </p>
+                  </div>
                 </div>
-                <div>
-                  <h3 className="font-semibold text-primary-800 text-sm">
-                    Nomor WhatsApp Belum Ditambahkan
-                  </h3>
-                  <p className="text-primary-700/80 text-xs mt-0.5">
-                    Kami membutuhkan nomor WhatsApp Anda agar kurir dapat
-                    menghubungi Anda.
-                  </p>
-                </div>
+                <button
+                  onClick={() => setPhoneModalOpen(true)}
+                  className="px-4 py-2 bg-primary-600 hover:bg-primary-700 text-white text-sm font-semibold rounded-xl transition-all whitespace-nowrap w-full sm:w-auto active:scale-[0.98]"
+                >
+                  Tambahkan Nomor
+                </button>
               </div>
-              <button
-                onClick={() => setPhoneModalOpen(true)}
-                className="px-4 py-2 bg-primary-600 hover:bg-primary-700 text-white text-sm font-semibold rounded-xl transition-all whitespace-nowrap w-full sm:w-auto active:scale-[0.98]"
-              >
-                Tambahkan Nomor
-              </button>
-            </div>
-          )}
+            )}
 
           <AddressSection
             addresses={addresses}
@@ -242,8 +246,13 @@ const CheckoutContent: React.FC = () => {
             />
 
             {(() => {
+              const selectedAddress = addresses.find(
+                (a) => a.id === selectedAddressId,
+              );
               const isMissingAddress = !selectedAddressId;
-              const isMissingPhone = !!(profile && !profile.phone);
+              const isMissingPhone = !(
+                profile?.phone || selectedAddress?.telepon
+              );
               const isMissingPayment = !paymentMethod;
               const isFormComplete =
                 !isMissingAddress &&
@@ -268,6 +277,8 @@ const CheckoutContent: React.FC = () => {
                   itemCount={items.length}
                   totalBarang={totalBarang}
                   totalOngkir={totalOngkir}
+                  totalPPN={totalPPN}
+                  persenPPN={persenPPN}
                   grandTotal={grandTotal}
                   loadingShipping={loadingShipping}
                   loadingSubmit={loadingSubmit}

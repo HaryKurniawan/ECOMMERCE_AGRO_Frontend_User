@@ -55,9 +55,9 @@ const PopularProductsSection: React.FC<PopularProductsSectionProps> = ({
     <section>
       <SectionHeader title={title} actionHref="/katalog" />
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 items-stretch">
-        {popularProducts.map((product) => (
+        {popularProducts.map((product, index) => (
           <ProductCard
-            key={product.id}
+            key={product.id_produk ? `${product.id_produk}-${index}` : index}
             product={product}
             onAddToCart={onAddToCart}
             hideCartOnMobile={true}

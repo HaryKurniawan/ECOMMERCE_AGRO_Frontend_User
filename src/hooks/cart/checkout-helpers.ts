@@ -48,12 +48,16 @@ export interface StoreGroup {
  * Map raw cart items ke ApiOrderItem
  */
 export function mapCartItemsToOrderItems(
-  itemsRaw: RawCartItem[],
+  itemsRaw: any[],
   selectedIds: string[] | null,
 ): ApiOrderItem[] {
   return itemsRaw
-    .filter((i: RawCartItem) => !selectedIds || selectedIds.includes(i.id))
-    .map((item: RawCartItem) => {
+    .filter((i: any) => {
+      const itemId = i.id_itemKeranjang || i.id_itemKeranjang;
+      return !selectedIds || selectedIds.includes(itemId);
+    })
+    .map((item: any) => {
+      const itemId = item.id_itemKeranjang || item.id_itemKeranjang;
       const productData = item.produk;
       const grades = productData?.grade || [];
       const currentGrade = grades.find((g: RawGrade) => g.grade === item.grade);
@@ -62,14 +66,15 @@ export function mapCartItemsToOrderItems(
         : productData?.harga || 0;
 
       return {
-        id: item.id,
-        produkId: item.produkId || "",
+        id: itemId,
+        produkId: item.produkId || item.id_produk || "",
         produkNama: productData?.nama || "Unknown Product",
         harga: Number(displayPrice),
         jumlah: Number(item.jumlah),
         satuan: productData?.satuan || "pcs",
         gambar: productData?.gambarUrl || "",
-        tokoId: productData?.toko?.id || "unknown",
+        tokoId:
+          productData?.toko?.id || productData?.toko?.id_toko || "unknown",
         storeName: productData?.toko?.nama || "Unknown Store",
         grade: item.grade || "A",
         varianKemasanId: item.varianKemasanId,

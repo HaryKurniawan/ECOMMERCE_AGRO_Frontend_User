@@ -7,7 +7,7 @@ import { useRouter } from "next/navigation";
 
 interface ProductStoreCardProps {
   store: {
-    id: string;
+    id_toko: string;
     nama?: string;
     foto?: string;
     kabupaten?: string;
@@ -21,7 +21,7 @@ const ProductStoreCard: React.FC<ProductStoreCardProps> = ({ store }) => {
   return (
     <div className="px-4 lg:px-0">
       <button
-        onClick={() => store?.id && router.push(`/toko/${store.id}`)}
+        onClick={() => store?.id_toko && router.push(`/toko/${store.id_toko}`)}
         className="w-full group text-left"
       >
         <div className="flex items-center gap-4 p-4 bg-white border border-gray-200 rounded-3xl hover:border-primary-200 transition-all duration-200">

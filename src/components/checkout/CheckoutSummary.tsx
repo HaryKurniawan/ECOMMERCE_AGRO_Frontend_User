@@ -7,6 +7,8 @@ interface CheckoutSummaryProps {
   itemCount: number;
   totalBarang: number;
   totalOngkir: number;
+  totalPPN?: number;
+  persenPPN?: number;
   grandTotal: number;
   loadingShipping: boolean;
   loadingSubmit: boolean;
@@ -20,6 +22,8 @@ const CheckoutSummary: React.FC<CheckoutSummaryProps> = ({
   itemCount,
   totalBarang,
   totalOngkir,
+  totalPPN = 0,
+  persenPPN = 0,
   grandTotal,
   loadingShipping,
   loadingSubmit,
@@ -46,6 +50,14 @@ const CheckoutSummary: React.FC<CheckoutSummaryProps> = ({
             {loadingShipping ? "Menghitung..." : formatRupiah(totalOngkir)}
           </span>
         </div>
+        {totalPPN > 0 && (
+          <div className="flex justify-between text-gray-600">
+            <span className="font-normal">PPN ({persenPPN}%)</span>
+            <span className="font-normal text-gray-900">
+              {formatRupiah(totalPPN)}
+            </span>
+          </div>
+        )}
       </div>
 
       <div className="mt-5 pt-5 border-t border-gray-100">

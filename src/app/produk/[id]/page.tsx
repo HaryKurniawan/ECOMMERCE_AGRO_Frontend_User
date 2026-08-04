@@ -39,7 +39,7 @@ const DetailProdukPage: React.FC = () => {
     useProductDetail(id as string, isAuthenticated);
 
   const { reviews, reviewsTotal, reviewsLoading } = useProductReviews(
-    product?.id,
+    product?.id_produk,
   );
   const { handleChatSeller, chatLoading } = useChatAction();
   const {
@@ -87,7 +87,9 @@ const DetailProdukPage: React.FC = () => {
   }
 
   const variants = product?.varian || product?.kemasan || [];
-  const selectedVariant = variants.find((v: any) => v.id === selectedVarianId);
+  const selectedVariant = variants.find(
+    (v: any) => v.id_varianKemasan === selectedVarianId,
+  );
 
   const displayHarga = selectedVariant
     ? product.harga * selectedVariant.ukuranKg +
@@ -99,8 +101,8 @@ const DetailProdukPage: React.FC = () => {
   const totalStok = displayStok;
 
   const onChatSeller = () => {
-    if (product?.id && product?.tokoId) {
-      handleChatSeller(product.id, product.tokoId);
+    if (product?.id_produk && product?.tokoId) {
+      handleChatSeller(product.id_produk, product.tokoId);
     }
   };
 

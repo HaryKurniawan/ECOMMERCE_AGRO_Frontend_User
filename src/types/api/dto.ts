@@ -54,7 +54,7 @@ export interface ApiOrderShipping {
 }
 
 export interface ApiOrderItem {
-  id?: string;
+  id_itemPesanan?: string;
   produkId?: string;
   produkNama?: string;
   jumlah: number | string;
@@ -88,7 +88,7 @@ export interface ApiOrderItem {
 }
 
 export interface ApiOrderData {
-  id: string;
+  id_pesanan: string;
   createdAt: string;
   updatedAt?: string;
   status: string;
@@ -110,7 +110,7 @@ export interface ApiOrderData {
 }
 
 export interface ApiStoreData {
-  id?: string;
+  id_toko?: string;
   nama?: string;
   kabupaten?: string;
   wilayah?: string;
@@ -139,7 +139,7 @@ export interface ApiStoreData {
 }
 
 export interface ApiProductReview {
-  id: string;
+  id_ulasanProduk: string;
   rating: number;
   ulasan?: string;
   createdAt: string;

@@ -45,7 +45,7 @@ const ActiveFilterChips: React.FC<ActiveFilterChipsProps> = ({
       <div className="flex items-center gap-2 flex-wrap">
         {selectedStore && (
           <span className="flex items-center gap-1 bg-primary-50 text-primary-700 px-3 py-1 rounded-full text-xs font-semibold border border-primary-100">
-            {stores.find((s) => s.id === selectedStore)?.nama || "Toko"}
+            {stores.find((s) => s.id_toko === selectedStore)?.nama || "Toko"}
             <button onClick={() => setSelectedStore("")} className="ml-0.5">
               <X size={11} />
             </button>

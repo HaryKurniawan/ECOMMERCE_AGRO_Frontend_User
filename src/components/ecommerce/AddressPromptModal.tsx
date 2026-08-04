@@ -42,19 +42,13 @@ const AddressPromptModal: React.FC<AddressPromptModalProps> = ({
 
         <div className="flex gap-3">
           <button
-            onClick={onClose}
-            className="flex-1 bg-gray-100 text-gray-600 font-medium py-3 rounded-xl hover:bg-gray-200 transition-all text-sm"
-          >
-            Nanti
-          </button>
-          <button
             onClick={() => {
               onClose();
               router.push(
                 `/profil/alamat/form?city=${encodeURIComponent(city)}`,
               );
             }}
-            className="flex-1 bg-primary-600 text-white font-medium py-3 rounded-xl hover:bg-primary-700 transition-all shadow-md shadow-primary-500/20 text-sm"
+            className="w-full bg-primary-600 text-white font-medium py-3 rounded-xl hover:bg-primary-700 transition-all shadow-md shadow-primary-500/20 text-sm"
           >
             Isi Sekarang
           </button>

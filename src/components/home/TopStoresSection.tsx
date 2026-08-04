@@ -36,7 +36,7 @@ const TopStoresSection: React.FC<TopStoresSectionProps> = ({ stores }) => {
       <div className="lg:hidden overflow-x-auto scroll-hide -mx-4 px-4">
         <div className="flex gap-3">
           {topStores.map((store) => (
-            <StoreCard key={store.id} store={store} variant="compact" />
+            <StoreCard key={store.id_toko} store={store} variant="compact" />
           ))}
         </div>
       </div>
@@ -45,8 +45,8 @@ const TopStoresSection: React.FC<TopStoresSectionProps> = ({ stores }) => {
       <div className="hidden lg:grid lg:grid-cols-2 xl:grid-cols-4 gap-4">
         {topStores.map((store) => (
           <button
-            key={store.id}
-            onClick={() => router.push(`/toko/${store.id}`)}
+            key={store.id_toko}
+            onClick={() => router.push(`/toko/${store.id_toko}`)}
             className="bg-white rounded-2xl border border-gray-100 p-5 hover:shadow-xl transition-all duration-300 hover:-translate-y-1 text-left group"
           >
             <div className="flex items-center gap-3 mb-3">

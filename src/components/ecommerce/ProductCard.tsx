@@ -29,7 +29,7 @@ const ProductCard: React.FC<ProductCardProps> = ({
   const { isAuthenticated, _hasHydrated } = useAuthStore();
 
   const handleCardClick = () => {
-    router.push(`/produk/${product.id}`);
+    router.push(`/produk/${product.id_produk}`);
   };
 
   // Show the lowest available grade price, or product.harga as fallback
@@ -155,7 +155,7 @@ const ProductCard: React.FC<ProductCardProps> = ({
                 }
                 if (onAddToCart) onAddToCart(product);
               }}
-              className={`w-full mt-3 py-2 bg-white border border-gray-200 hover:border-primary-300 hover:bg-gray-50 text-primary-600 rounded-xl text-xs font-medium items-center justify-center gap-1.5 transition-all active:scale-95 ${hideCartOnMobile ? "hidden lg:flex" : "flex"}`}
+              className={`w-full mt-3 py-2 bg-white border border-gray-200 hover:border-primary-300 hover:bg-gray-50 text-primary-600 rounded-xl text-xs font-medium items-center justify-center gap-1.5 transition-all active:scale-95 ${hideCartOnMobile ? "hidden" : "flex lg:hidden"}`}
               aria-label={`Tambah ${product.nama?.replace(" - ", " ")} ke keranjang`}
             >
               <Plus size={14} /> Keranjang

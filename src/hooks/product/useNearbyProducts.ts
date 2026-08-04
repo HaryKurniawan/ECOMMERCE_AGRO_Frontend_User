@@ -51,7 +51,7 @@ export const useNearbyProducts = ({
           }
           return false;
         })
-        .map((store) => store.id),
+        .map((store) => store.id_toko),
     );
 
     // Jika hanya ada 1 toko di kota tersebut (atau tidak ada), jangan tampilkan fitur produk sekitar

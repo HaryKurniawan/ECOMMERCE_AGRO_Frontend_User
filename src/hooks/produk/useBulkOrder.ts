@@ -27,7 +27,7 @@ export const useBulkOrder = (product: any) => {
     try {
       const response = await ordersApi.createWholesale({
         tokoId: product.tokoId,
-        produkId: product.id,
+        produkId: product.id_produk,
         jumlah: data.jumlah,
         harga: product.harga,
         alamatKirim: data.alamatKirim,

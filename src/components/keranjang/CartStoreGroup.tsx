@@ -33,7 +33,7 @@ const CartStoreGroup: React.FC<CartStoreGroupProps> = ({
   onUpdateVariant,
   onPromptDelete,
 }) => {
-  const itemIds = items.map((i) => i.id);
+  const itemIds = items.map((i) => i.id_itemKeranjang);
   const isStoreSelected = itemIds.every((id) => selectedIds.includes(id));
 
   return (
@@ -68,16 +68,16 @@ const CartStoreGroup: React.FC<CartStoreGroupProps> = ({
       <div className="divide-y divide-gray-100">
         {items.map((item) => (
           <CartItemRow
-            key={item.id}
+            key={item.id_itemKeranjang}
             item={item}
             isSelectMode={isSelectMode}
-            isSelected={selectedIds.includes(item.id)}
-            onToggleSelection={() => onToggleItem(item.id)}
+            isSelected={selectedIds.includes(item.id_itemKeranjang)}
+            onToggleSelection={() => onToggleItem(item.id_itemKeranjang)}
             onUpdateQuantity={(deltaOrTarget, isAbsolute) =>
-              onUpdateQuantity(item.id, deltaOrTarget, isAbsolute)
+              onUpdateQuantity(item.id_itemKeranjang, deltaOrTarget, isAbsolute)
             }
             onUpdateVariant={(newVarianId) =>
-              onUpdateVariant(item.id, newVarianId)
+              onUpdateVariant(item.id_itemKeranjang, newVarianId)
             }
             onPromptDelete={() => onPromptDelete(item)}
           />

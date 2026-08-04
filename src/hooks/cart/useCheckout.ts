@@ -7,6 +7,7 @@ import { useState, useEffect, useMemo } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 
 import { useAuthStore } from "@/src/store/auth-store";
+import { pajakApi } from "@/src/lib/ecommerce-api";
 
 import { useCheckoutData } from "./useCheckoutData";
 import { useCheckoutShipping } from "./useCheckoutShipping";
@@ -36,6 +37,22 @@ export const useCheckout = () => {
     { tokoId: string; text: string }[]
   >([]);
 
+  const [ppnConfig, setPpnConfig] = useState<{
+    isAktif: boolean;
+    persenPPN: number;
+  } | null>(null);
+
+  useEffect(() => {
+    pajakApi
+      .getConfig()
+      .then((res) => {
+        if (res.data?.data) {
+          setPpnConfig(res.data.data);
+        }
+      })
+      .catch((err) => console.error("Error fetching PPN config:", err));
+  }, []);
+
   // Data fetching (cart items & addresses)
   const {
     items,
@@ -62,7 +79,18 @@ export const useCheckout = () => {
     () => calculateTotalShipping(shippingInfos, groupedByStore),
     [shippingInfos, groupedByStore],
   );
-  const grandTotal = totalBarang + totalOngkir;
+
+  const totalPPN = useMemo(() => {
+    if (!ppnConfig || !ppnConfig.isAktif) return 0;
+    return totalBarang * (ppnConfig.persenPPN / 100);
+  }, [totalBarang, ppnConfig]);
+
+  const persenPPN = useMemo(() => {
+    if (!ppnConfig || !ppnConfig.isAktif) return 0;
+    return ppnConfig.persenPPN;
+  }, [ppnConfig]);
+
+  const grandTotal = totalBarang + totalOngkir + totalPPN;
 
   // Order submission
   const {
@@ -78,6 +106,7 @@ export const useCheckout = () => {
     shippingInfos,
     catatanPerStore,
     allDeliverable,
+    addresses,
   );
 
   // Auth check & initial data load
@@ -126,6 +155,8 @@ export const useCheckout = () => {
     // Calculations
     totalBarang,
     totalOngkir,
+    totalPPN,
+    persenPPN,
     grandTotal,
     allDeliverable,
 

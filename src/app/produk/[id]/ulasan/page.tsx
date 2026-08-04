@@ -153,14 +153,14 @@ const UlasanProdukPage = () => {
             <div className="flex flex-col gap-3 px-4 pt-1">
               {reviews.map(
                 (rev: {
-                  id: string;
+                  id_ulasanProduk: string;
                   user?: { name: string };
                   createdAt: string;
                   rating: number;
                   ulasan?: string;
                 }) => (
                   <div
-                    key={rev.id}
+                    key={rev.id_ulasanProduk}
                     className="p-4 bg-white border border-gray-100 rounded-xl shadow-sm"
                   >
                     <div className="flex items-start gap-3">

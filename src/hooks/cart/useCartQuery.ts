@@ -31,10 +31,17 @@ export const useCartQuery = () => {
 
       return items.map((i: any) => ({
         ...i,
+        id: i.id_itemKeranjang || i.id_itemKeranjang,
         product: i.produk
           ? {
               ...i.produk,
-              store: i.produk.toko, // Map 'toko' ke 'store'
+              id: i.produk.id || i.produk.id_produk,
+              store: i.produk.toko
+                ? {
+                    ...i.produk.toko,
+                    id: i.produk.toko.id || i.produk.toko.id_toko,
+                  }
+                : null,
             }
           : null,
       }));

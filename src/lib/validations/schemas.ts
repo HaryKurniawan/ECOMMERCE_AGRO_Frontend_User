@@ -53,8 +53,8 @@ export const editPhoneSchema = z.object({
 
 export const alamatSchema = z.object({
   label: z.string().min(1, "Label wajib dipilih"),
-  penerima: nameField.optional().or(z.literal("")),
-  telepon: phoneField.optional().or(z.literal("")),
+  penerima: nameField,
+  telepon: phoneField,
   alamat: z.string().min(5, "Alamat lengkap minimal 5 karakter"),
   kota: z
     .string()

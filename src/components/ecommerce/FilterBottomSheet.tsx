@@ -121,10 +121,10 @@ const FilterBottomSheet: React.FC<FilterBottomSheetProps> = ({
             </button>
             {categories.map((cat) => (
               <button
-                key={cat.id}
-                onClick={() => onCategoryChange(cat.id)}
+                key={cat.id_kategoriToko}
+                onClick={() => onCategoryChange(cat.id_kategoriToko)}
                 className={`px-4 py-2 rounded-xl text-xs font-medium border transition-all whitespace-nowrap ${
-                  selectedCategory === cat.id
+                  selectedCategory === cat.id_kategoriToko
                     ? "bg-primary-600 text-white border-primary-600 shadow-sm"
                     : "bg-white text-gray-600 border-gray-100 hover:bg-gray-50"
                 }`}
@@ -152,10 +152,10 @@ const FilterBottomSheet: React.FC<FilterBottomSheetProps> = ({
               </button>
               {stores.map((store) => (
                 <button
-                  key={store.id}
-                  onClick={() => onStoreChange && onStoreChange(store.id)}
+                  key={store.id_toko}
+                  onClick={() => onStoreChange && onStoreChange(store.id_toko)}
                   className={`px-4 py-2 rounded-xl text-xs font-medium border transition-all whitespace-nowrap ${
-                    selectedStore === store.id
+                    selectedStore === store.id_toko
                       ? "bg-primary-600 text-white border-primary-600 shadow-sm"
                       : "bg-white text-gray-600 border-gray-100 hover:bg-gray-50"
                   }`}

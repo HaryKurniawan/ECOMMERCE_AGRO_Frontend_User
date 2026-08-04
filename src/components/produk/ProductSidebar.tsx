@@ -37,7 +37,7 @@ interface ProductSidebarProps {
   isOutOfArea?: boolean;
   isAuthenticated?: boolean;
   store: {
-    id: string;
+    id_toko: string;
     nama?: string;
     foto?: string;
     kabupaten?: string;
