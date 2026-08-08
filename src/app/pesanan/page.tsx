@@ -103,14 +103,12 @@ const PesananContent = () => {
   const [confirmModalOrder, setConfirmModalOrder] = useState<string | null>(
     null,
   );
+  const [showPaymentSuccessModal, setShowPaymentSuccessModal] = useState(false);
 
   // Handle redirect kembali dari Xendit (setelah bayar di sandbox)
   useEffect(() => {
     if (paymentParam === "success") {
-      toast.success(
-        "Pembayaran berhasil! Pesanan sedang diproses oleh penjual.",
-        { duration: 5000, icon: "🎉" },
-      );
+      setShowPaymentSuccessModal(true);
       setActiveTab("diproses");
       // Poll beberapa kali untuk memastikan webhook sudah diproses backend
       const delays = [1500, 4000, 8000];
@@ -407,6 +405,61 @@ const PesananContent = () => {
                 ) : (
                   "Konfirmasi"
                 )}
+              </button>
+            </div>
+          </div>
+        </Modal>
+
+        {/* Payment Success Modal */}
+        <Modal
+          open={showPaymentSuccessModal}
+          onCancel={() => setShowPaymentSuccessModal(false)}
+          footer={null}
+          centered
+          closeIcon={false}
+          width={360}
+          styles={{
+            body: { padding: "40px 24px" },
+            mask: {
+              backdropFilter: "blur(4px)",
+              backgroundColor: "rgba(0, 0, 0, 0.65)",
+            },
+          }}
+        >
+          <div className="flex flex-col items-center justify-center bg-white">
+            <div className="relative mb-4">
+              <Image
+                src="/berhasil-bayar.svg"
+                alt="Payment Success"
+                width={200}
+                height={200}
+                className="object-contain w-[200px] h-[200px]"
+                priority
+              />
+            </div>
+
+            <h1 className="font-display font-semibold text-xl text-gray-900 mb-1">
+              Pembayaran Berhasil!
+            </h1>
+            <p className="text-sm text-gray-500 text-center mb-8">
+              Pesanan kamu sedang diproses oleh penjual
+            </p>
+
+            <div className="w-full space-y-3">
+              <button
+                onClick={() => setShowPaymentSuccessModal(false)}
+                className="w-full py-3.5 bg-primary-600 hover:bg-primary-700 text-white rounded-2xl font-semibold text-[15px] flex items-center justify-center gap-2 transition-all"
+              >
+                Lihat Pesanan Saya
+              </button>
+              <button
+                onClick={() => {
+                  setShowPaymentSuccessModal(false);
+                  router.push("/");
+                }}
+                className="w-full py-3 bg-white border border-primary-600 hover:bg-primary-50 text-primary-600 rounded-2xl font-semibold text-sm transition-all"
+              >
+                Lanjut Belanja
               </button>
             </div>
           </div>
