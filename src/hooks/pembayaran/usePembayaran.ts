@@ -32,8 +32,17 @@ export const usePembayaran = (
     enabled: !!orderId && orderId !== "ORD00000001",
     // Poll API setiap 3 detik jika status masih MENUNGGU_BAYAR (untuk mendeteksi Webhook Xendit)
     refetchInterval: (query) => {
-      const data = query.state?.data as ApiOrderData | undefined;
-      if (data?.status?.toUpperCase() === "MENUNGGU_BAYAR") return 3000;
+      // In React Query, query.state.data is the RAW data from queryFn, not the result of `select`.
+      // Since queryFn returns an AxiosResponse, we must access .data.data or .data
+      const rawRes = query.state?.data as any;
+      const orderData = rawRes?.data?.data || rawRes?.data;
+      if (
+        orderData &&
+        typeof orderData.status === "string" &&
+        orderData.status.toUpperCase() === "MENUNGGU_BAYAR"
+      ) {
+        return 3000;
+      }
       return false;
     },
   });
