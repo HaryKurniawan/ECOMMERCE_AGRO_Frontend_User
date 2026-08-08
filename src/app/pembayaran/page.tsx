@@ -49,6 +49,12 @@ const PembayaranContent: React.FC = () => {
   useEffect(() => {
     if (loading || !order) return;
 
+    // Jika status berubah jadi DIPROSES via auto-polling, jangan redirect.
+    // Biarkan usePembayaran hook mengatur isPaid = true dan menampilkan animasi sukses.
+    if (order.status?.toUpperCase() === "DIPROSES") {
+      return;
+    }
+
     // If order status is not MENUNGGU_BAYAR, redirect to pesanan page
     if (order.status?.toUpperCase() !== "MENUNGGU_BAYAR") {
       router.replace("/pesanan");
@@ -73,11 +79,6 @@ const PembayaranContent: React.FC = () => {
     return <PaymentSkeleton />;
   }
 
-  // If order is not in MENUNGGU_BAYAR status, don't render payment page
-  if (order?.status?.toUpperCase() !== "MENUNGGU_BAYAR") {
-    return null;
-  }
-
   // Gunakan totalGabungan (sudah termasuk semua pesanan dalam 1 checkout)
   const total = totalGabungan;
   const metode: { label: string; icon: string } = {
@@ -85,8 +86,8 @@ const PembayaranContent: React.FC = () => {
     icon: "🏦",
   };
 
-  // Jika pembayaran sukses, tampilkan halaman full-screen Success
-  if (isPaid) {
+  // Jika pembayaran sukses (baik via bypass maupun auto-polling), tampilkan halaman full-screen Success
+  if (isPaid || order?.status?.toUpperCase() === "DIPROSES") {
     return (
       <PaymentSuccessScreen
         orderId={primaryOrderId}
@@ -94,6 +95,11 @@ const PembayaranContent: React.FC = () => {
         metode={metode}
       />
     );
+  }
+
+  // If order is not in MENUNGGU_BAYAR status, don't render payment page checkout
+  if (order?.status?.toUpperCase() !== "MENUNGGU_BAYAR") {
+    return null;
   }
 
   // Jika belum sukses, tampilkan halaman Checkout Menunggu Pembayaran
