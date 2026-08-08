@@ -30,6 +30,12 @@ export const usePembayaran = (
     queryFn: () => ordersApi.getById(orderId!),
     select: (res): ApiOrderData => res.data?.data || res.data,
     enabled: !!orderId && orderId !== "ORD00000001",
+    // Poll API setiap 3 detik jika status masih MENUNGGU_BAYAR (untuk mendeteksi Webhook Xendit)
+    refetchInterval: (query) => {
+      const data = query.state?.data as ApiOrderData | undefined;
+      if (data?.status?.toUpperCase() === "MENUNGGU_BAYAR") return 3000;
+      return false;
+    },
   });
 
   // Fetch all extra orders (from multi-store checkout) to sum the totals
@@ -44,6 +50,13 @@ export const usePembayaran = (
   });
 
   const order = orderQuery.data ?? null;
+
+  // Auto detect if payment is successful via backend webhook
+  useEffect(() => {
+    if (order?.status === "DIPROSES") {
+      setIsPaid(true);
+    }
+  }, [order?.status]);
 
   // Jika metodeBayar adalah VA, paymentUrl berisi nomor VA. Jika Invoice, paymentUrl adalah link http.
   const isVaPayment = order?.metodeBayar?.endsWith("_VA") ?? false;
