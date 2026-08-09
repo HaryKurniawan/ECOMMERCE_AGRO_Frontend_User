@@ -151,14 +151,7 @@ export default function NotifikasiPage() {
       {/* Tabs */}
       <div className="bg-white border-b border-gray-100 overflow-x-auto scroll-hide">
         <div className="flex items-center gap-6 px-4 max-w-2xl mx-auto w-full">
-          {(
-            [
-              "Semua",
-              "Transaksi",
-              "Info",
-              ...(user?.role && user.role !== "USER" ? ["Tugas"] : []),
-            ] as ApiNotifCategory[]
-          ).map((tab) => (
+          {(["Semua", "Transaksi", "Info"] as ApiNotifCategory[]).map((tab) => (
             <button
               key={tab}
               onClick={() => setActiveTab(tab)}

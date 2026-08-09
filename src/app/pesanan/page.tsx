@@ -350,16 +350,24 @@ const PesananContent = () => {
       </div>
 
       {/* Confirmation Modal */}
-      <ConfigProvider theme={{ components: { Modal: { borderRadiusLG: 32 } } }}>
+      <ConfigProvider
+        theme={{
+          components: {
+            Modal: {
+              borderRadiusLG: 24,
+            },
+          },
+        }}
+      >
         <Modal
           open={!!confirmModalOrder}
           onCancel={() => setConfirmModalOrder(null)}
           footer={null}
           centered
           closeIcon={false}
-          width={330}
+          width={280}
           styles={{
-            body: { padding: "64px 28px" },
+            body: { padding: "32px 24px" },
             mask: {
               backdropFilter: "blur(4px)",
               backgroundColor: "rgba(0, 0, 0, 0.65)",
@@ -367,25 +375,17 @@ const PesananContent = () => {
           }}
         >
           <div className="flex flex-col items-center text-center">
-            <div className="w-28 h-28 mb-8 relative">
-              <Image
-                src="/images/cart.svg"
-                alt="Konfirmasi"
-                fill
-                className="object-contain"
-              />
-            </div>
-            <h3 className="font-medium text-base text-gray-800 mb-3 mt-2">
+            <h3 className="font-normal text-base text-gray-800 mb-3">
               Pesanan Sudah Tiba?
             </h3>
-            <p className="text-xs text-gray-500 leading-relaxed mb-10 px-2">
+            <p className="text-[11px] text-gray-500 leading-relaxed mb-8 px-1">
               Yuk pastikan pesananmu sudah diterima dengan baik agar dananya
               bisa diteruskan ke penjual.
             </p>
             <div className="w-full flex gap-3">
               <button
                 onClick={() => setConfirmModalOrder(null)}
-                className="flex-1 py-2.5 rounded-2xl border border-gray-200 text-gray-500 font-medium text-[12px] hover:bg-gray-50 hover:text-gray-700 transition-colors"
+                className="flex-1 py-2.5 rounded-2xl border border-gray-200 text-gray-500 font-normal text-[12px] hover:bg-gray-50 hover:text-gray-700 transition-colors"
               >
                 Batal
               </button>
@@ -397,7 +397,7 @@ const PesananContent = () => {
                     handleConfirmReceivedAction(id);
                   }
                 }}
-                className="flex-1 py-2.5 rounded-2xl bg-emerald-600 text-white font-medium text-[12px] hover:bg-emerald-700 transition-colors flex items-center justify-center gap-1.5"
+                className="flex-1 py-2.5 rounded-2xl bg-primary-600 text-white font-normal text-[12px] hover:bg-primary-700 transition-colors flex items-center justify-center gap-1.5"
                 disabled={!!confirmingId}
               >
                 {confirmingId ? (

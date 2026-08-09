@@ -21,14 +21,13 @@ export default function OrderSuccessPage() {
       <div className="flex-1 flex flex-col items-center justify-center p-6 relative z-10">
         {/* Animated Icon */}
         <div className="relative w-32 h-32 mb-8 animate-in zoom-in duration-500 delay-150">
-          <div className="absolute inset-0 bg-emerald-100 rounded-full animate-ping opacity-20 duration-1000" />
-          <div className="absolute inset-2 bg-emerald-50 rounded-full animate-pulse duration-700" />
-          <div className="absolute inset-0 flex items-center justify-center">
-            <CheckCircle2
-              size={72}
-              className="text-emerald-500 drop-shadow-md"
-            />
-          </div>
+          <Image
+            src="/pesanan diterima.svg"
+            alt="Pesanan Diterima"
+            fill
+            className="object-contain"
+            priority
+          />
         </div>
 
         {/* Text */}
