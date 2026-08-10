@@ -15,6 +15,11 @@ interface ProductReviewsPreviewProps {
   averageRating: number;
 }
 
+const getReviewerName = (name?: string) => {
+  if (!name) return "Pembeli";
+  return name.split("@")[0];
+};
+
 const ProductReviewsPreview: React.FC<ProductReviewsPreviewProps> = ({
   produkId,
   reviews,
@@ -76,13 +81,13 @@ const ProductReviewsPreview: React.FC<ProductReviewsPreviewProps> = ({
                 <div className="flex items-start gap-3">
                   {/* Avatar */}
                   <div className="w-9 h-9 rounded-full bg-gradient-to-br from-primary-100 to-primary-200 flex items-center justify-center text-primary-700 font-bold text-sm flex-shrink-0">
-                    {(rev.user?.name || "U")[0].toUpperCase()}
+                    {getReviewerName(rev.user?.name)[0].toUpperCase()}
                   </div>
 
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center justify-between mb-1">
                       <p className="text-xs font-semibold text-gray-800">
-                        {rev.user?.name || "Pembeli"}
+                        {getReviewerName(rev.user?.name)}
                       </p>
                       <StarRating value={rev.rating} readonly size={12} />
                     </div>

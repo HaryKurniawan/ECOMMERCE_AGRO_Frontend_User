@@ -7,6 +7,11 @@ import { formatTanggal } from "@/lib/ecommerce-api";
 import { useUlasanList } from "@/src/hooks/produk/useUlasanList";
 import StarRating from "@/src/components/ecommerce/StarRating";
 
+const getReviewerName = (name?: string) => {
+  if (!name) return "Pembeli";
+  return name.split("@")[0];
+};
+
 const UlasanProdukPage = () => {
   const params = useParams();
   const id = params.id as string;
@@ -165,11 +170,11 @@ const UlasanProdukPage = () => {
                   >
                     <div className="flex items-start gap-3">
                       <div className="w-9 h-9 shrink-0 rounded-full bg-primary-50 flex items-center justify-center text-primary-600 font-bold text-[13px] border border-primary-100 mt-0.5">
-                        {(rev.user?.name || "U")[0].toUpperCase()}
+                        {getReviewerName(rev.user?.name)[0].toUpperCase()}
                       </div>
                       <div className="flex-1 min-w-0">
                         <p className="text-[13px] font-semibold text-gray-800 leading-none mb-1.5 truncate">
-                          {rev.user?.name || "Pembeli"}
+                          {getReviewerName(rev.user?.name)}
                         </p>
                         <div className="flex items-center gap-2 mb-1.5">
                           <StarRating
