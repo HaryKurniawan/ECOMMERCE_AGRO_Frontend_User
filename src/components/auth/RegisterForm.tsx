@@ -82,7 +82,10 @@ export default function RegisterForm() {
         response?: { status?: number; data?: { message?: string } };
       };
 
-      const msg = axiosError?.response?.data?.message;
+      let msg = axiosError?.response?.data?.message;
+      if (Array.isArray(msg)) {
+        msg = msg[0]; // Ambil pesan pertama jika berupa array
+      }
       if (
         axiosError?.response?.status === 409 ||
         msg === "Email already registered" ||

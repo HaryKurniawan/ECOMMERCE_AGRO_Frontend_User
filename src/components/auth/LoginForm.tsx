@@ -99,7 +99,11 @@ export default function LoginForm() {
         response?: { data?: { message?: string } };
       };
 
-      const errorMsg = axiosError?.response?.data?.message;
+      let errorMsg = axiosError?.response?.data?.message;
+
+      if (Array.isArray(errorMsg)) {
+        errorMsg = errorMsg[0];
+      }
 
       if (errorMsg) {
         // Jika error dari backend berkaitan dengan role/aplikasi lain, tampilkan modal Akses Ditolak
