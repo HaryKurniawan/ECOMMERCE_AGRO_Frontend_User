@@ -13,6 +13,7 @@ function GoogleCallbackContent() {
 
   useEffect(() => {
     const token = searchParams.get("token");
+    const id = searchParams.get("id");
     const nama = searchParams.get("nama");
     const email = searchParams.get("email");
     const peran = searchParams.get("peran");
@@ -39,10 +40,11 @@ function GoogleCallbackContent() {
         if (!res.ok) throw new Error("Gagal menyimpan token");
 
         // Simpan data user ke Zustand store (non-sensitive, no token stored here)
+        const decodedId = id ? decodeURIComponent(id) : "";
         const decodedNama = nama ? decodeURIComponent(nama) : "User";
         const decodedEmail = email ? decodeURIComponent(email) : "";
         setAuth({
-          id: "",
+          id: decodedId,
           email: decodedEmail,
           name: decodedNama === "undefined" ? "User" : decodedNama,
           role: peran || "KONSUMEN",

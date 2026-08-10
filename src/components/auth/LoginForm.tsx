@@ -256,12 +256,15 @@ export default function LoginForm() {
       {/* Register Link */}
       <p className="mt-8 text-center text-sm text-gray-500">
         Belum punya akun?{" "}
-        <Link
-          href="/register"
-          className="text-gray-900 font-semibold hover:underline"
+        <button
+          onClick={(e) => {
+            e.preventDefault();
+            router.push("/register");
+          }}
+          className="text-gray-900 font-semibold hover:underline bg-transparent border-none p-0 cursor-pointer"
         >
           Daftar
-        </Link>
+        </button>
       </p>
     </>
   );

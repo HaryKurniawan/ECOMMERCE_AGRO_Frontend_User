@@ -307,12 +307,15 @@ export default function RegisterForm() {
       {/* Login Link */}
       <p className="mt-8 text-center text-sm text-gray-500">
         Sudah punya akun?{" "}
-        <Link
-          href="/login"
-          className="text-gray-900 font-semibold hover:underline"
+        <button
+          onClick={(e) => {
+            e.preventDefault();
+            router.push("/login");
+          }}
+          className="text-gray-900 font-semibold hover:underline bg-transparent border-none p-0 cursor-pointer"
         >
           Masuk
-        </Link>
+        </button>
       </p>
     </>
   );

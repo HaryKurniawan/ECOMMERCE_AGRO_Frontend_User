@@ -157,11 +157,13 @@ const ChatRoomContent: React.FC = () => {
       try {
         const profileRes = await authApi.getProfile();
         const profile = profileRes.data?.data || profileRes.data;
-        if (profile?.id) {
-          setResolvedUserId(profile.id);
+        if (profile?.id || profile?.id_pengguna) {
+          setResolvedUserId(profile.id || profile.id_pengguna);
+        } else if (storeUserId) {
+          setResolvedUserId(storeUserId);
         }
       } catch {
-        // fallback to store userId
+        if (storeUserId) setResolvedUserId(storeUserId);
       }
 
       await fetchMessages();
@@ -334,15 +336,20 @@ const ChatRoomContent: React.FC = () => {
 
     let content = content_raw;
 
-    if (productContext && !content.includes(productContext.nama)) {
+    if (productContext) {
       const meta = {
         id: productContext.id,
         nama: productContext.nama,
         harga: productContext.harga,
         fotoUrl: productContext.fotoUrl || productContext.gambarUtama || null,
       };
+
+      if (!content.includes(productContext.nama)) {
+        content = `Meminta info untuk produk: ${productContext.nama}\n\n${content}`;
+      }
+
       content =
-        `Meminta info untuk produk: ${productContext.nama}\n\n${content}\n---PRODUCT_META---\n${JSON.stringify(meta)}`.trim();
+        `${content}\n---PRODUCT_META---\n${JSON.stringify(meta)}`.trim();
       setProductContext(null);
     }
 
