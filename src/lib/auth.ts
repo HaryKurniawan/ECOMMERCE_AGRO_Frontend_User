@@ -90,6 +90,7 @@ export async function register(
     email: data.email,
     kataSandi: data.password, // password → kataSandi
     nama: data.name, // name → nama
+    noTelepon: data.phone, // phone → noTelepon
     peran: data.role, // role → peran (if needed)
   });
   return response.data?.data || response.data;

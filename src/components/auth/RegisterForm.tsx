@@ -112,6 +112,19 @@ export default function RegisterForm() {
     if (/[0-9]/.test(e.key)) e.preventDefault();
   };
 
+  const blockNonNumbers = (e: React.KeyboardEvent) => {
+    if (
+      !/[0-9+]/.test(e.key) &&
+      e.key !== "Backspace" &&
+      e.key !== "Tab" &&
+      e.key !== "ArrowLeft" &&
+      e.key !== "ArrowRight" &&
+      e.key !== "Delete"
+    ) {
+      e.preventDefault();
+    }
+  };
+
   return (
     <>
       <Modal
