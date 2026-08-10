@@ -86,13 +86,18 @@ export async function register(
   data: RegisterRequest,
 ): Promise<{ message: string; email: string }> {
   // Transform frontend field names to backend Indonesian field names
-  const response = await authApi.register({
+  const payload: any = {
     email: data.email,
     kataSandi: data.password, // password → kataSandi
     nama: data.name, // name → nama
-    noTelepon: data.phone, // phone → noTelepon
     peran: data.role, // role → peran (if needed)
-  });
+  };
+
+  if (data.phone && data.phone.trim() !== "") {
+    payload.noTelepon = data.phone;
+  }
+
+  const response = await authApi.register(payload);
   return response.data?.data || response.data;
 }
 

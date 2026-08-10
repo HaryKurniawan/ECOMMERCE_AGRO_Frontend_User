@@ -94,7 +94,7 @@ export default function AuthLayout({
           <div
             className={`mb-8 ${hideHeaderOnMobile ? "hidden md:block" : ""}`}
           >
-            <h1 className="text-2xl font-display font-bold text-emerald-700 tracking-tight">
+            <h1 className="text-2xl font-display font-semibold text-emerald-700 tracking-tight">
               {title}
             </h1>
             {subtitle ? (

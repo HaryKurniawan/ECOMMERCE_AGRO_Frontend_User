@@ -238,7 +238,7 @@ export default function LoginForm() {
             size="md"
             fullWidth
             loading={mutation.isPending}
-            className="bg-green-700 hover:bg-green-800 shadow-sm shadow-green-200 py-3 text-sm font-medium"
+            className="bg-green-700 hover:bg-green-800 shadow-sm shadow-green-200 py-3.5 text-sm font-medium"
           >
             Masuk Sekarang
           </Button>

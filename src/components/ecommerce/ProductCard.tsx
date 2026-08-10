@@ -109,14 +109,6 @@ const ProductCard: React.FC<ProductCardProps> = ({
           </span>
         )}
 
-        {/* Lokasi Seller — PALING BAWAH INFO */}
-        {storeCity && (
-          <p className="flex items-center gap-1 text-[10px] text-gray-400 font-medium mt-1.5 truncate">
-            <MapPin size={10} className="text-primary-400 flex-shrink-0" />
-            <span className="truncate">{storeCity}</span>
-          </p>
-        )}
-
         {/* Bottom Section (Pushed to bottom) */}
         <div className="mt-auto">
           {/* Meta */}

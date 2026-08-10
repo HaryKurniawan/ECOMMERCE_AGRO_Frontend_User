@@ -105,17 +105,6 @@ export default function ForgotPasswordForm() {
           </AntdButton>
         </div>
       </Modal>
-      <div className="text-center mb-8">
-        <div className="w-24 h-24 mb-6 mx-auto flex items-center justify-center bg-green-50 rounded-full border border-green-100">
-          <KeyRound size={40} className="text-green-600" />
-        </div>
-        <h2 className="text-2xl font-bold text-gray-900 mb-2">
-          Lupa Password?
-        </h2>
-        <p className="text-sm text-gray-500 px-4">
-          Masukkan email Anda. Kami akan kirimkan link untuk reset password.
-        </p>
-      </div>
 
       {errorMessage && (
         <AlertMessage
@@ -155,10 +144,9 @@ export default function ForgotPasswordForm() {
           <Button
             type="submit"
             variant="primary"
-            size="lg"
             fullWidth
             loading={loading}
-            className="bg-green-700 hover:bg-green-800 shadow-sm shadow-green-200"
+            className="bg-green-700 hover:bg-green-800 shadow-sm shadow-green-200 text-sm py-3.5"
           >
             Kirim Link Reset
           </Button>

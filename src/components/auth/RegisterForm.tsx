@@ -298,10 +298,9 @@ export default function RegisterForm() {
           <Button
             type="submit"
             variant="primary"
-            size="lg"
             fullWidth
             loading={mutation.isPending}
-            className="bg-green-700 hover:bg-green-800 shadow-sm shadow-green-200"
+            className="bg-green-700 hover:bg-green-800 shadow-sm shadow-green-200 text-sm py-3.5"
           >
             Daftar Sekarang
           </Button>

@@ -158,17 +158,17 @@ export default function GuestChatPage() {
         >
           <ArrowLeft size={20} />
         </button>
-        <div className="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center flex-shrink-0">
-          <Headphones size={22} className="text-blue-600" />
+        <div className="w-10 h-10 bg-primary-100 rounded-full flex items-center justify-center flex-shrink-0">
+          <Headphones size={22} className="text-primary-600" />
         </div>
         <div className="flex-1 min-w-0">
           <h1 className="font-semibold text-gray-800 text-[15px] truncate">
             Bot Bantuan Agro
           </h1>
-          <p className="text-emerald-500 text-[12px] font-medium flex items-center gap-1">
-            <span className="w-2 h-2 rounded-full bg-emerald-500 relative flex">
-              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
-              <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500" />
+          <p className="text-primary-500 text-[12px] font-medium flex items-center gap-1">
+            <span className="w-2 h-2 rounded-full bg-primary-500 relative flex">
+              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary-400 opacity-75" />
+              <span className="relative inline-flex rounded-full h-2 w-2 bg-primary-500" />
             </span>
             Online (Bot)
           </p>
@@ -178,7 +178,7 @@ export default function GuestChatPage() {
       {/* Messages Area */}
       <div className="flex-1 overflow-y-auto px-4 py-4 space-y-4 bg-slate-50">
         <div className="flex justify-center mb-4 mt-2">
-          <span className="bg-blue-50 text-blue-600 px-3 py-1 rounded-full text-[11px] font-medium border border-blue-100">
+          <span className="bg-primary-50 text-primary-700 px-3 py-1 rounded-full text-[11px] font-medium border border-primary-200">
             Koneksi Terenkripsi (Guest)
           </span>
         </div>
