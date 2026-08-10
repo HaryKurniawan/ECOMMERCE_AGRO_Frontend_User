@@ -4,7 +4,7 @@ import { Headphones, Leaf } from "lucide-react";
 
 interface AuthLayoutProps {
   children: ReactNode;
-  title: string;
+  title?: string;
   subtitle?: string;
   showGuestChat?: boolean;
   showMobileLogo?: boolean;
@@ -91,20 +91,22 @@ export default function AuthLayout({
         {/* Form card */}
         <div className="w-full max-w-[360px]">
           {/* Heading */}
-          <div
-            className={`mb-8 ${hideHeaderOnMobile ? "hidden md:block" : ""}`}
-          >
-            <h1 className="text-2xl font-display font-semibold text-emerald-700 tracking-tight">
-              {title}
-            </h1>
-            {subtitle ? (
-              <p className="mt-1 text-sm text-gray-400">{subtitle}</p>
-            ) : (
-              <p className="mt-1 text-sm text-gray-400">
-                Masuk ke akun Anda untuk melanjutkan
-              </p>
-            )}
-          </div>
+          {title && (
+            <div
+              className={`mb-8 ${hideHeaderOnMobile ? "hidden md:block" : ""}`}
+            >
+              <h1 className="text-2xl font-display font-semibold text-emerald-700 tracking-tight">
+                {title}
+              </h1>
+              {subtitle ? (
+                <p className="mt-1 text-sm text-gray-400">{subtitle}</p>
+              ) : (
+                <p className="mt-1 text-sm text-gray-400">
+                  Masuk ke akun Anda untuk melanjutkan
+                </p>
+              )}
+            </div>
+          )}
 
           {/* Form content */}
           {children}
