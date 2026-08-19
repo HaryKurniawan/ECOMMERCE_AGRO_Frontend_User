@@ -84,19 +84,19 @@ export const ORDER_STATUS_COLORS = new Map<
   [
     "SELESAI",
     {
-      text: "text-emerald-600",
-      bg: "bg-emerald-50",
-      ring: "ring-emerald-200",
-      dot: "bg-emerald-500",
+      text: "text-primary-600",
+      bg: "bg-primary-50",
+      ring: "ring-primary-200",
+      dot: "bg-primary-500",
     },
   ],
   [
     "ARRIVED",
     {
-      text: "text-indigo-600",
-      bg: "bg-indigo-50",
-      ring: "ring-indigo-200",
-      dot: "bg-indigo-500",
+      text: "text-emerald-600",
+      bg: "bg-emerald-50",
+      ring: "ring-emerald-200",
+      dot: "bg-emerald-500",
     },
   ],
   [

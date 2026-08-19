@@ -33,8 +33,8 @@ const BottomNav: React.FC = () => {
   if (isAuth || (!isAuthenticated && !isPublicRoute)) return null;
 
   const navItems = [
-    { label: "Home", icon: Home, path: "/" },
-    { label: "Chat", icon: MessageCircle, path: "/chat" },
+    { label: "Beranda", icon: Home, path: "/" },
+    { label: "Percakapan", icon: MessageCircle, path: "/chat" },
     { label: "Notifikasi", icon: Bell, path: "/notifikasi" },
     { label: "Profil", icon: User, path: "/profil" },
   ];

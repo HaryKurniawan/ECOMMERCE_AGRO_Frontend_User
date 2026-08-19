@@ -48,7 +48,7 @@ const EmptyState: React.FC<EmptyStateProps> = ({
           {icon}
         </div>
       ) : illustration ? (
-        <div className="relative w-80 h-80 -mt-12 -mb-4 select-none">
+        <div className="relative w-56 h-56 mt-6 mb-2 select-none">
           <Image
             src={illustration}
             alt={title}
@@ -60,10 +60,10 @@ const EmptyState: React.FC<EmptyStateProps> = ({
       ) : null}
 
       {/* Text */}
-      <h2 className="font-display font-semibold text-gray-900 text-xl mb-2 leading-tight">
+      <h2 className="font-display font-semibold text-gray-900 text-[17px] mb-2 leading-tight">
         {title}
       </h2>
-      <p className="text-gray-500 text-sm leading-relaxed max-w-xs">
+      <p className="text-gray-500 text-[13px] leading-relaxed max-w-xs">
         {description}
       </p>
 

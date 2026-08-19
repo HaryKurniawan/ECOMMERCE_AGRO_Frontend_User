@@ -91,16 +91,16 @@ const CartSummary: React.FC<CartSummaryProps> = ({
     <div className="lg:hidden fixed bottom-0 left-0 right-0 bg-white/80 backdrop-blur-xl border-t border-gray-100 z-50 rounded-t-[2.5rem] shadow-[0_-20px_40px_rgba(0,0,0,0.04)]">
       <div className="px-8 pt-6 pb-2 space-y-2">
         <div className="flex items-center justify-between text-gray-600">
-          <span className="text-sm font-semibold text-gray-900">Subtotal</span>
-          <span className="font-bold text-base text-gray-900">
+          <span className="text-sm font-medium text-gray-700">Subtotal</span>
+          <span className="font-semibold text-base text-gray-800">
             {formatRupiah(subtotal)}
           </span>
         </div>
         <div className="flex items-center justify-between text-gray-600 pb-4 border-b-2 border-dashed border-gray-200">
-          <span className="text-sm font-semibold text-gray-900">
+          <span className="text-sm font-medium text-gray-700">
             Ongkos Kirim
           </span>
-          <span className="font-bold text-base text-gray-900">
+          <span className="font-semibold text-base text-gray-800">
             {formatRupiah(ongkir)}
           </span>
         </div>
@@ -111,7 +111,7 @@ const CartSummary: React.FC<CartSummaryProps> = ({
           <p className="text-xs text-gray-500 font-medium tracking-widest mb-0.5">
             Total Bayar
           </p>
-          <p className="font-display font-bold text-xl text-gray-900 tracking-tight leading-none">
+          <p className="font-display font-semibold text-xl text-gray-800 tracking-tight leading-none">
             {formatRupiah(total)}
           </p>
         </div>

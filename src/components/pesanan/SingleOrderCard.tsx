@@ -24,7 +24,7 @@ export default function SingleOrderCard({
     (order as any).pengiriman?.status === "ARRIVED";
 
   return (
-    <div className="rounded-2xl overflow-hidden border border-gray-200 shadow-sm bg-white">
+    <div className="rounded-2xl overflow-hidden border border-gray-200 bg-white">
       <OrderCard order={order} className="border-0 shadow-none rounded-none" />
 
       {isUnpaid && onPay && (
@@ -37,7 +37,7 @@ export default function SingleOrderCard({
               e.stopPropagation();
               onPay();
             }}
-            className="px-5 py-2.5 bg-primary-600 text-white rounded-xl text-xs font-bold shadow-sm active:scale-95 transition-all hover:bg-primary-700"
+            className="px-5 py-2.5 bg-primary-600 text-white rounded-xl text-xs font-medium active:scale-95 transition-all hover:bg-primary-700"
           >
             Bayar Sekarang
           </button>
@@ -52,7 +52,7 @@ export default function SingleOrderCard({
           <button
             onClick={onConfirmReceived}
             disabled={isConfirming}
-            className="px-5 py-2.5 bg-primary-600 text-white rounded-xl text-xs font-bold shadow-sm active:scale-95 transition-all hover:bg-primary-700 disabled:opacity-60 flex items-center gap-2"
+            className="px-5 py-2.5 bg-primary-600 text-white rounded-xl text-xs font-medium active:scale-95 transition-all hover:bg-primary-700 disabled:opacity-60 flex items-center gap-2"
           >
             {isConfirming && <Loader2 size={12} className="animate-spin" />}
             Pesanan Diterima

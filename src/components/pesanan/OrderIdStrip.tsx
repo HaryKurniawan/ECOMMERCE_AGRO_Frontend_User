@@ -6,7 +6,8 @@ import { formatTanggal } from "@/lib/ecommerce-api";
 
 interface OrderIdStripProps {
   orderId: string;
-  createdAt: string;
+  statusLabel: string;
+  statusColorClasses: string;
   copied: boolean;
   onCopy: () => void;
 }
@@ -16,41 +17,44 @@ interface OrderIdStripProps {
  */
 export default function OrderIdStrip({
   orderId,
-  createdAt,
+  statusLabel,
+  statusColorClasses,
   copied,
   onCopy,
 }: OrderIdStripProps) {
   return (
-    <div className="bg-white rounded-2xl border border-gray-200 px-5 py-3.5 flex items-center justify-between shadow-sm">
-      <div className="flex items-center gap-2.5">
-        <div className="w-7 h-7 bg-gray-50 rounded-lg flex items-center justify-center">
-          <Receipt size={13} className="text-gray-400" />
-        </div>
-        <div>
-          <p className="text-[10px] text-gray-400 font-medium leading-none mb-0.5">
+    <div className="bg-white rounded-2xl border border-gray-200 px-5 py-3.5 flex items-center justify-between">
+      {/* Kiri: ID Pesanan & Tombol Copy */}
+      <div className="flex items-center gap-2">
+        <div className="mt-0.5">
+          <p className="text-[10px] text-gray-400 font-medium leading-none mb-1">
             No. Pesanan
           </p>
-          <p className="font-mono font-bold text-xs text-gray-800">
-            #{orderId.slice(-8).toUpperCase()}
-          </p>
+          <div className="flex items-center gap-1.5">
+            <p className="font-mono font-semibold text-[13px] text-gray-800">
+              #{orderId.slice(-8).toUpperCase()}
+            </p>
+            <button
+              onClick={onCopy}
+              className="p-1 hover:bg-gray-50 rounded-md transition-colors"
+              aria-label="Salin nomor pesanan"
+            >
+              {copied ? (
+                <CheckCircle size={14} className="text-primary-500" />
+              ) : (
+                <Copy size={14} className="text-gray-300" />
+              )}
+            </button>
+          </div>
         </div>
       </div>
-      <div className="flex items-center gap-3">
-        <span className="text-[11px] text-gray-400 font-medium">
-          {formatTanggal(createdAt)}
-        </span>
-        <button
-          onClick={onCopy}
-          className="p-1.5 hover:bg-gray-50 rounded-lg transition-colors"
-          aria-label="Salin nomor pesanan"
-        >
-          {copied ? (
-            <CheckCircle size={14} className="text-emerald-500" />
-          ) : (
-            <Copy size={14} className="text-gray-300" />
-          )}
-        </button>
-      </div>
+
+      {/* Kanan: Status */}
+      <span
+        className={`text-[11px] font-semibold px-3 py-1 rounded-full ${statusColorClasses}`}
+      >
+        {statusLabel}
+      </span>
     </div>
   );
 }

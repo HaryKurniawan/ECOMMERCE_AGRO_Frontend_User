@@ -14,6 +14,7 @@ import {
 } from "lucide-react";
 import { formatDistanceToNow } from "date-fns";
 import { id as localeId } from "date-fns/locale";
+import Image from "next/image";
 
 import EmptyState from "@/src/components/ecommerce/EmptyState";
 import type { ApiNotifCategory } from "@/types/api/dto";
@@ -136,12 +137,12 @@ export default function NotifikasiPage() {
       {/* Header */}
       <div className="bg-white border-b border-gray-100 p-4 sticky top-0 z-40">
         <div className="flex items-center justify-between max-w-2xl mx-auto w-full">
-          <h1 className="font-display font-bold text-lg text-gray-900">
+          <h1 className="font-display font-semibold text-base text-gray-900">
             Notifikasi
           </h1>
           <button
             onClick={handleMarkAllRead}
-            className="text-xs font-bold text-primary-600 px-3 py-1.5 hover:bg-primary-50 rounded-lg transition-colors"
+            className="text-xs font-medium text-primary-600 px-3 py-1.5 hover:bg-primary-50 rounded-lg transition-colors"
           >
             Tandai Semua Dibaca
           </button>
@@ -231,7 +232,7 @@ export default function NotifikasiPage() {
           ))
         ) : (
           <EmptyState
-            icon={<CheckCircle2 size={48} />}
+            illustration="/images/notifikasi-sudah-dibaca.svg"
             title="Semua sudah dibaca!"
             description="Kamu sudah up-to-date. Notifikasi tentang pesanan dan info penting akan muncul di sini."
           />

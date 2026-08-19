@@ -38,9 +38,9 @@ const STATUS_CONFIG: Record<
   },
   DIKIRIM: {
     label: "Dikirim",
-    bg: "bg-violet-50",
-    text: "text-violet-700",
-    dot: "bg-violet-400",
+    bg: "bg-sky-50",
+    text: "text-sky-700",
+    dot: "bg-sky-400",
   },
   SELESAI: {
     label: "Selesai",
@@ -135,19 +135,18 @@ export default function OrderCard({
           <div className="w-6 h-6 rounded-full bg-primary-50 flex items-center justify-center shrink-0">
             <Store size={12} className="text-primary-600" />
           </div>
-          <span className="text-sm font-bold text-gray-800 truncate">
+          <span className="text-sm font-semibold text-gray-800 truncate">
             {storeName}
           </span>
           {order.isGrosir && (
-            <span className="inline-flex items-center gap-1 text-[9px] font-bold px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-700 shrink-0">
-              <TrendingUp size={9} />
+            <span className="inline-flex items-center text-[10px] font-medium px-2.5 py-0.5 rounded-full bg-emerald-100 text-emerald-700 shrink-0">
               Grosiran
             </span>
           )}
         </div>
         {/* Status badge */}
         <span
-          className={`inline-flex items-center gap-1.5 text-[10px] font-bold px-2.5 py-1 rounded-full shrink-0 ml-2 ${statusCfg.bg} ${statusCfg.text}`}
+          className={`inline-flex items-center gap-1.5 text-[10px] font-medium px-2.5 py-1 rounded-full shrink-0 ml-2 ${statusCfg.bg} ${statusCfg.text}`}
         >
           <span className={`w-1.5 h-1.5 rounded-full ${statusCfg.dot}`} />
           {statusCfg.label}
@@ -178,7 +177,7 @@ export default function OrderCard({
 
         {/* Info */}
         <div className="flex-1 min-w-0 pt-0.5">
-          <p className="text-sm font-semibold text-gray-900 line-clamp-2 leading-snug">
+          <p className="text-sm font-medium text-gray-900 line-clamp-2 leading-snug">
             {productName}
           </p>
           <p className="text-xs text-gray-400 mt-0.5">
@@ -199,7 +198,7 @@ export default function OrderCard({
       <div className="mx-4 border-t border-dashed border-gray-200" />
       <div className="flex items-center justify-between px-4 py-3">
         <span className="text-xs text-gray-400">Total Pesanan</span>
-        <span className="text-sm font-bold text-primary-600">
+        <span className="text-sm font-semibold text-primary-600">
           {formatRupiah(order.totalHarga || 0)}
         </span>
       </div>

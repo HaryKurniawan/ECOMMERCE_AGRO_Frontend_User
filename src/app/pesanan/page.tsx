@@ -359,56 +359,56 @@ const PesananContent = () => {
           },
         }}
       >
-        <Modal
-          open={!!confirmModalOrder}
-          onCancel={() => setConfirmModalOrder(null)}
-          footer={null}
-          centered
-          closeIcon={false}
-          width={280}
-          styles={{
-            body: { padding: "32px 24px" },
-            mask: {
-              backdropFilter: "blur(4px)",
-              backgroundColor: "rgba(0, 0, 0, 0.65)",
-            },
-          }}
-        >
-          <div className="flex flex-col items-center text-center">
-            <h3 className="font-normal text-base text-gray-800 mb-3">
-              Pesanan Sudah Tiba?
-            </h3>
-            <p className="text-[11px] text-gray-500 leading-relaxed mb-8 px-1">
-              Yuk pastikan pesananmu sudah diterima dengan baik agar dananya
-              bisa diteruskan ke penjual.
-            </p>
-            <div className="w-full flex gap-3">
-              <button
-                onClick={() => setConfirmModalOrder(null)}
-                className="flex-1 py-2.5 rounded-2xl border border-gray-200 text-gray-500 font-normal text-[12px] hover:bg-gray-50 hover:text-gray-700 transition-colors"
-              >
-                Batal
-              </button>
-              <button
-                onClick={() => {
-                  if (confirmModalOrder) {
-                    const id = confirmModalOrder;
-                    setConfirmModalOrder(null);
-                    handleConfirmReceivedAction(id);
-                  }
-                }}
-                className="flex-1 py-2.5 rounded-2xl bg-primary-600 text-white font-normal text-[12px] hover:bg-primary-700 transition-colors flex items-center justify-center gap-1.5"
-                disabled={!!confirmingId}
-              >
-                {confirmingId ? (
-                  <Loader2 size={14} className="animate-spin" />
-                ) : (
-                  "Konfirmasi"
-                )}
-              </button>
+        {!!confirmModalOrder && (
+          <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
+            <div
+              className="absolute inset-0 bg-black/40 backdrop-blur-sm transition-opacity"
+              onClick={() => setConfirmModalOrder(null)}
+            />
+            <div className="relative bg-white rounded-3xl w-full max-w-[310px] p-6 flex flex-col items-center text-center shadow-2xl scale-100 transition-transform">
+              <div className="w-44 h-44 mb-2 relative">
+                <Image
+                  src="/images/barang-diterima.svg"
+                  alt="Konfirmasi"
+                  fill
+                  className="object-contain"
+                />
+              </div>
+              <h3 className="font-medium text-[15px] text-gray-900 mb-2">
+                Pesanan Sudah Tiba?
+              </h3>
+              <p className="text-[13px] text-gray-500 leading-relaxed mb-8 px-1">
+                Pastikan pesanan sudah diterima dengan baik agar dana diteruskan
+                ke penjual.
+              </p>
+              <div className="w-full flex gap-2.5">
+                <button
+                  onClick={() => setConfirmModalOrder(null)}
+                  className="flex-1 py-2.5 rounded-xl bg-gray-100 text-gray-700 font-medium text-[13px] hover:bg-gray-200 transition-colors"
+                >
+                  Batal
+                </button>
+                <button
+                  onClick={() => {
+                    if (confirmModalOrder) {
+                      const id = confirmModalOrder;
+                      setConfirmModalOrder(null);
+                      handleConfirmReceivedAction(id);
+                    }
+                  }}
+                  disabled={!!confirmingId}
+                  className="flex-1 py-2.5 rounded-xl bg-primary-600 text-white font-medium text-[13px] hover:bg-primary-700 transition-colors shadow-sm shadow-primary-600/20 flex items-center justify-center gap-1.5 disabled:opacity-70"
+                >
+                  {confirmingId ? (
+                    <Loader2 size={14} className="animate-spin" />
+                  ) : (
+                    "Konfirmasi"
+                  )}
+                </button>
+              </div>
             </div>
           </div>
-        </Modal>
+        )}
 
         {/* Payment Success Modal */}
         <Modal

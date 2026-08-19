@@ -22,7 +22,7 @@ export default function GroupedOrderCard({
   );
 
   return (
-    <div className="bg-white rounded-2xl overflow-hidden shadow-sm border border-amber-200">
+    <div className="bg-white rounded-2xl overflow-hidden border border-amber-200">
       {/* Header — checkout group badge */}
       <div className="flex items-center justify-between px-4 pt-3 pb-2">
         <div className="flex items-center gap-2">
@@ -116,7 +116,7 @@ export default function GroupedOrderCard({
             e.stopPropagation();
             onPay();
           }}
-          className="px-5 py-2.5 bg-primary-600 text-white rounded-xl text-xs font-bold shadow-sm active:scale-95 transition-all hover:bg-primary-700"
+          className="px-5 py-2.5 bg-primary-600 text-white rounded-xl text-xs font-bold active:scale-95 transition-all hover:bg-primary-700"
         >
           Bayar Sekarang
         </button>

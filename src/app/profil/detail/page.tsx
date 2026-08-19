@@ -32,13 +32,17 @@ const ProfileDetailPage: React.FC = () => {
     isAuthenticated,
     _hasHydrated,
   );
-  const { updateProfile, actionLoading, toast } = useProfileActions();
+  const { updateProfile, actionLoading, toast, setToast } = useProfileActions();
 
   const loading = profileLoading || addressLoading;
 
   // Edit name state
   const [isEditingName, setIsEditingName] = useState(false);
   const [nameValue, setNameValue] = useState("");
+
+  // Edit phone state
+  const [isEditingPhone, setIsEditingPhone] = useState(false);
+  const [phoneValue, setPhoneValue] = useState("");
 
   useEffect(() => {
     if (!_hasHydrated) return;
@@ -49,13 +53,29 @@ const ProfileDetailPage: React.FC = () => {
 
   useEffect(() => {
     if (profile?.name) setNameValue(profile.name);
-  }, [profile?.name]);
+    if (profile?.phone) setPhoneValue(profile.phone);
+  }, [profile?.name, profile?.phone]);
 
   const handleSaveName = async () => {
     if (!nameValue.trim()) return;
     const { success } = await updateProfile({ name: nameValue.trim() });
     if (success) {
       setIsEditingName(false);
+      refetch();
+    }
+  };
+
+  const handleSavePhone = async () => {
+    const cleaned = phoneValue.trim();
+    if (!cleaned) return;
+    if (cleaned.length < 9) {
+      setToast("Nomor telepon minimal 9 digit");
+      setTimeout(() => setToast(""), 3000);
+      return;
+    }
+    const { success } = await updateProfile({ phoneNumber: cleaned });
+    if (success) {
+      setIsEditingPhone(false);
       refetch();
     }
   };
@@ -102,16 +122,6 @@ const ProfileDetailPage: React.FC = () => {
       </div>
 
       <div className="max-w-2xl mx-auto px-4 py-6 space-y-4">
-        {/* Profile Avatar Card */}
-        <div className="bg-white rounded-2xl p-6 border border-gray-200 flex flex-col items-center">
-          <div className="w-20 h-20 bg-gray-50 rounded-full flex items-center justify-center border border-gray-200 mb-3 flex-shrink-0">
-            <User size={40} className="text-gray-400" />
-          </div>
-          <h2 className="font-medium text-xl text-gray-900 text-center leading-tight">
-            {profile.name || profile.email}
-          </h2>
-        </div>
-
         {/* Info Card */}
         <div className="bg-white rounded-2xl border border-gray-200 overflow-hidden">
           {/* Nama Lengkap */}
@@ -205,17 +215,65 @@ const ProfileDetailPage: React.FC = () => {
                   Nomor Telepon
                 </p>
               </div>
-              <div className="flex items-center justify-between gap-2">
-                {profile.phone ? (
+              {isEditingPhone ? (
+                <div className="flex items-center gap-2">
+                  <input
+                    type="tel"
+                    maxLength={15}
+                    value={phoneValue}
+                    onChange={(e) => {
+                      const val = e.target.value.replace(/\D/g, "");
+                      setPhoneValue(val);
+                    }}
+                    className="flex-1 border border-gray-200 rounded-lg px-3 py-1.5 text-sm focus:ring-2 focus:ring-primary-300 focus:border-primary-400 outline-none transition-all"
+                    autoFocus
+                    placeholder="Contoh: 08123456789"
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter") handleSavePhone();
+                      if (e.key === "Escape") setIsEditingPhone(false);
+                    }}
+                    disabled={actionLoading}
+                  />
+                  <button
+                    onClick={handleSavePhone}
+                    disabled={actionLoading || !phoneValue.trim()}
+                    className="p-1.5 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition-colors disabled:opacity-50"
+                  >
+                    {actionLoading ? (
+                      <Loader2 size={14} className="animate-spin" />
+                    ) : (
+                      <Check size={14} />
+                    )}
+                  </button>
+                  <button
+                    onClick={() => {
+                      setIsEditingPhone(false);
+                      setPhoneValue(profile.phone || "");
+                    }}
+                    className="p-1.5 bg-gray-100 text-gray-500 rounded-lg hover:bg-gray-200 transition-colors"
+                    disabled={actionLoading}
+                  >
+                    <X size={14} />
+                  </button>
+                </div>
+              ) : (
+                <div className="flex items-center justify-between gap-2">
                   <p className="font-semibold text-gray-900 text-sm truncate">
-                    {profile.phone}
+                    {profile.phone || (
+                      <span className="italic text-gray-400 font-normal">
+                        Belum diatur
+                      </span>
+                    )}
                   </p>
-                ) : (
-                  <p className="italic text-gray-400 text-sm font-normal">
-                    Belum diatur
-                  </p>
-                )}
-              </div>
+                  <button
+                    onClick={() => setIsEditingPhone(true)}
+                    className="text-primary-600 p-1.5 rounded-lg hover:bg-primary-50 transition-colors flex items-center gap-1 text-xs font-semibold flex-shrink-0"
+                  >
+                    <Edit2 size={13} />
+                    Ubah
+                  </button>
+                </div>
+              )}
             </div>
           </div>
         </div>

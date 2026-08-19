@@ -19,7 +19,7 @@ interface PaymentCountdownProps {
  */
 export default function PaymentCountdown({ timeLeft }: PaymentCountdownProps) {
   return (
-    <div className="bg-amber-50 rounded-2xl p-5 flex items-center gap-4 border border-amber-200 shadow-sm">
+    <div className="bg-amber-50 rounded-2xl p-5 flex items-center gap-4 border border-amber-200">
       <Clock size={24} className="text-amber-500 flex-shrink-0" />
       <div className="flex-1 min-w-0">
         <p className="text-[12px] text-amber-700 font-medium mb-1">

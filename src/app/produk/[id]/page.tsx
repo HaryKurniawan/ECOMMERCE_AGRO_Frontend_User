@@ -131,7 +131,7 @@ const DetailProdukPage: React.FC = () => {
     <div className="animate-fade-in relative min-h-screen bg-gray-50 pb-20 lg:pb-10">
       {/* Mobile Header */}
       <div
-        className={`sticky top-0 lg:top-16 z-40 px-4 py-3 lg:hidden flex items-center justify-between transition-all duration-300 ${
+        className={`sticky top-0 lg:top-16 z-40 px-4 py-2 lg:hidden flex items-center justify-between transition-all duration-300 ${
           isScrolled
             ? "bg-white/90 backdrop-blur-md border-b border-gray-100 shadow-sm"
             : "bg-transparent"
@@ -139,11 +139,11 @@ const DetailProdukPage: React.FC = () => {
       >
         <button
           onClick={() => router.back()}
-          className="p-2 hover:bg-gray-50 rounded-xl transition-colors"
+          className="p-1.5 hover:bg-gray-50 rounded-xl transition-colors"
         >
           <ArrowLeft size={22} className="text-gray-700" />
         </button>
-        <span className="font-display font-medium text-sm text-gray-900 tracking-tight">
+        <span className="font-display font-medium text-[15px] text-gray-900 tracking-tight">
           Detail Produk
         </span>
         <div className="flex items-center gap-1">

@@ -126,7 +126,7 @@ const ChatSidebar: React.FC<ChatSidebarProps> = ({
               </button>
             )}
             <h1 className="font-display font-semibold text-base text-gray-900">
-              Chat
+              Percakapan
             </h1>
           </div>
           {conversations.length > 0 && (
@@ -142,7 +142,7 @@ const ChatSidebar: React.FC<ChatSidebarProps> = ({
         <button
           onClick={() => handleStartAdminCS()}
           disabled={chatLoading}
-          className="relative w-full bg-white rounded-xl border border-gray-100 px-4 py-4 shadow-sm flex items-center gap-3 hover:bg-gray-50 transition-all active:scale-[0.99]"
+          className="relative w-full bg-white rounded-xl border border-gray-200 px-4 py-4 flex items-center gap-3 hover:bg-gray-50 transition-all active:scale-[0.99]"
         >
           <div className="w-10 h-10 bg-primary-50 rounded-xl flex items-center justify-center flex-shrink-0">
             {chatLoading ? (
@@ -189,7 +189,7 @@ const ChatSidebar: React.FC<ChatSidebarProps> = ({
                 <button
                   key={conv.id}
                   onClick={() => router.push(`/chat/${conv.id}`)}
-                  className={`w-full rounded-xl border px-4 py-3.5 flex items-center gap-3 transition-all active:scale-[0.99] text-left ${isActive ? "bg-primary-50 border-primary-100 shadow-none" : "bg-white border-gray-100 hover:bg-gray-50 shadow-sm"}`}
+                  className={`w-full rounded-xl border px-4 py-3.5 flex items-center gap-3 transition-all active:scale-[0.99] text-left ${isActive ? "bg-primary-50 border-primary-100 shadow-none" : "bg-white border-gray-200 hover:bg-gray-50"}`}
                 >
                   <div className="w-10 h-10 bg-emerald-50 rounded-xl flex items-center justify-center flex-shrink-0">
                     <Store size={18} className="text-emerald-600" />

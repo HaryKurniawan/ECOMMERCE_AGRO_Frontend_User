@@ -39,6 +39,27 @@ import {
   ORDER_STATUS_COLORS,
 } from "../../../components/pesanan/order-status.constants";
 
+const PAYMENT_METHOD_LABELS: Record<string, string> = {
+  BCA_VA: "BCA Virtual Account",
+  MANDIRI_VA: "Mandiri Virtual Account",
+  BNI_VA: "BNI Virtual Account",
+  BRI_VA: "BRI Virtual Account",
+  PERMATA_VA: "Permata Virtual Account",
+  GOPAY: "GoPay",
+  SHOPEEPAY: "ShopeePay",
+  OVO: "OVO",
+  DANA: "DANA",
+  QRIS: "QRIS",
+  MANUAL_TRANSFER: "Transfer Bank Manual",
+  TUNAI: "Tunai",
+  KREDIT: "Kredit (Tempo)",
+};
+
+function formatMetodeBayar(method: string | undefined | null): string {
+  if (!method) return "-";
+  return PAYMENT_METHOD_LABELS[method] || method.replace(/_/g, " ");
+}
+
 /* ─── Main ────────────────────────────────────────────────────────────────── */
 
 const OrderDetailContent = () => {
@@ -194,25 +215,16 @@ const OrderDetailContent = () => {
     <div className="min-h-screen bg-[#FAFAFA] pb-28">
       {/* Header */}
       <div className="bg-white sticky top-0 z-30 border-b border-gray-100/80">
-        <div className="max-w-2xl mx-auto px-4 h-14 flex items-center gap-3">
+        <div className="max-w-2xl mx-auto px-4 py-4 flex items-center relative justify-center">
           <button
-            onClick={() => router.back()}
-            className="p-2 -ml-2 hover:bg-gray-50 rounded-xl transition-colors text-gray-500 lg:hidden"
+            onClick={() => router.push("/pesanan")}
+            className="p-2 -ml-2 hover:bg-gray-50 rounded-xl transition-colors text-gray-500 lg:hidden absolute left-4"
           >
             <ArrowLeft size={20} />
           </button>
-          <h1 className="font-display font-bold text-[15px] text-gray-900 flex-1">
+          <h1 className="font-display font-semibold text-[15px] text-gray-900 text-center">
             Detail Pesanan
           </h1>
-          <span
-            className={`text-[11px] font-semibold px-3 py-1 rounded-full ${colors.bg} ${colors.text}`}
-          >
-            {ORDER_ROADMAP.find((r) => r.key === statusKey)?.label ||
-              statusKey
-                .split("_")
-                .map((w) => w.charAt(0) + w.slice(1).toLowerCase())
-                .join(" ")}
-          </span>
         </div>
       </div>
 
@@ -222,33 +234,65 @@ const OrderDetailContent = () => {
           <PaymentCountdown timeLeft={timeLeft} />
         )}
 
-        {/* Shipping Tracking */}
-        {(order as any).pengiriman && (
-          <ShippingTrackingSection shipping={(order as any).pengiriman} />
-        )}
-
         {/* Order ID Strip */}
         <OrderIdStrip
           orderId={order.id_pesanan}
-          createdAt={order.createdAt}
+          statusLabel={
+            ORDER_ROADMAP.find((r) => r.key === statusKey)?.label ||
+            statusKey
+              .split("_")
+              .map((w) => w.charAt(0) + w.slice(1).toLowerCase())
+              .join(" ")
+          }
+          statusColorClasses={`${colors.bg} ${colors.text}`}
           copied={copied}
           onCopy={handleCopy}
         />
+
+        {/* Address */}
+        <section className="bg-white rounded-2xl border border-gray-200 p-5">
+          <div className="flex items-center gap-2 mb-3">
+            <div className="w-7 h-7 bg-primary-50 rounded-lg flex items-center justify-center">
+              <MapPin size={13} className="text-primary-600" />
+            </div>
+            <h2 className="font-semibold text-sm text-gray-800">
+              Alamat Pengiriman
+            </h2>
+          </div>
+          <p className="text-xs text-gray-500 leading-relaxed">
+            {order.alamatKirim}
+          </p>
+          {isGrosir && (
+            <div className="flex items-center gap-2 mt-3 text-[11px] text-gray-400">
+              <Calendar size={12} />
+              <span>
+                Jadwal:{" "}
+                <span className="font-semibold text-gray-600">
+                  {order.jadwalKirim
+                    ? formatTanggal(String(order.jadwalKirim))
+                    : "Menyesuaikan Pembayaran"}
+                </span>
+              </span>
+            </div>
+          )}
+        </section>
 
         {/* Store + Items */}
         <section className="bg-white rounded-2xl border border-gray-200 overflow-hidden">
           {/* Store header */}
           <div className="px-5 py-3 border-b border-gray-50 flex items-center justify-between bg-gray-50/30">
             <div className="flex items-center gap-2">
-              <Store size={14} className="text-gray-400" />
-              <span className="font-bold text-[13px] text-gray-800">
+              <div className="w-7 h-7 bg-primary-50 rounded-lg flex items-center justify-center">
+                <Store size={13} className="text-primary-600" />
+              </div>
+              <span className="font-semibold text-[13px] text-gray-800">
                 {storeName}
               </span>
             </div>
             <button
               onClick={handleChat}
               disabled={chattingLoading}
-              className="flex items-center gap-1.5 text-[11px] font-bold text-emerald-600 hover:text-emerald-700 transition-colors disabled:opacity-50"
+              className="flex items-center gap-1.5 text-[11px] font-semibold text-primary-600 hover:text-primary-700 transition-colors disabled:opacity-50"
             >
               {chattingLoading ? (
                 <Loader2 size={12} className="animate-spin" />
@@ -283,7 +327,7 @@ const OrderDetailContent = () => {
                     {item.jumlah} x {formatRupiah(item.harga)}
                   </p>
                 </div>
-                <p className="text-[13px] font-bold text-gray-800 self-center flex-shrink-0">
+                <p className="text-[13px] font-semibold text-gray-800 self-center flex-shrink-0">
                   {formatRupiah(
                     Number(item.jumlah || 0) * Number(item.harga || 0),
                   )}
@@ -297,10 +341,10 @@ const OrderDetailContent = () => {
         {isGrosir && packagingSpecs.length > 0 && (
           <section className="bg-white rounded-2xl border border-gray-200 overflow-hidden">
             <div className="px-5 py-3 bg-primary-50/60 border-b border-gray-200 flex items-center gap-2">
-              <div className="w-6 h-6 bg-primary-100 rounded-lg flex items-center justify-center">
+              <div className="w-7 h-7 bg-primary-50 rounded-lg flex items-center justify-center">
                 <Package size={13} className="text-primary-600" />
               </div>
-              <h2 className="font-bold text-[13px] text-primary-800">
+              <h2 className="font-semibold text-[13px] text-primary-800">
                 Kemasan yang Dipesan
               </h2>
               <span className="ml-auto text-[10px] text-primary-600 bg-primary-100 px-2 py-0.5 rounded-full font-semibold flex items-center gap-1">
@@ -330,7 +374,7 @@ const OrderDetailContent = () => {
                       </p>
                     </div>
                     <div className="text-right shrink-0">
-                      <p className="text-[13px] font-bold text-gray-700">
+                      <p className="text-[13px] font-semibold text-gray-700">
                         {fullBags + (hasSisa ? 1 : 0)} bungkus
                       </p>
                       <p className="text-[10px] text-gray-400">
@@ -353,46 +397,23 @@ const OrderDetailContent = () => {
           </section>
         )}
 
-        {/* Address */}
-        <section className="bg-white rounded-2xl border border-gray-200 p-5">
-          <div className="flex items-center gap-2 mb-3">
-            <div className="w-7 h-7 bg-primary-50 rounded-lg flex items-center justify-center">
-              <MapPin size={13} className="text-primary-600" />
-            </div>
-            <h2 className="font-bold text-sm text-gray-800">
-              Alamat Pengiriman
-            </h2>
-          </div>
-          <p className="text-xs text-gray-500 leading-relaxed pl-9">
-            {order.alamatKirim}
-          </p>
-          <div className="flex items-center gap-2 mt-3 pl-9 text-[11px] text-gray-400">
-            <Calendar size={12} />
-            <span>
-              Jadwal:{" "}
-              <span className="font-semibold text-gray-600">
-                {order.jadwalKirim
-                  ? formatTanggal(String(order.jadwalKirim))
-                  : isGrosir
-                    ? "Menyesuaikan Pembayaran"
-                    : "Segera"}
-              </span>
-            </span>
-          </div>
-        </section>
+        {/* Shipping Tracking */}
+        {(order as any).pengiriman && (
+          <ShippingTrackingSection shipping={(order as any).pengiriman} />
+        )}
 
         {/* Estimasi Pengiriman Grosir */}
         {isGrosir && (
-          <section className="bg-emerald-50/70 rounded-2xl border border-emerald-200/80 p-5 space-y-3">
+          <section className="bg-primary-50/70 rounded-2xl border border-primary-200/80 p-5 space-y-3">
             <div className="flex items-center gap-2.5">
-              <div className="w-8 h-8 bg-emerald-100 rounded-xl flex items-center justify-center shrink-0">
-                <Truck size={16} className="text-emerald-700" />
+              <div className="w-7 h-7 bg-primary-50 rounded-lg flex items-center justify-center shrink-0">
+                <Truck size={13} className="text-primary-600" />
               </div>
               <div className="min-w-0 flex-1">
-                <h2 className="font-bold text-xs text-emerald-900 uppercase tracking-wider">
+                <h2 className="font-semibold text-xs text-primary-900 uppercase tracking-wider">
                   Estimasi Pengiriman Grosir
                 </h2>
-                <p className="text-[11px] text-emerald-700 font-medium">
+                <p className="text-[11px] text-primary-700 font-medium">
                   2 – 5 Hari Kerja{" "}
                   {isPaidOrder
                     ? "dari pembayaran berhasil"
@@ -400,12 +421,12 @@ const OrderDetailContent = () => {
                 </p>
               </div>
             </div>
-            <div className="bg-white/90 rounded-xl p-3 border border-emerald-100 flex flex-wrap items-center justify-between gap-2 text-xs">
-              <span className="text-emerald-800 font-medium flex items-center gap-1.5">
-                <Calendar size={13} className="text-emerald-600 shrink-0" />
+            <div className="bg-white/90 rounded-xl p-3 border border-primary-100 flex flex-wrap items-center justify-between gap-2 text-xs">
+              <span className="text-primary-800 font-medium flex items-center gap-1.5">
+                <Calendar size={13} className="text-primary-600 shrink-0" />
                 Estimasi Tanggal Tiba:
               </span>
-              <span className="font-bold text-emerald-900 bg-emerald-100/70 px-2.5 py-1 rounded-lg">
+              <span className="font-semibold text-primary-900 bg-primary-100/70 px-2.5 py-1 rounded-lg">
                 {estimasiTanggalTeks}
               </span>
             </div>
@@ -419,7 +440,7 @@ const OrderDetailContent = () => {
               <div className="w-7 h-7 bg-primary-50 rounded-lg flex items-center justify-center">
                 <Camera size={13} className="text-primary-600" />
               </div>
-              <h2 className="font-bold text-sm text-gray-800">
+              <h2 className="font-semibold text-sm text-gray-800">
                 Foto Sebelum Kirim (Dari Seller)
               </h2>
             </div>
@@ -443,9 +464,11 @@ const OrderDetailContent = () => {
           <div className="p-5">
             <div className="flex items-center gap-2 mb-4">
               <div className="w-7 h-7 bg-primary-50 rounded-lg flex items-center justify-center">
-                <CreditCard size={13} className="text-primary-500" />
+                <CreditCard size={13} className="text-primary-600" />
               </div>
-              <h2 className="font-bold text-sm text-gray-800">Pembayaran</h2>
+              <h2 className="font-semibold text-sm text-gray-800">
+                Pembayaran
+              </h2>
             </div>
 
             <div className="space-y-2 text-xs">
@@ -477,15 +500,15 @@ const OrderDetailContent = () => {
               <div className="flex justify-between pt-2 border-t border-dashed border-gray-100">
                 <span className="text-gray-400">Metode</span>
                 <span className="text-gray-600 font-semibold">
-                  {order.metodeBayar}
+                  {formatMetodeBayar(order.metodeBayar)}
                 </span>
               </div>
             </div>
           </div>
 
-          <div className="bg-gray-50 px-5 py-3.5 flex items-center justify-between border-t border-gray-100">
-            <span className="text-sm font-bold text-gray-700">Total</span>
-            <span className="font-display font-black text-lg text-primary-700">
+          <div className="bg-white px-5 py-4 flex items-center justify-between border-t border-gray-100">
+            <span className="text-sm font-semibold text-gray-700">Total</span>
+            <span className="font-semibold text-base text-primary-700">
               {formatRupiah(Number(order.totalHarga || 0))}
             </span>
           </div>
@@ -504,7 +527,7 @@ const OrderDetailContent = () => {
                 onClick={() => {
                   router.push(`/pembayaran?orderId=${order.id_pesanan}`);
                 }}
-                className="flex-1 py-3 bg-primary-600 text-white rounded-2xl font-bold text-[13px] shadow-lg shadow-primary-600/20 hover:bg-primary-700 transition-all active:scale-[0.98] flex items-center justify-center gap-2"
+                className="flex-1 py-3 bg-primary-600 text-white rounded-2xl font-semibold text-[13px] shadow-lg shadow-primary-600/20 hover:bg-primary-700 transition-all active:scale-[0.98] flex items-center justify-center gap-2"
               >
                 <Wallet size={15} /> Bayar Sekarang
               </button>
@@ -513,7 +536,7 @@ const OrderDetailContent = () => {
               <button
                 onClick={() => setIsConfirmModalOpen(true)}
                 disabled={confirming}
-                className="flex-1 py-3 bg-emerald-600 text-white rounded-2xl font-bold text-[13px] shadow-lg shadow-emerald-600/20 hover:bg-emerald-700 transition-all active:scale-[0.98] flex items-center justify-center gap-2 disabled:opacity-60"
+                className="flex-1 py-3 bg-primary-600 text-white rounded-2xl font-semibold text-[13px] shadow-lg shadow-primary-600/20 hover:bg-primary-700 transition-all active:scale-[0.98] flex items-center justify-center gap-2 disabled:opacity-60"
               >
                 {confirming ? (
                   <Loader2 size={15} className="animate-spin" />
@@ -528,13 +551,13 @@ const OrderDetailContent = () => {
                   onClick={() =>
                     router.push(`/pesanan/${order.id_pesanan}/rating`)
                   }
-                  className="flex-1 py-3 border border-amber-300 text-amber-600 rounded-2xl font-bold text-[13px] hover:bg-amber-50 transition-all flex items-center justify-center gap-1.5 active:scale-[0.97]"
+                  className="flex-1 py-3 border border-amber-300 text-amber-600 rounded-2xl font-semibold text-[13px] hover:bg-amber-50 transition-all flex items-center justify-center gap-1.5 active:scale-[0.97]"
                 >
                   <Star size={14} className="fill-amber-400" /> Ulasan
                 </button>
                 <button
                   onClick={() => router.push("/katalog")}
-                  className="flex-1 py-3 bg-primary-600 text-white rounded-2xl font-bold text-[13px] shadow-lg shadow-primary-600/20 hover:bg-primary-700 transition-all flex items-center justify-center gap-1.5 active:scale-[0.98]"
+                  className="flex-1 py-3 bg-primary-600 text-white rounded-2xl font-semibold text-[13px] shadow-lg shadow-primary-600/20 hover:bg-primary-700 transition-all flex items-center justify-center gap-1.5 active:scale-[0.98]"
                 >
                   <ShoppingBag size={14} /> Beli Lagi
                 </button>
@@ -544,43 +567,32 @@ const OrderDetailContent = () => {
         </div>
       )}
 
-      {/* Confirmation Modal */}
-      <ConfigProvider theme={{ components: { Modal: { borderRadiusLG: 32 } } }}>
-        <Modal
-          open={isConfirmModalOpen}
-          onCancel={() => setIsConfirmModalOpen(false)}
-          footer={null}
-          centered
-          closeIcon={false}
-          width={330}
-          styles={{
-            body: { padding: "64px 28px" },
-            mask: {
-              backdropFilter: "blur(4px)",
-              backgroundColor: "rgba(0, 0, 0, 0.65)",
-            },
-          }}
-        >
-          <div className="flex flex-col items-center text-center">
-            <div className="w-28 h-28 mb-8 relative">
+      {isConfirmModalOpen && (
+        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
+          <div
+            className="absolute inset-0 bg-black/40 backdrop-blur-sm transition-opacity"
+            onClick={() => setIsConfirmModalOpen(false)}
+          />
+          <div className="relative bg-white rounded-3xl w-full max-w-[310px] p-6 flex flex-col items-center text-center shadow-2xl scale-100 transition-transform">
+            <div className="w-44 h-44 mb-2 relative">
               <Image
-                src="/images/cart.svg"
+                src="/images/barang-diterima.svg"
                 alt="Konfirmasi"
                 fill
                 className="object-contain"
               />
             </div>
-            <h3 className="font-medium text-base text-gray-800 mb-3 mt-2">
+            <h3 className="font-medium text-[15px] text-gray-900 mb-2">
               Pesanan Sudah Tiba?
             </h3>
-            <p className="text-xs text-gray-500 leading-relaxed mb-10 px-2">
-              Yuk pastikan pesananmu sudah diterima dengan baik agar dananya
-              bisa diteruskan ke penjual.
+            <p className="text-[13px] text-gray-500 leading-relaxed mb-8 px-1">
+              Pastikan pesanan sudah diterima dengan baik agar dana diteruskan
+              ke penjual.
             </p>
-            <div className="w-full flex gap-3">
+            <div className="w-full flex gap-2.5">
               <button
                 onClick={() => setIsConfirmModalOpen(false)}
-                className="flex-1 py-2.5 rounded-2xl border border-gray-200 text-gray-500 font-medium text-[12px] hover:bg-gray-50 hover:text-gray-700 transition-colors"
+                className="flex-1 py-2.5 rounded-xl bg-gray-100 text-gray-700 font-medium text-[13px] hover:bg-gray-200 transition-colors"
               >
                 Batal
               </button>
@@ -589,14 +601,14 @@ const OrderDetailContent = () => {
                   setIsConfirmModalOpen(false);
                   handleConfirm();
                 }}
-                className="flex-1 py-2.5 rounded-2xl bg-emerald-600 text-white font-medium text-[12px] hover:bg-emerald-700 transition-colors"
+                className="flex-1 py-2.5 rounded-xl bg-primary-600 text-white font-medium text-[13px] hover:bg-primary-700 transition-colors shadow-sm shadow-primary-600/20"
               >
                 Konfirmasi
               </button>
             </div>
           </div>
-        </Modal>
-      </ConfigProvider>
+        </div>
+      )}
     </div>
   );
 };
