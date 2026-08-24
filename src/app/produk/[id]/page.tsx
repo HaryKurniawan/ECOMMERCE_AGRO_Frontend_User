@@ -138,7 +138,7 @@ const DetailProdukPage: React.FC = () => {
         }`}
       >
         <button
-          onClick={() => router.back()}
+          onClick={() => router.push("/")}
           className="p-1.5 hover:bg-gray-50 rounded-xl transition-colors"
         >
           <ArrowLeft size={22} className="text-gray-700" />

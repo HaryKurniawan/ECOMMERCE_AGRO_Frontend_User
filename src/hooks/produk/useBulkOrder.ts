@@ -38,10 +38,6 @@ export const useBulkOrder = (product: any) => {
       });
 
       if (response.data) {
-        toast.success(
-          "Permintaan pesanan grosir berhasil dikirim ke Penjual.",
-          { duration: 5000 },
-        );
         setShowBulkOrderModal(false);
         setIsSuccess(true);
       }

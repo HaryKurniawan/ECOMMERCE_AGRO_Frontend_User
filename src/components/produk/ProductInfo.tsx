@@ -51,7 +51,7 @@ const ProductInfo: React.FC<ProductInfoProps> = ({
     <div className="px-4 lg:px-0 mt-4 lg:mt-0 space-y-5">
       {/* Variant Preview */}
       {(product.varian || product.kemasan)?.length ? (
-        <div className="mb-4 pb-4 border-b border-gray-100 -mx-4 lg:mx-0 px-4 lg:px-0">
+        <div className="mb-4 pb-4 border-b border-gray-200/80 -mx-4 lg:mx-0 px-4 lg:px-0">
           <label
             htmlFor="kemasan-select"
             className="text-xs font-medium text-gray-600 block mb-2"
@@ -112,7 +112,7 @@ const ProductInfo: React.FC<ProductInfoProps> = ({
             {/* Stock */}
             <div className="flex items-center gap-1.5 mt-0.5">
               <span className="text-xs text-gray-500 font-medium">Stok:</span>
-              <span className="text-xs font-bold text-green-600 bg-green-50 px-2 py-0.5 rounded-lg border border-green-100">
+              <span className="text-xs font-bold text-gray-900 px-2.5 py-1 rounded-xl border border-gray-200">
                 {totalStok} {product.satuan}
               </span>
             </div>
@@ -132,23 +132,25 @@ const ProductInfo: React.FC<ProductInfoProps> = ({
       </div>
 
       {/* Bulk Order CTA */}
-      <div className="lg:hidden mt-6 mb-10 pb-6 border-b border-gray-100 -mx-4 px-4">
+      <div className="lg:hidden mt-4 mb-6 pb-6 border-b border-gray-200/80">
         <button
           onClick={onBulkOrder}
-          className="w-full flex items-center justify-between px-4 py-3 bg-white hover:bg-gray-50 border border-gray-200 hover:border-gray-300 rounded-xl transition-all group"
+          className="w-full flex items-center justify-between p-4 bg-white hover:bg-gray-50/80 border border-primary-600 hover:border-primary-700 rounded-2xl transition-all group shadow-xs"
         >
-          <div className="flex items-center gap-2.5">
-            <Tag size={15} className="text-primary-600" />
+          <div className="flex items-center gap-3">
+            <div className="w-9 h-9 rounded-xl bg-primary-100 text-primary-600 flex items-center justify-center shrink-0 border border-primary-200">
+              <Tag size={16} />
+            </div>
             <div className="text-left">
-              <p className="text-sm font-semibold text-gray-700 group-hover:text-primary-700 transition-colors">
+              <p className="text-sm font-semibold text-gray-900 group-hover:text-primary-700 transition-colors">
                 Butuh lebih dari 100 {product.satuan}?
               </p>
-              <p className="text-[10px] text-gray-400">
-                Ajukan order grosir dengan harga spesial
+              <p className="text-xs text-gray-500">
+                Dapatkan harga grosir spesial
               </p>
             </div>
           </div>
-          <span className="flex-shrink-0 px-3 py-1.5 rounded-lg border border-gray-200 text-[11px] font-semibold text-primary-600 group-hover:bg-primary-50 transition-colors">
+          <span className="flex-shrink-0 px-4 py-2 rounded-xl bg-primary-600 text-white text-xs font-medium hover:bg-primary-700 transition-colors shadow-xs">
             Lihat
           </span>
         </button>

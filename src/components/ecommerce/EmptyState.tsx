@@ -25,6 +25,7 @@ interface EmptyStateProps {
   secondaryLabel?: string;
   onSecondaryAction?: () => void;
   className?: string;
+  imageClassName?: string;
 }
 
 const EmptyState: React.FC<EmptyStateProps> = ({
@@ -37,6 +38,7 @@ const EmptyState: React.FC<EmptyStateProps> = ({
   secondaryLabel,
   onSecondaryAction,
   className = "",
+  imageClassName = "",
 }) => {
   return (
     <div
@@ -48,7 +50,9 @@ const EmptyState: React.FC<EmptyStateProps> = ({
           {icon}
         </div>
       ) : illustration ? (
-        <div className="relative w-56 h-56 mt-6 mb-2 select-none">
+        <div
+          className={`relative w-72 h-72 sm:w-80 sm:h-80 -mt-4 -mb-3 select-none ${imageClassName}`}
+        >
           <Image
             src={illustration}
             alt={title}
@@ -60,7 +64,7 @@ const EmptyState: React.FC<EmptyStateProps> = ({
       ) : null}
 
       {/* Text */}
-      <h2 className="font-display font-semibold text-gray-900 text-[17px] mb-2 leading-tight">
+      <h2 className="font-display font-semibold text-gray-900 text-[17px] mb-1.5 leading-tight">
         {title}
       </h2>
       <p className="text-gray-500 text-[13px] leading-relaxed max-w-xs">
@@ -69,7 +73,7 @@ const EmptyState: React.FC<EmptyStateProps> = ({
 
       {/* Actions */}
       {(actionLabel || secondaryLabel) && (
-        <div className="flex flex-col gap-3 w-full max-w-xs mt-12">
+        <div className="flex flex-col gap-3 w-full max-w-xs mt-9">
           {actionLabel && onAction && (
             <button
               onClick={onAction}

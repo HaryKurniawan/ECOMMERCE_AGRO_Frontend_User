@@ -190,8 +190,8 @@ const AddToCartModal: React.FC<AddToCartModalProps> = ({
           {/* Packaging Size Variant Selector */}
           {hasVariants && (
             <div className="p-5 pb-0">
-              <div className="font-display text-[10px] font-bold uppercase tracking-wider text-gray-400 block mb-2.5">
-                Ukuran Kemasan
+              <div className="text-xs font-medium text-gray-600 block mb-2 font-normal">
+                Ukuran Kemasan:
               </div>
               <div className="flex flex-wrap gap-2.5">
                 {variants.map((k) => {
@@ -207,18 +207,18 @@ const AddToCartModal: React.FC<AddToCartModalProps> = ({
                         setQuantity(1);
                         setQuantityInput("1");
                       }}
-                      className={`flex flex-col items-start px-4 py-2.5 rounded-2xl border-2 transition-all text-left relative ${
+                      className={`flex flex-col items-start px-3.5 py-1.5 rounded-xl border transition-all text-left relative ${
                         isSelected
-                          ? "border-primary-600 bg-primary-50/20 text-primary-900 ring-2 ring-primary-100"
+                          ? "border-primary-600 bg-primary-50/30 text-primary-900 shadow-2xs"
                           : k.isActive && !isOutOfStock
                             ? "border-gray-200 hover:border-gray-300 text-gray-700 bg-white"
                             : "border-gray-100 bg-gray-50 text-gray-400 cursor-not-allowed opacity-50"
                       }`}
                     >
-                      <span className="text-xs font-bold font-display">
+                      <span className="text-xs font-semibold text-gray-800">
                         {k.ukuranKg} kg
                       </span>
-                      <span className="text-[9px] text-emerald-600 font-semibold mt-1 bg-emerald-50 px-1.5 py-0.5 rounded">
+                      <span className="text-[10px] text-gray-400 font-normal mt-0.5">
                         Sisa: {k.stokKemasan}
                       </span>
                       {isOutOfStock && k.isActive && (
@@ -234,8 +234,8 @@ const AddToCartModal: React.FC<AddToCartModalProps> = ({
           )}
 
           {/* Quantity + Confirm */}
-          <div className="p-5 pt-4">
-            <div className="flex items-center justify-between mb-4">
+          <div className="p-4 pt-3">
+            <div className="flex items-center justify-between mb-3">
               <span className="font-display text-sm font-semibold text-gray-700">
                 Jumlah
               </span>
@@ -276,7 +276,7 @@ const AddToCartModal: React.FC<AddToCartModalProps> = ({
             <button
               onClick={handleConfirm}
               disabled={isSubmitting || displayStock === 0}
-              className={`w-full py-4 rounded-2xl font-semibold shadow-lg transition-all active:scale-[0.98] flex items-center justify-center gap-2 disabled:opacity-50 mt-6 bg-primary-600 text-white shadow-primary-100 hover:bg-primary-700`}
+              className={`w-full py-3.5 rounded-2xl font-medium shadow-sm transition-all active:scale-[0.98] flex items-center justify-center gap-2 disabled:opacity-50 mt-4 bg-primary-600 text-white hover:bg-primary-700`}
             >
               {isSubmitting ? (
                 <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
@@ -294,7 +294,7 @@ const AddToCartModal: React.FC<AddToCartModalProps> = ({
           </div>
 
           {/* Safe area padding for mobile */}
-          <div className="h-6 lg:hidden" />
+          <div className="h-2 lg:hidden" />
         </div>
       </div>
     </div>

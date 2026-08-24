@@ -4,10 +4,11 @@ import React from "react";
 import { useParams, useRouter } from "next/navigation";
 import {
   ArrowLeft,
-  ArrowRight,
   Sparkles,
   ChevronRight,
   Loader2,
+  Info,
+  BookOpen,
 } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import Image from "next/image";
@@ -52,7 +53,7 @@ export default function GrosirLandingPage() {
   if (productLoading || !_hasHydrated) {
     return (
       <div className="fixed inset-0 flex items-center justify-center bg-white">
-        <Loader2 className="animate-spin text-primary-500" size={36} />
+        <Loader2 className="animate-spin text-primary-500" size={32} />
       </div>
     );
   }
@@ -66,94 +67,134 @@ export default function GrosirLandingPage() {
   };
 
   return (
-    <div className="min-h-screen bg-white flex flex-col">
+    <div className="min-h-screen bg-gray-50/60 flex flex-col">
       {/* Header */}
-      <div className="sticky top-0 z-30 bg-white/90 backdrop-blur-md border-b border-gray-100 px-4 py-3.5 flex items-center gap-3">
+      <div className="sticky top-0 z-30 bg-white/90 backdrop-blur-md border-b border-gray-200/80 px-4 py-3 flex items-center justify-between">
         <button
-          onClick={() => router.back()}
-          className="p-2 hover:bg-gray-100 rounded-xl transition-all active:scale-90"
+          onClick={() => router.push(`/produk/${id}`)}
+          className="p-2 hover:bg-gray-100 rounded-xl transition-all active:scale-95 text-gray-700"
         >
-          <ArrowLeft size={20} className="text-gray-700" />
+          <ArrowLeft size={18} />
         </button>
-        <h1 className="font-semibold text-base text-gray-900">
+        <h1 className="font-semibold text-sm text-gray-900 text-center flex-1">
           Pembelian Grosir
         </h1>
+        <div className="w-8" />
       </div>
 
       {/* Content */}
-      <div className="flex-1 flex flex-col items-center px-6 pt-8 pb-36">
+      <div className="flex-1 flex flex-col items-center px-5 pt-6 pb-36 max-w-md mx-auto w-full">
         {/* Illustration */}
-        <div className="w-full max-w-[280px] md:max-w-sm mb-2">
+        <div className="w-full max-w-[280px] sm:max-w-[320px] mb-5">
           <Image
-            src="/images/grosir-hero.png"
+            src="/images/grosir-hero.svg"
             alt="Pembelian Grosiran"
-            width={400}
-            height={300}
+            width={380}
+            height={280}
             className="w-full h-auto object-contain"
             priority
           />
         </div>
 
-        {/* Produk Info */}
-        {product && (
-          <div className="mt-2 mb-1 flex items-center gap-2 px-3 py-1.5 bg-green-50 rounded-full">
-            <span className="text-xs font-medium text-green-700 truncate max-w-[200px]">
-              {product.nama}
-            </span>
-            <span className="text-xs text-green-500">· Min. 300 kg</span>
-          </div>
-        )}
-
-        {/* Title & Discount */}
-        <div className="text-center mt-4">
-          <h2 className="text-xl font-medium text-gray-800 leading-snug">
-            Hemat Lebih Banyak
-            <br />
-            dengan Pembelian Grosir
+        {/* Title Section */}
+        <div className="text-center mb-5">
+          <h2 className="text-lg sm:text-xl font-semibold text-gray-900 leading-snug tracking-tight">
+            Beli Banyak, Lebih Hemat
           </h2>
 
           {diskonLoading ? (
-            <div className="mt-3 h-10 w-48 mx-auto bg-gray-100 rounded-xl animate-pulse" />
+            <div className="mt-2.5 h-7 w-40 mx-auto bg-gray-200/70 rounded-full animate-pulse" />
           ) : (
             diskonGrosirPersen > 0 && (
-              <div className="mt-4 inline-flex items-center gap-2 bg-gradient-to-r from-emerald-500 to-green-600 text-white px-5 py-2.5 rounded-2xl shadow-lg shadow-emerald-200">
-                <Sparkles size={18} />
-                <span className="font-bold text-lg">
-                  Diskon {diskonGrosirPersen}% untuk pesanan grosiran!
-                </span>
+              <div className="mt-2.5 inline-flex items-center gap-1.5 bg-primary-50 text-primary-700 border border-primary-100/80 px-3.5 py-1.5 rounded-full text-xs font-medium">
+                <Sparkles size={14} className="text-primary-600" />
+                <span>Diskon {diskonGrosirPersen}% untuk Pesanan Grosir</span>
               </div>
             )
           )}
         </div>
 
-        {/* Link ke halaman info */}
+        {/* Dynamic Condition Card */}
+        {product &&
+          (() => {
+            const stok = product.stok || 0;
+            const minGrosir = Math.max(100, stok + 1);
+            const isOverStock = stok < 100 || minGrosir > 100;
+
+            return (
+              <div className="w-full bg-white border border-gray-200/80 rounded-2xl p-4 text-left space-y-2 shadow-xs mb-4">
+                <div className="flex items-center justify-between border-b border-gray-100 pb-2.5">
+                  <span className="text-xs font-semibold text-gray-800 truncate max-w-[170px]">
+                    {product.nama}
+                  </span>
+                  <span className="text-[11px] font-medium text-primary-700 bg-primary-50 border border-primary-100/60 px-2.5 py-1 rounded-lg">
+                    Min: {minGrosir.toLocaleString("id-ID")}{" "}
+                    {product.satuan || "kg"}
+                  </span>
+                </div>
+                <div className="flex items-start gap-2 pt-0.5">
+                  <Info
+                    size={14}
+                    className="text-primary-600 shrink-0 mt-0.5"
+                  />
+                  <p className="text-xs text-gray-600 leading-relaxed font-normal">
+                    {isOverStock ? (
+                      <>
+                        Stok tersedia saat ini:{" "}
+                        <strong>
+                          {stok.toLocaleString("id-ID")}{" "}
+                          {product.satuan || "kg"}
+                        </strong>
+                        . Pesanan di atas stok otomatis diproses secara{" "}
+                        <strong>Pre-Order / Booking</strong>.
+                      </>
+                    ) : (
+                      <>
+                        Pemesanan grosir diproses langsung dari toko petani
+                        dengan jaminan kesegaran.
+                      </>
+                    )}
+                  </p>
+                </div>
+              </div>
+            );
+          })()}
+
+        {/* Guide Card Link */}
         <button
           onClick={() => router.push(`/produk/${id}/grosir/keuntungan`)}
-          className="mt-6 flex items-center gap-1.5 text-primary-600 font-semibold text-sm hover:text-primary-700 transition-colors group"
+          className="w-full flex items-center justify-between p-3.5 bg-white border border-gray-200/80 hover:border-primary-400 hover:bg-gray-50/50 rounded-2xl transition-all shadow-xs group"
         >
-          <span>Lihat keuntungan &amp; tata cara pemesanan</span>
+          <div className="flex items-center gap-2.5">
+            <div className="w-8 h-8 rounded-xl bg-primary-50 text-primary-600 flex items-center justify-center shrink-0 border border-primary-100/60">
+              <BookOpen size={15} />
+            </div>
+            <span className="text-xs font-medium text-gray-700 group-hover:text-primary-700 transition-colors">
+              Lihat Keuntungan &amp; Tata Cara
+            </span>
+          </div>
           <ChevronRight
             size={16}
-            className="group-hover:translate-x-0.5 transition-transform"
+            className="text-gray-400 group-hover:text-primary-600 group-hover:translate-x-0.5 transition-all"
           />
         </button>
       </div>
 
       {/* Sticky Bottom CTA */}
-      <div className="fixed bottom-0 left-0 right-0 z-50 bg-white/90 backdrop-blur-md border-t border-gray-100 px-4 py-4 pb-safe">
-        <div className="max-w-lg mx-auto">
+      <div className="fixed bottom-0 left-0 right-0 z-50 bg-white/90 backdrop-blur-md border-t border-gray-200/80 px-4 py-3.5 pb-safe">
+        <div className="max-w-md mx-auto space-y-2">
           {diskonGrosirPersen > 0 && (
-            <p className="text-center text-xs text-gray-400 mb-2">
+            <p className="text-center text-[11px] text-gray-500 font-normal">
               Hemat{" "}
-              <span className="font-semibold text-emerald-600">
+              <span className="font-semibold text-primary-600">
                 {diskonGrosirPersen}% dari harga normal
               </span>{" "}
-              untuk pesanan grosiran kamu
+              untuk pesanan grosir Anda
             </p>
           )}
           <button
             onClick={handleOrder}
-            className="w-full py-4 bg-primary-600 text-white rounded-2xl font-semibold text-[15px] flex items-center justify-center transition-all active:scale-[0.98] hover:bg-primary-700"
+            className="w-full py-3.5 sm:py-4 px-4 bg-primary-600 text-white rounded-xl text-sm sm:text-base font-semibold hover:bg-primary-700 active:scale-[0.99] transition-all shadow-sm flex items-center justify-center gap-2"
           >
             Pesan Sekarang
           </button>

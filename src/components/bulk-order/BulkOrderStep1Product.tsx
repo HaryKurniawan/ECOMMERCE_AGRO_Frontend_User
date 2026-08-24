@@ -1,7 +1,14 @@
 "use client";
 
 import React from "react";
-import { Package, AlertCircle, CheckCircle2, X, Info } from "lucide-react";
+import {
+  Package,
+  AlertCircle,
+  CheckCircle2,
+  X,
+  Info,
+  Truck,
+} from "lucide-react";
 import Image from "next/image";
 
 import { formatRupiah } from "@/lib/ecommerce-api";
@@ -26,6 +33,7 @@ interface BulkOrderStep1ProductProps {
     harga: number;
     satuan?: string;
     varian?: VarianKemasan[];
+    stok?: number;
   } | null;
   jumlah: number;
   onJumlahChange: (value: number) => void;
@@ -94,7 +102,8 @@ export const BulkOrderStep1Product: React.FC<BulkOrderStep1ProductProps> = ({
     return sum + s.ukuranKg * s.jumlahBungkus + sisa;
   }, 0);
 
-  const isJumlahValid = jumlah >= 300;
+  const minGrosir = Math.max(100, (product.stok || 0) + 1);
+  const isJumlahValid = jumlah >= minGrosir;
 
   return (
     <div className="bg-white rounded-3xl border border-gray-100 overflow-hidden animate-in fade-in slide-in-from-bottom-4 duration-500">
@@ -146,7 +155,7 @@ export const BulkOrderStep1Product: React.FC<BulkOrderStep1ProductProps> = ({
           <div className="relative">
             <input
               type="number"
-              min="300"
+              min={minGrosir}
               required
               value={jumlah || ""}
               onChange={(e) => {
@@ -158,26 +167,52 @@ export const BulkOrderStep1Product: React.FC<BulkOrderStep1ProductProps> = ({
                 }
               }}
               onBlur={() => {
-                if (jumlah < 300) {
-                  handleJumlahChange(300);
+                if (jumlah < minGrosir) {
+                  handleJumlahChange(minGrosir);
                 }
               }}
-              className="w-full h-14 bg-gray-50 border border-gray-100 rounded-2xl px-5 pr-20 text-xl font-bold text-gray-900 focus:outline-none focus:ring-2 focus:ring-primary-400 focus:bg-white focus:border-transparent transition-all"
+              placeholder="Masukkan jumlah..."
+              className="w-full h-14 bg-gray-50 border border-gray-200/80 rounded-2xl px-5 pr-16 text-lg sm:text-xl font-semibold text-gray-900 placeholder:font-normal placeholder:text-base placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-primary-100 focus:border-primary-500 focus:bg-white transition-all shadow-sm"
             />
-            <div className="absolute right-5 top-1/2 -translate-y-1/2 text-sm font-semibold text-gray-400 pointer-events-none">
+            <div className="absolute right-5 top-1/2 -translate-y-1/2 text-sm font-medium text-gray-400 pointer-events-none">
               {product.satuan}
             </div>
           </div>
-          {jumlah < 300 ? (
+          {jumlah < minGrosir ? (
             <p className="mt-2 text-xs text-red-500 flex items-center gap-1.5 font-medium">
               <AlertCircle size={12} />
-              Minimal pemesanan grosir adalah 300 {product.satuan}
+              Minimal pemesanan grosir adalah {minGrosir} {product.satuan}
             </p>
           ) : (
-            <p className="mt-2 text-xs text-emerald-600 flex items-center gap-1.5 font-medium">
-              <CheckCircle2 size={12} />
-              Jumlah memenuhi syarat minimum grosir
-            </p>
+            <div className="mt-4 p-4 rounded-2xl bg-gray-50 border border-gray-100/80 space-y-3">
+              {/* Estimasi Nilai Pesanan */}
+              <div className="flex items-center justify-between pb-2.5 border-b border-gray-200/60">
+                <span className="text-xs font-medium text-gray-500">
+                  Estimasi Nilai Pesanan
+                </span>
+                <span className="text-base font-bold text-emerald-600">
+                  {formatRupiah(jumlah * product.harga)}
+                </span>
+              </div>
+
+              {/* Status Ongkir */}
+              {jumlah >= 300 ? (
+                <div className="flex items-center gap-2 text-xs font-medium text-emerald-700 bg-emerald-50/80 border border-emerald-100/80 px-3.5 py-2.5 rounded-xl">
+                  <Truck size={15} className="text-emerald-600 shrink-0" />
+                  <span>
+                    Pesanan Anda <strong>Memenuhi Syarat Gratis Ongkir!</strong>
+                  </span>
+                </div>
+              ) : (
+                <div className="flex items-center gap-2 text-xs font-medium text-amber-700 bg-amber-50/80 border border-amber-100/80 px-3.5 py-2.5 rounded-xl">
+                  <Truck size={15} className="text-amber-600 shrink-0" />
+                  <span>
+                    Dikenakan Ongkir Grosir (Gratis jika &ge; 300{" "}
+                    {product.satuan})
+                  </span>
+                </div>
+              )}
+            </div>
           )}
         </div>
 
@@ -251,7 +286,8 @@ export const BulkOrderStep1Product: React.FC<BulkOrderStep1ProductProps> = ({
 
           {!isJumlahValid && (
             <div className="py-4 text-center text-xs text-gray-400">
-              Masukkan jumlah pesanan terlebih dahulu (min. 300 kg)
+              Masukkan jumlah pesanan terlebih dahulu (min. {minGrosir}{" "}
+              {product.satuan})
             </div>
           )}
 

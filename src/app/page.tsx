@@ -13,8 +13,6 @@ import AddToCartModal from "@/src/components/ecommerce/AddToCartModal";
 import CartSuccessModal from "@/src/components/ecommerce/CartSuccessModal";
 import BannerCarousel from "@/src/components/ecommerce/BannerCarousel";
 import FilterBottomSheet from "@/src/components/ecommerce/FilterBottomSheet";
-import CitySelectionModal from "@/src/components/ecommerce/CitySelectionModal";
-import AddressPromptModal from "@/src/components/ecommerce/AddressPromptModal";
 import { useBanners } from "@/hooks/banner/useBanners";
 
 // Sections
@@ -73,8 +71,6 @@ const HomePage: React.FC = () => {
 
   const [showStickySearch, setShowStickySearch] = useState(false);
   const [showFilter, setShowFilter] = useState(false);
-  const [showAddressPrompt, setShowAddressPrompt] = useState(false);
-  const [promptCity, setPromptCity] = useState("");
 
   const handleSearchSubmit = () => {
     if (search.trim()) {
@@ -213,24 +209,6 @@ const HomePage: React.FC = () => {
             onClose={closeCartSuccessModal}
             product={selectedProduct}
             quantity={lastAddedQty}
-          />
-
-          <CitySelectionModal
-            isOpen={isAuthenticated && addresses.length === 0 && !hasSetCity}
-            availableCities={availableCities}
-            onSelectCity={(city) => {
-              setCity(city);
-              setPromptCity(city);
-              setTimeout(() => {
-                setShowAddressPrompt(true);
-              }, 400);
-            }}
-          />
-
-          <AddressPromptModal
-            isOpen={showAddressPrompt}
-            city={promptCity}
-            onClose={() => setShowAddressPrompt(false)}
           />
         </div>
       </main>

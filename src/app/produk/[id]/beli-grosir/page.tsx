@@ -209,14 +209,16 @@ export default function BeliGrosirPage() {
   }
 
   // Form validation
+  const minGrosir = Math.max(100, (product?.stok || 0) + 1);
+
   const isFormValid =
-    jumlah >= 300 &&
+    jumlah >= minGrosir &&
     (useManual ? manualAlamat.trim().length > 0 : selectedAddressId !== "") &&
     metodeBayar !== "";
 
   const isStepValid =
     currentStep === 1
-      ? jumlah >= 300
+      ? jumlah >= minGrosir
       : currentStep === 2
         ? true // packaging is optional
         : isFormValid;
@@ -333,7 +335,7 @@ export default function BeliGrosirPage() {
             onClick={() =>
               currentStep > 1
                 ? setCurrentStep((prev) => prev - 1)
-                : router.back()
+                : router.push(`/produk/${id}/grosir`)
             }
             className="px-6 py-3 bg-gray-100 text-gray-700 font-semibold rounded-xl hover:bg-gray-200 transition-all active:scale-95"
           >

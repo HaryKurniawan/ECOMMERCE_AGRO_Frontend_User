@@ -36,7 +36,10 @@ export const BulkOrderSummary: React.FC<BulkOrderSummaryProps> = ({
 
   const nominalDiskon =
     diskonGrosirPersen > 0 ? (subtotal * diskonGrosirPersen) / 100 : 0;
-  const totalEstimate = subtotal - nominalDiskon + ongkosKirimGrosir;
+
+  // Gratis Ongkir jika pembelian >= 300kg
+  const finalOngkir = jumlah >= 300 ? 0 : ongkosKirimGrosir;
+  const totalEstimate = subtotal - nominalDiskon + finalOngkir;
 
   return (
     <div className="bg-white rounded-3xl border border-gray-100 p-6 shadow-sm sticky top-24">
@@ -102,14 +105,21 @@ export const BulkOrderSummary: React.FC<BulkOrderSummaryProps> = ({
             </div>
           )}
 
-          {ongkosKirimGrosir > 0 && (
+          {finalOngkir > 0 ? (
             <div className="flex justify-between items-center mt-2">
               <p className="text-[10px] text-gray-400 font-medium">
                 Ongkos Kirim
               </p>
               <p className="font-medium text-gray-800 text-sm">
-                +{formatRupiah(ongkosKirimGrosir)}
+                +{formatRupiah(finalOngkir)}
               </p>
+            </div>
+          ) : (
+            <div className="flex justify-between items-center mt-2">
+              <p className="text-[10px] text-gray-400 font-medium">
+                Ongkos Kirim
+              </p>
+              <p className="font-medium text-emerald-600 text-sm">Gratis</p>
             </div>
           )}
 

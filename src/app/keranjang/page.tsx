@@ -87,7 +87,7 @@ const KeranjangPage: React.FC = () => {
       </div>
 
       {cartItems.length === 0 ? (
-        <div className="flex-1 flex items-center justify-center">
+        <div className="flex-1 flex items-center justify-center -mt-16 sm:-mt-20">
           <EmptyState
             illustration="/empty-cart.svg"
             title="Keranjang masih kosong"

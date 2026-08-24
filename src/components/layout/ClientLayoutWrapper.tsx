@@ -4,8 +4,7 @@ import dynamic from "next/dynamic";
 import { usePathname } from "next/navigation";
 
 import AuthGuard from "@/src/components/AuthGuard";
-import MandatoryAddressModal from "@/src/components/ecommerce/MandatoryAddressModal";
-import OnboardingModal from "@/src/components/ecommerce/OnboardingModal";
+import UnifiedOnboardingModal from "@/src/components/ecommerce/UnifiedOnboardingModal";
 import { useAuthStore } from "@/src/store/auth-store";
 import { useRestoreAuth } from "@/src/hooks/auth";
 
@@ -61,7 +60,7 @@ export default function ClientLayoutWrapper({
           <div className="desktop-container">{children}</div>
         </main>
         {showBottomNav && <BottomNav />}
-        {showOnboarding ? <OnboardingModal /> : <MandatoryAddressModal />}
+        <UnifiedOnboardingModal />
       </div>
     </AuthGuard>
   ) : (

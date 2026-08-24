@@ -78,24 +78,24 @@ const ProductSidebar: React.FC<ProductSidebarProps> = ({
           </div>
 
           {/* Bulk Order CTA */}
-          <div className="mb-5 border-b border-gray-100 pb-5">
+          <div className="mb-5 border-b border-gray-200/80 pb-5">
             <button
               onClick={onBulkOrder}
               disabled={isShoppingDisabled}
-              className="w-full flex items-center justify-between px-3 py-2 bg-white hover:bg-emerald-50 border border-dashed border-emerald-300 hover:border-emerald-500 rounded-xl transition-all group disabled:opacity-50 disabled:cursor-not-allowed"
+              className="w-full flex items-center justify-between p-3 bg-white hover:bg-gray-50/80 border border-primary-600 hover:border-primary-700 rounded-xl transition-all group disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              <div className="flex items-center gap-2">
-                <Tag size={14} className="text-emerald-600 shrink-0" />
+              <div className="flex items-center gap-2.5">
+                <Tag size={15} className="text-primary-600 shrink-0" />
                 <div className="text-left">
-                  <p className="text-[11px] font-semibold text-gray-700 group-hover:text-emerald-700 transition-colors">
+                  <p className="text-xs font-semibold text-gray-900 group-hover:text-primary-700 transition-colors">
                     Butuh lebih dari 100 {product.satuan}?
                   </p>
-                  <p className="text-[9px] text-gray-400 leading-tight">
+                  <p className="text-[10px] text-gray-500 leading-tight">
                     Ajukan order grosir
                   </p>
                 </div>
               </div>
-              <span className="text-[9px] font-bold text-emerald-600 bg-emerald-50 px-2 py-1 rounded-md group-hover:bg-emerald-100 transition-colors whitespace-nowrap">
+              <span className="text-[10px] font-semibold text-white bg-primary-600 px-2.5 py-1 rounded-lg group-hover:bg-primary-700 transition-colors whitespace-nowrap shadow-xs">
                 Lihat
               </span>
             </button>
