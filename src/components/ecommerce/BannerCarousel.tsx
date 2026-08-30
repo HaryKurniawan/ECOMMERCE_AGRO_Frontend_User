@@ -118,14 +118,26 @@ const BannerCarousel: React.FC<BannerCarouselProps> = ({
             if (rawUrl.startsWith("http://") || rawUrl.startsWith("https://")) {
               imgUrl = rawUrl;
             } else {
-              const apiHost =
-                process.env.NEXT_PUBLIC_API_URL?.replace(/\/api\/?$/, "") ||
+              const backendUrl =
+                process.env.NEXT_PUBLIC_BACKEND_URL ||
+                process.env.NEXT_PUBLIC_API_URL ||
                 "https://api.agro-ecommerce.web.id";
-              const cleanPath = rawUrl.replace(/^\/api\/proxy/, "");
+
+              let domainRoot = "https://api.agro-ecommerce.web.id";
+              try {
+                const parsed = new URL(backendUrl);
+                domainRoot = `${parsed.protocol}//${parsed.host}`;
+              } catch {
+                domainRoot = "https://api.agro-ecommerce.web.id";
+              }
+
+              const cleanPath = rawUrl
+                .replace(/^\/api\/proxy/, "")
+                .replace(/^\/api/, "");
               const formattedPath = cleanPath.startsWith("/")
                 ? cleanPath
                 : `/${cleanPath}`;
-              imgUrl = `${apiHost}${formattedPath}`;
+              imgUrl = `${domainRoot}${formattedPath}`;
             }
           }
 
@@ -147,6 +159,14 @@ const BannerCarousel: React.FC<BannerCarouselProps> = ({
             bgGradientClass = "bg-slate-900";
           }
 
+          const cleanTitle = (banner.title || "").trim();
+          const cleanSub = (banner.subtitle || "").trim();
+          const hasTitle =
+            cleanTitle !== "" && cleanTitle !== "-" && cleanTitle !== ".";
+          const hasSubtitle =
+            cleanSub !== "" && cleanSub !== "-" && cleanSub !== ".";
+          const showTextOverlay = hasTitle || hasSubtitle;
+
           const content = (
             <div
               className={`w-full h-32 md:h-36 lg:h-40 ${imgUrl ? "bg-slate-900" : bgGradientClass} flex flex-col justify-end items-start relative overflow-hidden group/banner ${banner.link ? "cursor-pointer" : ""}`}
@@ -154,7 +174,7 @@ const BannerCarousel: React.FC<BannerCarouselProps> = ({
               {imgUrl ? (
                 <img
                   src={imgUrl}
-                  alt={banner.title}
+                  alt={hasTitle ? cleanTitle : "Banner Promo"}
                   style={{
                     objectFit: fitMode,
                     objectPosition: `${posX}% ${posY}%`,
@@ -168,17 +188,17 @@ const BannerCarousel: React.FC<BannerCarouselProps> = ({
                 </>
               )}
 
-              {(banner.title || banner.subtitle) && (
+              {showTextOverlay && (
                 <div className="relative z-10 w-full p-4 md:p-6 bg-gradient-to-t from-black/80 via-black/40 to-transparent">
                   <div className="max-w-[90%] md:max-w-[80%] text-left">
-                    {banner.title && (
+                    {hasTitle && (
                       <h2 className="text-sm md:text-base lg:text-lg font-display font-semibold text-white mb-1 md:mb-1.5 leading-tight drop-shadow-md">
-                        {banner.title}
+                        {cleanTitle}
                       </h2>
                     )}
-                    {banner.subtitle && (
+                    {hasSubtitle && (
                       <p className="text-[9px] md:text-[10px] lg:text-xs text-white/95 font-medium drop-shadow-sm max-w-[250px] md:max-w-md line-clamp-2">
-                        {banner.subtitle}
+                        {cleanSub}
                       </p>
                     )}
                   </div>
