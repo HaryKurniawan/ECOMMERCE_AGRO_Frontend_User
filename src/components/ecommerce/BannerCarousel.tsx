@@ -112,15 +112,54 @@ const BannerCarousel: React.FC<BannerCarouselProps> = ({
         style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
       >
         {infiniteBanners.map((banner, idx) => {
+          const rawUrl = banner.imageUrl || "";
+          let imgUrl = "";
+          if (rawUrl) {
+            if (rawUrl.startsWith("http://") || rawUrl.startsWith("https://")) {
+              imgUrl = rawUrl;
+            } else {
+              const apiHost =
+                process.env.NEXT_PUBLIC_API_URL?.replace(/\/api\/?$/, "") ||
+                "https://api.agro-ecommerce.web.id";
+              const cleanPath = rawUrl.replace(/^\/api\/proxy/, "");
+              const formattedPath = cleanPath.startsWith("/")
+                ? cleanPath
+                : `/${cleanPath}`;
+              imgUrl = `${apiHost}${formattedPath}`;
+            }
+          }
+
+          let posX = 50;
+          let posY = 50;
+          let fitMode: "cover" | "contain" = "cover";
+          let bgGradientClass = banner.gradient || "bg-slate-100";
+
+          if (banner.gradient && banner.gradient.includes("pos:")) {
+            const posMatch = banner.gradient.match(/pos:(\d+)%\s+(\d+)%/);
+            const fitMatch = banner.gradient.match(/fit:(cover|contain)/);
+            if (posMatch) {
+              posX = parseInt(posMatch[1], 10);
+              posY = parseInt(posMatch[2], 10);
+            }
+            if (fitMatch) {
+              fitMode = fitMatch[1] as "cover" | "contain";
+            }
+            bgGradientClass = "bg-slate-900";
+          }
+
           const content = (
             <div
-              className={`w-full h-32 md:h-36 lg:h-40 ${banner.gradient || "bg-slate-100"} flex flex-col justify-end items-start relative overflow-hidden group/banner ${banner.link ? "cursor-pointer" : ""}`}
+              className={`w-full h-32 md:h-36 lg:h-40 ${imgUrl ? "bg-slate-900" : bgGradientClass} flex flex-col justify-end items-start relative overflow-hidden group/banner ${banner.link ? "cursor-pointer" : ""}`}
             >
-              {banner.imageUrl ? (
+              {imgUrl ? (
                 <img
-                  src={`/api/proxy${banner.imageUrl}`}
+                  src={imgUrl}
                   alt={banner.title}
-                  className="absolute inset-0 w-full h-full object-cover group-hover/banner:scale-105 transition-transform duration-700"
+                  style={{
+                    objectFit: fitMode,
+                    objectPosition: `${posX}% ${posY}%`,
+                  }}
+                  className="absolute inset-0 w-full h-full group-hover/banner:scale-105 transition-transform duration-700"
                 />
               ) : (
                 <>
@@ -129,18 +168,22 @@ const BannerCarousel: React.FC<BannerCarouselProps> = ({
                 </>
               )}
 
-              <div className="relative z-10 w-full p-6 md:p-8 bg-gradient-to-t from-black/70 via-black/30 to-transparent">
-                <div className="max-w-[90%] md:max-w-[80%] text-left">
-                  <h2 className="text-sm md:text-base lg:text-lg font-display font-semibold text-white mb-1 md:mb-1.5 leading-tight drop-shadow-md">
-                    {banner.title}
-                  </h2>
-                  {banner.subtitle && (
-                    <p className="text-[9px] md:text-[10px] lg:text-xs text-white/95 font-medium drop-shadow-sm max-w-[250px] md:max-w-md line-clamp-2">
-                      {banner.subtitle}
-                    </p>
-                  )}
+              {(banner.title || banner.subtitle) && (
+                <div className="relative z-10 w-full p-4 md:p-6 bg-gradient-to-t from-black/80 via-black/40 to-transparent">
+                  <div className="max-w-[90%] md:max-w-[80%] text-left">
+                    {banner.title && (
+                      <h2 className="text-sm md:text-base lg:text-lg font-display font-semibold text-white mb-1 md:mb-1.5 leading-tight drop-shadow-md">
+                        {banner.title}
+                      </h2>
+                    )}
+                    {banner.subtitle && (
+                      <p className="text-[9px] md:text-[10px] lg:text-xs text-white/95 font-medium drop-shadow-sm max-w-[250px] md:max-w-md line-clamp-2">
+                        {banner.subtitle}
+                      </p>
+                    )}
+                  </div>
                 </div>
-              </div>
+              )}
             </div>
           );
 
