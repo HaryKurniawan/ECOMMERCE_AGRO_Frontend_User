@@ -15,7 +15,7 @@ function run(cmd, opts = {}) {
   execSync(cmd, { stdio: "inherit", ...opts });
 }
 
-header("🔍  LANGKAH 1 — Menjalankan ESLint (lint-staged)");
+header("LANGKAH 1 — Menjalankan ESLint (lint-staged)");
 try {
   run("npx lint-staged");
   console.log("  ✅  ESLint selesai — tidak ada error!");
@@ -24,7 +24,7 @@ try {
   process.exit(1);
 }
 
-header("🛡️   LANGKAH 2 — Menjalankan npm audit");
+header("LANGKAH 2 — Menjalankan npm audit");
 try {
   run("npm audit --audit-level=critical");
   console.log("  ✅  npm audit selesai — tidak ada kerentanan kritis.");
