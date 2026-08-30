@@ -7,7 +7,6 @@ import { z } from "zod";
 import { useMutation } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { Modal, Button as AntdButton } from "antd";
 
 import { register as registerApi } from "@/lib/auth";
 import { UserRole } from "@/types";
@@ -127,53 +126,55 @@ export default function RegisterForm() {
 
   return (
     <>
-      <Modal
-        title={
-          <div className="flex items-center gap-2 text-orange-600">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              className="h-6 w-6"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
+      {emailExistsModalOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4">
+          <div className="bg-white rounded-3xl px-5 py-8 w-full max-w-xs shadow-xl relative">
+            <button
+              onClick={() => setEmailExistsModalOpen(false)}
+              className="absolute top-4 right-4 text-gray-400 hover:text-gray-600 transition-colors"
             >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
+              <svg
+                className="w-5 h-5"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
                 strokeWidth={2}
-                d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"
-              />
-            </svg>
-            Email Telah Terdaftar
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M6 18L18 6M6 6l12 12"
+                />
+              </svg>
+            </button>
+
+            <h3 className="text-lg font-medium text-gray-900 text-center mb-4 mt-2">
+              Email Sudah Terdaftar
+            </h3>
+
+            <p className="text-sm text-gray-600 mb-8 leading-relaxed text-center">
+              Silakan masuk ke akun Anda atau atur ulang kata sandi jika lupa.
+            </p>
+
+            <div className="flex flex-col gap-3">
+              <button
+                type="button"
+                className="w-full bg-green-600 hover:bg-green-700 text-white font-medium text-sm py-3 rounded-xl transition-colors focus:outline-none focus:ring-2 focus:ring-green-500/20"
+                onClick={() => router.push("/login")}
+              >
+                Masuk ke Akun
+              </button>
+              <button
+                type="button"
+                className="w-full border border-gray-200 text-gray-600 hover:bg-gray-50 font-medium text-sm py-3 rounded-xl transition-colors focus:outline-none focus:ring-2 focus:ring-gray-500/20"
+                onClick={() => router.push("/forgot-password")}
+              >
+                Lupa Kata Sandi?
+              </button>
+            </div>
           </div>
-        }
-        open={emailExistsModalOpen}
-        onCancel={() => setEmailExistsModalOpen(false)}
-        footer={null}
-        centered
-      >
-        <p className="text-gray-600 mt-4 mb-6">
-          Email yang Anda masukkan sudah terdaftar di sistem kami. Apakah Anda
-          ingin masuk menggunakan akun tersebut atau mengatur ulang kata sandi?
-        </p>
-        <div className="flex flex-col gap-3">
-          <AntdButton
-            type="primary"
-            size="large"
-            className="bg-green-600 hover:bg-green-700 w-full"
-            onClick={() => router.push("/login")}
-          >
-            Ke Halaman Login
-          </AntdButton>
-          <AntdButton
-            size="large"
-            className="w-full"
-            onClick={() => router.push("/forgot-password")}
-          >
-            Lupa Password?
-          </AntdButton>
         </div>
-      </Modal>
+      )}
 
       {successModalEmail && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4">
