@@ -23,11 +23,51 @@ const registerSchema = z
     email: z.string().email("Format email tidak valid"),
     password: z.string().min(6, "Password minimal 6 karakter"),
     confirmPassword: z.string(),
+    isB2B: z.boolean().optional(),
+    namaPerusahaan: z.string().optional(),
+    npwpPerusahaan: z.string().optional(),
+    nibPerusahaan: z.string().optional(),
   })
   .refine((data) => data.password === data.confirmPassword, {
     message: "Password tidak cocok",
     path: ["confirmPassword"],
-  });
+  })
+  .refine(
+    (data) => {
+      if (data.isB2B) {
+        return !!data.namaPerusahaan && data.namaPerusahaan.trim().length > 0;
+      }
+      return true;
+    },
+    {
+      message: "Nama Perusahaan wajib diisi jika mendaftar sebagai B2B",
+      path: ["namaPerusahaan"],
+    },
+  )
+  .refine(
+    (data) => {
+      if (data.isB2B) {
+        return !!data.npwpPerusahaan && data.npwpPerusahaan.trim().length > 0;
+      }
+      return true;
+    },
+    {
+      message: "NPWP Perusahaan wajib diisi jika mendaftar sebagai B2B",
+      path: ["npwpPerusahaan"],
+    },
+  )
+  .refine(
+    (data) => {
+      if (data.isB2B) {
+        return !!data.nibPerusahaan && data.nibPerusahaan.length === 13;
+      }
+      return true;
+    },
+    {
+      message: "NIB harus 13 digit",
+      path: ["nibPerusahaan"],
+    },
+  );
 
 type RegisterFormData = z.infer<typeof registerSchema>;
 
@@ -52,10 +92,16 @@ export default function RegisterForm() {
   const {
     register,
     handleSubmit,
+    watch,
     formState: { errors },
   } = useForm<RegisterFormData>({
     resolver: zodResolver(registerSchema),
+    defaultValues: {
+      isB2B: false,
+    },
   });
+
+  const isB2BSelected = watch("isB2B");
 
   const mutation = useMutation({
     mutationFn: (data: RegisterFormData) =>
@@ -64,6 +110,11 @@ export default function RegisterForm() {
         email: data.email,
         password: data.password,
         role: UserRole.KONSUMEN,
+        ...(data.isB2B && {
+          namaPerusahaan: data.namaPerusahaan,
+          npwpPerusahaan: data.npwpPerusahaan,
+          nibPerusahaan: data.nibPerusahaan,
+        }),
       }),
     onSuccess: async (data, variables) => {
       // Clear auth session untuk simulasi email verification
@@ -293,6 +344,90 @@ export default function RegisterForm() {
           error={errors.confirmPassword?.message}
           {...register("confirmPassword")}
         />
+
+        {/* B2B Toggle */}
+        <div className="pt-2">
+          <label className="flex items-center gap-3 cursor-pointer p-3 rounded-xl border border-gray-200 bg-gray-50 hover:bg-gray-100 transition-colors">
+            <input
+              type="checkbox"
+              className="w-5 h-5 text-green-600 rounded border-gray-300 focus:ring-green-500"
+              {...register("isB2B")}
+            />
+            <div className="flex flex-col">
+              <span className="text-sm font-medium text-gray-900">
+                Daftar sebagai Pembeli Perusahaan (B2B)
+              </span>
+              <span className="text-xs text-gray-500">
+                Dapatkan akses ke harga grosir khusus perusahaan
+              </span>
+            </div>
+          </label>
+        </div>
+
+        {/* B2B Fields */}
+        {isB2BSelected && (
+          <div className="space-y-4 p-4 bg-green-50/50 rounded-xl border border-green-100">
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1.5 ml-1">
+                Nama Perusahaan <span className="text-red-500">*</span>
+              </label>
+              <input
+                type="text"
+                placeholder="Contoh: PT Agro Jabar Maju"
+                className={`w-full px-4 py-3 rounded-xl border ${
+                  errors.namaPerusahaan ? "border-red-300" : "border-gray-200"
+                } text-gray-900 focus:outline-none focus:ring-2 focus:ring-green-500/20 focus:border-green-500 transition-colors bg-white`}
+                {...register("namaPerusahaan")}
+              />
+              {errors.namaPerusahaan && (
+                <p className="mt-1.5 text-sm text-red-500 ml-1">
+                  {errors.namaPerusahaan.message}
+                </p>
+              )}
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1.5 ml-1">
+                NPWP Perusahaan <span className="text-red-500">*</span>
+              </label>
+              <input
+                type="text"
+                placeholder="Masukkan Nomor NPWP"
+                className={`w-full px-4 py-3 rounded-xl border ${
+                  errors.npwpPerusahaan ? "border-red-300" : "border-gray-200"
+                } text-gray-900 focus:outline-none focus:ring-2 focus:ring-green-500/20 focus:border-green-500 transition-colors bg-white`}
+                {...register("npwpPerusahaan")}
+              />
+              {errors.npwpPerusahaan && (
+                <p className="mt-1.5 text-sm text-red-500 ml-1">
+                  {errors.npwpPerusahaan.message}
+                </p>
+              )}
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1.5 ml-1">
+                Nomor Induk Berusaha (NIB){" "}
+                <span className="text-red-500">*</span>
+              </label>
+              <input
+                type="text"
+                placeholder="13 Digit NIB"
+                maxLength={13}
+                onKeyDown={blockNonNumbers}
+                className={`w-full px-4 py-3 rounded-xl border ${
+                  errors.nibPerusahaan ? "border-red-300" : "border-gray-200"
+                } text-gray-900 focus:outline-none focus:ring-2 focus:ring-green-500/20 focus:border-green-500 transition-colors bg-white`}
+                {...register("nibPerusahaan")}
+              />
+              {errors.nibPerusahaan && (
+                <p className="mt-1.5 text-sm text-red-500 ml-1">
+                  {errors.nibPerusahaan.message}
+                </p>
+              )}
+            </div>
+          </div>
+        )}
 
         {/* Submit Button */}
         <div className="pt-4">

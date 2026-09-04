@@ -194,9 +194,9 @@ const OrderDetailContent = () => {
   let estimasiTanggalTeks = "Menunggu Pembayaran";
   if (order.status?.toUpperCase() === "MENUNGGU_KONFIRMASI_SELLER") {
     estimasiTanggalTeks = "Menunggu Konfirmasi Seller";
-  }
-
-  if (isPaidOrder && order.updatedAt) {
+  } else if (isGrosir && !isPaidOrder) {
+    estimasiTanggalTeks = "Menunggu Konfirmasi Seller";
+  } else if (isGrosir && isPaidOrder && order.updatedAt) {
     const baseReferenceDate = new Date(order.updatedAt);
     const estimasiMinDate = new Date(baseReferenceDate);
     estimasiMinDate.setDate(estimasiMinDate.getDate() + 2);
@@ -209,6 +209,22 @@ const OrderDetailContent = () => {
       year: "numeric",
     };
     estimasiTanggalTeks = `${estimasiMinDate.toLocaleDateString("id-ID", dateOpts)} – ${estimasiMaxDate.toLocaleDateString("id-ID", dateOpts)}`;
+  } else {
+    // Estimasi reguler (bukan grosir atau belum bayar)
+    const baseReferenceDate = order.createdAt
+      ? new Date(order.createdAt)
+      : new Date();
+    const estimasiDate = new Date(baseReferenceDate);
+    if (estimasiDate.getHours() >= 15) {
+      estimasiDate.setDate(estimasiDate.getDate() + 1);
+    }
+    const dateOpts: Intl.DateTimeFormatOptions = {
+      weekday: "long",
+      day: "numeric",
+      month: "short",
+      year: "numeric",
+    };
+    estimasiTanggalTeks = estimasiDate.toLocaleDateString("id-ID", dateOpts);
   }
 
   return (
@@ -402,36 +418,35 @@ const OrderDetailContent = () => {
           <ShippingTrackingSection shipping={(order as any).pengiriman} />
         )}
 
-        {/* Estimasi Pengiriman Grosir */}
-        {isGrosir && (
-          <section className="bg-primary-50/70 rounded-2xl border border-primary-200/80 p-5 space-y-3">
-            <div className="flex items-center gap-2.5">
-              <div className="w-7 h-7 bg-primary-50 rounded-lg flex items-center justify-center shrink-0">
-                <Truck size={13} className="text-primary-600" />
-              </div>
-              <div className="min-w-0 flex-1">
-                <h2 className="font-semibold text-xs text-primary-900 uppercase tracking-wider">
-                  Estimasi Pengiriman Grosir
-                </h2>
-                <p className="text-[11px] text-primary-700 font-medium">
-                  2 – 5 Hari Kerja{" "}
-                  {isPaidOrder
-                    ? "dari pembayaran berhasil"
-                    : "setelah pembayaran berhasil"}
-                </p>
-              </div>
+        {/* Estimasi Pengiriman */}
+        <section className="bg-primary-50/70 rounded-2xl border border-primary-200/80 p-5 space-y-3">
+          <div className="flex items-center gap-2.5">
+            <div className="w-7 h-7 bg-primary-50 rounded-lg flex items-center justify-center shrink-0">
+              <Truck size={13} className="text-primary-600" />
             </div>
-            <div className="bg-white/90 rounded-xl p-3 border border-primary-100 flex flex-wrap items-center justify-between gap-2 text-xs">
-              <span className="text-primary-800 font-medium flex items-center gap-1.5">
-                <Calendar size={13} className="text-primary-600 shrink-0" />
-                Estimasi Tanggal Tiba:
-              </span>
-              <span className="font-semibold text-primary-900 bg-primary-100/70 px-2.5 py-1 rounded-lg">
-                {estimasiTanggalTeks}
-              </span>
+            <div className="min-w-0 flex-1">
+              <h2 className="font-semibold text-xs text-primary-900 uppercase tracking-wider">
+                {isGrosir
+                  ? "Estimasi Pengiriman Grosir"
+                  : "Estimasi Pengiriman"}
+              </h2>
+              <p className="text-[11px] text-primary-700 font-medium">
+                {isGrosir
+                  ? `2 - 5 Hari Kerja ${isPaidOrder ? "dari pembayaran berhasil" : "setelah pembayaran berhasil"}`
+                  : "Operasional s/d pukul 15.00"}
+              </p>
             </div>
-          </section>
-        )}
+          </div>
+          <div className="bg-white/90 rounded-xl p-3 border border-primary-100 flex flex-wrap items-center justify-between gap-2 text-xs">
+            <span className="text-primary-800 font-medium flex items-center gap-1.5">
+              <Calendar size={13} className="text-primary-600 shrink-0" />
+              Estimasi Tanggal Tiba:
+            </span>
+            <span className="font-semibold text-primary-900 bg-primary-100/70 px-2.5 py-1 rounded-lg">
+              {estimasiTanggalTeks}
+            </span>
+          </div>
+        </section>
 
         {/* Foto Sebelum Kirim */}
         {order.fotoSebelumKirimUrl && (
@@ -517,8 +532,8 @@ const OrderDetailContent = () => {
 
       {/* Bottom Bar */}
       {(statusKey === "MENUNGGU_BAYAR" ||
-        ((order as any).pengiriman?.status === "ARRIVED" &&
-          order.status !== "SELESAI") ||
+        statusKey === "DIKIRIM" ||
+        statusKey === "ARRIVED" ||
         statusKey === "SELESAI") && (
         <div className="fixed bottom-0 inset-x-0 bg-white border-t border-gray-100 z-30">
           <div className="max-w-2xl mx-auto px-4 py-3 flex gap-2.5">
@@ -531,12 +546,16 @@ const OrderDetailContent = () => {
               >
                 <Wallet size={15} /> Bayar Sekarang
               </button>
-            ) : (order as any).pengiriman?.status === "ARRIVED" &&
+            ) : (statusKey === "DIKIRIM" || statusKey === "ARRIVED") &&
               order.status !== "SELESAI" ? (
               <button
                 onClick={() => setIsConfirmModalOpen(true)}
                 disabled={confirming}
-                className="flex-1 py-3 bg-primary-600 text-white rounded-2xl font-semibold text-[13px] shadow-lg shadow-primary-600/20 hover:bg-primary-700 transition-all active:scale-[0.98] flex items-center justify-center gap-2 disabled:opacity-60"
+                className={`flex-1 py-3 rounded-2xl font-semibold text-[13px] transition-all active:scale-[0.98] flex items-center justify-center gap-2 disabled:opacity-60 ${
+                  (order as any).pengiriman?.status === "ARRIVED"
+                    ? "bg-primary-600 text-white shadow-lg shadow-primary-600/20 hover:bg-primary-700"
+                    : "bg-gray-100 text-gray-700 border border-gray-200 hover:bg-gray-200"
+                }`}
               >
                 {confirming ? (
                   <Loader2 size={15} className="animate-spin" />
@@ -567,48 +586,65 @@ const OrderDetailContent = () => {
         </div>
       )}
 
-      {isConfirmModalOpen && (
-        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
-          <div
-            className="absolute inset-0 bg-black/40 backdrop-blur-sm transition-opacity"
-            onClick={() => setIsConfirmModalOpen(false)}
-          />
-          <div className="relative bg-white rounded-3xl w-full max-w-[310px] p-6 flex flex-col items-center text-center shadow-2xl scale-100 transition-transform">
-            <div className="w-44 h-44 mb-2 relative">
-              <Image
-                src="/images/barang-diterima.svg"
-                alt="Konfirmasi"
-                fill
-                className="object-contain"
-              />
-            </div>
-            <h3 className="font-medium text-[15px] text-gray-900 mb-2">
-              Pesanan Sudah Tiba?
-            </h3>
-            <p className="text-[13px] text-gray-500 leading-relaxed mb-8 px-1">
-              Pastikan pesanan sudah diterima dengan baik agar dana diteruskan
-              ke penjual.
-            </p>
-            <div className="w-full flex gap-2.5">
-              <button
+      {isConfirmModalOpen &&
+        (() => {
+          const isStillInTransit =
+            (order as any).pengiriman?.status !== "ARRIVED";
+
+          return (
+            <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
+              <div
+                className="absolute inset-0 bg-black/40 backdrop-blur-sm transition-opacity"
                 onClick={() => setIsConfirmModalOpen(false)}
-                className="flex-1 py-2.5 rounded-xl bg-gray-100 text-gray-700 font-medium text-[13px] hover:bg-gray-200 transition-colors"
-              >
-                Batal
-              </button>
-              <button
-                onClick={() => {
-                  setIsConfirmModalOpen(false);
-                  handleConfirm();
-                }}
-                className="flex-1 py-2.5 rounded-xl bg-primary-600 text-white font-medium text-[13px] hover:bg-primary-700 transition-colors shadow-sm shadow-primary-600/20"
-              >
-                Konfirmasi
-              </button>
+              />
+              <div className="relative bg-white rounded-3xl w-full max-w-[320px] p-6 flex flex-col items-center text-center shadow-2xl scale-100 transition-transform">
+                <div className="w-36 h-36 mb-2 relative">
+                  <Image
+                    src="/images/barang-diterima.svg"
+                    alt="Konfirmasi"
+                    fill
+                    className="object-contain"
+                  />
+                </div>
+
+                {isStillInTransit && (
+                  <div className="mb-3 px-3 py-1 rounded-full bg-amber-50 border border-amber-200 text-amber-800 text-[11px] font-medium flex items-center gap-1.5">
+                    <Truck size={12} className="text-amber-600" />
+                    <span>Status: Masih Dalam Pengiriman</span>
+                  </div>
+                )}
+
+                <h3 className="font-semibold text-base text-gray-900 mb-1.5">
+                  {isStillInTransit
+                    ? "Konfirmasi Barang Diterima?"
+                    : "Pesanan Sudah Tiba?"}
+                </h3>
+                <p className="text-xs text-gray-500 leading-relaxed mb-6 px-1">
+                  {isStillInTransit
+                    ? "Status kurir menunjukkan paket masih dalam pengiriman. Pastikan Anda sudah benar-benar menerima fisik paket sebelum mengonfirmasi."
+                    : "Pastikan pesanan sudah diterima dengan baik agar dana diteruskan ke penjual."}
+                </p>
+                <div className="w-full flex gap-2.5">
+                  <button
+                    onClick={() => setIsConfirmModalOpen(false)}
+                    className="flex-1 py-2.5 rounded-xl bg-gray-100 text-gray-700 font-medium text-xs hover:bg-gray-200 transition-colors"
+                  >
+                    Belum Terima
+                  </button>
+                  <button
+                    onClick={() => {
+                      setIsConfirmModalOpen(false);
+                      handleConfirm();
+                    }}
+                    className="flex-1 py-2.5 rounded-xl bg-primary-600 text-white font-medium text-xs hover:bg-primary-700 transition-colors shadow-sm shadow-primary-600/20"
+                  >
+                    Ya, Diterima
+                  </button>
+                </div>
+              </div>
             </div>
-          </div>
-        </div>
-      )}
+          );
+        })()}
     </div>
   );
 };

@@ -20,6 +20,7 @@ export const useBulkOrder = (product: any) => {
     metodeBayar: string;
     packagingSpecs?: PackagingSpec[];
     diskonGrosirPersen?: number;
+    tanggalPermintaanKirim?: string;
   }) => {
     if (!product) return;
     setLoading(true);
@@ -35,6 +36,7 @@ export const useBulkOrder = (product: any) => {
         metodeBayar: data.metodeBayar,
         packagingSpecs: data.packagingSpecs,
         diskonGrosirPersen: data.diskonGrosirPersen,
+        tanggalPermintaanKirim: data.tanggalPermintaanKirim,
       });
 
       if (response.data) {

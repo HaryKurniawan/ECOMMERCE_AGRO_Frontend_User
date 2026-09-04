@@ -15,6 +15,8 @@ interface BulkOrderStep1QuantityProps {
   } | null;
   jumlah: number;
   onJumlahChange: (value: number) => void;
+  tanggalPengiriman: string;
+  onTanggalPengirimanChange: (value: string) => void;
 }
 
 const QUICK_AMOUNTS = [300, 500, 1000, 2000, 5000];
@@ -25,15 +27,61 @@ export const BulkOrderStep1Quantity: React.FC<BulkOrderStep1QuantityProps> = ({
   product,
   jumlah,
   onJumlahChange,
+  tanggalPengiriman,
+  onTanggalPengirimanChange,
 }) => {
   if (!product) return null;
 
-  const minGrosir = Math.max(100, (product.stok || 0) + 1);
-  const isValid = jumlah >= minGrosir;
+  const productStok = product.stok || 0;
+  const minGrosir = Math.max(100, productStok + 1);
+
+  // Calculate current capacity based on selected date
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+  const selectedDateObj = new Date(tanggalPengiriman);
+  selectedDateObj.setHours(0, 0, 0, 0);
+  const diffTime = selectedDateObj.getTime() - today.getTime();
+  let diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+  if (diffDays < 2) diffDays = 2;
+
+  const maxCapacityForSelectedDate = (diffDays - 1) * 1000;
+  const maxAllowed = Math.min(productStok, maxCapacityForSelectedDate);
+
+  const isValid = jumlah >= minGrosir && jumlah <= maxAllowed;
 
   const handleChange = (val: number) => {
-    onJumlahChange(Math.max(0, val));
+    let finalVal = Math.max(0, val);
+    if (finalVal > productStok) {
+      finalVal = productStok;
+    }
+    onJumlahChange(finalVal);
+
+    // Auto-adjust date if needed
+    const requiredDays = Math.ceil(finalVal / 1000) + 1;
+    if (requiredDays > diffDays) {
+      const newD = new Date();
+      newD.setDate(newD.getDate() + requiredDays);
+      onTanggalPengirimanChange(newD.toISOString().split("T")[0]);
+    }
   };
+
+  // Generate date options based on max stock capacity
+  const dateOptions = [];
+  const maxDaysNeeded = Math.ceil(productStok / 1000) + 1;
+  const maxDaysOptions = Math.max(2, maxDaysNeeded);
+
+  for (let i = 2; i <= maxDaysOptions; i++) {
+    const d = new Date();
+    d.setDate(d.getDate() + i);
+    const dateStr = d.toISOString().split("T")[0];
+    const capacity = (i - 1) * 1000;
+    const finalCapacity = Math.min(capacity, productStok);
+    dateOptions.push({
+      dateStr,
+      label: `H+${i} (${d.toLocaleDateString("id-ID", { day: "numeric", month: "short" })}) - Max ${finalCapacity} kg`,
+      capacity: finalCapacity,
+    });
+  }
 
   return (
     <div className="bg-white rounded-2xl border border-gray-200 overflow-hidden animate-in fade-in slide-in-from-bottom-4 duration-500">
@@ -78,6 +126,43 @@ export const BulkOrderStep1Quantity: React.FC<BulkOrderStep1QuantityProps> = ({
           </div>
         </div>
 
+        {/* Date Selection input */}
+        <div className="mb-5">
+          <label className="block text-xs font-semibold text-gray-500 mb-2">
+            Tanggal Pengiriman
+          </label>
+          <select
+            value={tanggalPengiriman}
+            onChange={(e) => {
+              onTanggalPengirimanChange(e.target.value);
+              // Calculate capacity for the new date to optionally limit the amount
+              const newSelectedDateObj = new Date(e.target.value);
+              newSelectedDateObj.setHours(0, 0, 0, 0);
+              const newDiffTime =
+                newSelectedDateObj.getTime() - today.getTime();
+              let newDiffDays = Math.ceil(newDiffTime / (1000 * 60 * 60 * 24));
+              if (newDiffDays < 2) newDiffDays = 2;
+
+              const newMaxCapacity = (newDiffDays - 1) * 1000;
+              const newMaxAllowed = Math.min(productStok, newMaxCapacity);
+
+              if (jumlah > newMaxAllowed) {
+                onJumlahChange(newMaxAllowed);
+              }
+            }}
+            className="w-full h-14 bg-gray-50 border border-gray-200/80 rounded-2xl px-5 text-base sm:text-lg font-medium text-gray-900 focus:outline-none focus:ring-2 focus:ring-primary-100 focus:border-primary-500 focus:bg-white transition-all shadow-sm"
+          >
+            {dateOptions.map((opt) => (
+              <option key={opt.dateStr} value={opt.dateStr}>
+                {opt.label}
+              </option>
+            ))}
+          </select>
+          <p className="mt-2 text-xs text-gray-500">
+            Kapasitas pengiriman gudang adalah 1000 kg per hari.
+          </p>
+        </div>
+
         {/* Amount input */}
         <div className="mb-2">
           <label className="block text-xs font-semibold text-gray-500 mb-2">
@@ -87,6 +172,7 @@ export const BulkOrderStep1Quantity: React.FC<BulkOrderStep1QuantityProps> = ({
             <input
               type="number"
               min={minGrosir}
+              max={maxAllowed}
               required
               value={jumlah || ""}
               onChange={(e) => {
@@ -100,6 +186,9 @@ export const BulkOrderStep1Quantity: React.FC<BulkOrderStep1QuantityProps> = ({
               onBlur={() => {
                 if (jumlah > 0 && jumlah < minGrosir) {
                   handleChange(minGrosir);
+                }
+                if (jumlah > productStok) {
+                  handleChange(productStok);
                 }
               }}
               placeholder="Masukkan jumlah pesanan..."
@@ -115,6 +204,14 @@ export const BulkOrderStep1Quantity: React.FC<BulkOrderStep1QuantityProps> = ({
             <p className="mt-2 text-xs text-red-500 flex items-center gap-1.5 font-medium">
               <AlertCircle size={12} />
               Minimal pemesanan grosir adalah {minGrosir} {product.satuan}
+            </p>
+          ) : jumlah > maxAllowed ? (
+            <p className="mt-2 text-xs text-amber-500 flex items-center gap-1.5 font-medium">
+              <AlertCircle size={12} />
+              Kapasitas maksimal untuk tanggal terpilih adalah {maxAllowed}{" "}
+              {product.satuan}. Silakan pilih tanggal lebih lama jika ingin
+              memesan lebih banyak, atau input akan otomatis menyesuaikan
+              tanggal pengiriman.
             </p>
           ) : jumlah >= minGrosir ? (
             <div className="mt-4 p-4 rounded-2xl bg-gray-50 border border-gray-100/80 space-y-3">

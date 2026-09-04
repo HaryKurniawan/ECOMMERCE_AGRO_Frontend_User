@@ -196,6 +196,53 @@ export default function OrderCard({
 
       {/* ── Footer: total ─────────────────────────────────── */}
       <div className="mx-4 border-t border-dashed border-gray-200" />
+
+      {/* Estimasi Pengiriman */}
+      {(() => {
+        const isGrosir =
+          order.isGrosir ||
+          (order as any).isB2B ||
+          (order as any).tipePesanan === "GROSIR";
+        const isPaid = ["DIPROSES", "DIKIRIM", "SELESAI", "DITUTUP"].includes(
+          order.status?.toUpperCase() || "",
+        );
+        const isUnconfirmedGrosir = isGrosir && !isPaid;
+        const isPendingSellerConfirm =
+          order.status?.toUpperCase() === "MENUNGGU_KONFIRMASI_SELLER";
+        const hideEstimate = isUnconfirmedGrosir || isPendingSellerConfirm;
+
+        if (hideEstimate) return null;
+
+        return (
+          <div className="px-4 py-2.5 bg-emerald-50/30 flex items-center justify-between">
+            <div className="flex items-center gap-1.5">
+              <Package size={13} className="text-emerald-600" />
+              <span className="text-[11px] text-gray-500 font-medium">
+                Estimasi Barang Sampai
+              </span>
+            </div>
+            <span className="text-xs font-semibold text-emerald-700">
+              {(() => {
+                const date = order.createdAt
+                  ? new Date(order.createdAt)
+                  : new Date();
+                const hour = date.getHours();
+                if (hour >= 15) {
+                  date.setDate(date.getDate() + 1);
+                }
+                return date.toLocaleDateString("id-ID", {
+                  weekday: "long",
+                  day: "numeric",
+                  month: "short",
+                  year: "numeric",
+                });
+              })()}
+            </span>
+          </div>
+        );
+      })()}
+
+      <div className="mx-4 border-t border-dashed border-gray-200" />
       <div className="flex items-center justify-between px-4 py-3">
         <span className="text-xs text-gray-400">Total Pesanan</span>
         <span className="text-sm font-semibold text-primary-600">

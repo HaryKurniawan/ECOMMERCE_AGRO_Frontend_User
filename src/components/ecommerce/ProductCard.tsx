@@ -129,7 +129,7 @@ const ProductCard: React.FC<ProductCardProps> = ({
               </div>
               {product.stok !== undefined && (
                 <span className="text-[9px] bg-green-50 text-green-600 font-bold px-1.5 py-0.5 rounded-md border border-green-100 whitespace-nowrap">
-                  Sisa: {product.stok}
+                  Stok: {product.stok}
                 </span>
               )}
             </div>

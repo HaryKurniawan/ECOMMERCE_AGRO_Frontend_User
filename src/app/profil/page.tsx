@@ -92,6 +92,20 @@ const ProfilPage: React.FC = () => {
       desc: "Hubungi layanan pelanggan kami",
       path: "/chat",
     },
+    {
+      id: "upgrade-b2b",
+      label: "Akun Perusahaan (B2B)",
+      icon: Building2,
+      desc:
+        (profile as any)?.statusVerifikasiPerusahaan === "PENDING" ||
+        (profile as any)?.statusVerifikasiPerusahaan === "DISETUJUI" ||
+        (profile as any)?.isPerusahaan
+          ? (profile as any)?.statusVerifikasiPerusahaan === "PENDING"
+            ? "Menunggu verifikasi admin"
+            : "Terverifikasi sebagai perusahaan"
+          : "Daftar untuk harga grosir khusus",
+      path: "/profil/upgrade-b2b",
+    },
   ];
 
   if (!_hasHydrated || loading) {

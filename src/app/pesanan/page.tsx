@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
-import { ArrowLeft, Loader2 } from "lucide-react";
+import { ArrowLeft, Loader2, Truck } from "lucide-react";
 import toast from "react-hot-toast";
 import { Modal, ConfigProvider } from "antd";
 import Image from "next/image";
@@ -321,13 +321,6 @@ const PesananContent = () => {
                       ? () => handlePay([order])
                       : undefined
                   }
-                  onConfirmReceived={
-                    order.status?.toUpperCase() === "DIKIRIM" &&
-                    (order as any).pengiriman?.status === "ARRIVED"
-                      ? (e) => handleConfirmReceived(e, orderId)
-                      : undefined
-                  }
-                  isConfirming={confirmingId === orderId}
                 />
               );
             })}
@@ -359,56 +352,77 @@ const PesananContent = () => {
           },
         }}
       >
-        {!!confirmModalOrder && (
-          <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
-            <div
-              className="absolute inset-0 bg-black/40 backdrop-blur-sm transition-opacity"
-              onClick={() => setConfirmModalOrder(null)}
-            />
-            <div className="relative bg-white rounded-3xl w-full max-w-[310px] p-6 flex flex-col items-center text-center shadow-2xl scale-100 transition-transform">
-              <div className="w-44 h-44 mb-2 relative">
-                <Image
-                  src="/images/barang-diterima.svg"
-                  alt="Konfirmasi"
-                  fill
-                  className="object-contain"
-                />
-              </div>
-              <h3 className="font-medium text-[15px] text-gray-900 mb-2">
-                Pesanan Sudah Tiba?
-              </h3>
-              <p className="text-[13px] text-gray-500 leading-relaxed mb-8 px-1">
-                Pastikan pesanan sudah diterima dengan baik agar dana diteruskan
-                ke penjual.
-              </p>
-              <div className="w-full flex gap-2.5">
-                <button
+        {!!confirmModalOrder &&
+          (() => {
+            const targetOrder = filteredOrders.find(
+              (o: any) => (o.id_pesanan || o.id) === confirmModalOrder,
+            );
+            const isStillInTransit =
+              targetOrder &&
+              (targetOrder as any).pengiriman?.status !== "ARRIVED";
+
+            return (
+              <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
+                <div
+                  className="absolute inset-0 bg-black/40 backdrop-blur-sm transition-opacity"
                   onClick={() => setConfirmModalOrder(null)}
-                  className="flex-1 py-2.5 rounded-xl bg-gray-100 text-gray-700 font-medium text-[13px] hover:bg-gray-200 transition-colors"
-                >
-                  Batal
-                </button>
-                <button
-                  onClick={() => {
-                    if (confirmModalOrder) {
-                      const id = confirmModalOrder;
-                      setConfirmModalOrder(null);
-                      handleConfirmReceivedAction(id);
-                    }
-                  }}
-                  disabled={!!confirmingId}
-                  className="flex-1 py-2.5 rounded-xl bg-primary-600 text-white font-medium text-[13px] hover:bg-primary-700 transition-colors shadow-sm shadow-primary-600/20 flex items-center justify-center gap-1.5 disabled:opacity-70"
-                >
-                  {confirmingId ? (
-                    <Loader2 size={14} className="animate-spin" />
-                  ) : (
-                    "Konfirmasi"
+                />
+                <div className="relative bg-white rounded-3xl w-full max-w-[320px] p-6 flex flex-col items-center text-center shadow-2xl scale-100 transition-transform">
+                  <div className="w-36 h-36 mb-2 relative">
+                    <Image
+                      src="/images/barang-diterima.svg"
+                      alt="Konfirmasi"
+                      fill
+                      className="object-contain"
+                    />
+                  </div>
+
+                  {isStillInTransit && (
+                    <div className="mb-3 px-3 py-1 rounded-full bg-amber-50 border border-amber-200 text-amber-800 text-[11px] font-medium flex items-center gap-1.5">
+                      <Truck size={12} className="text-amber-600" />
+                      <span>Status: Masih Dalam Pengiriman</span>
+                    </div>
                   )}
-                </button>
+
+                  <h3 className="font-semibold text-base text-gray-900 mb-1.5">
+                    {isStillInTransit
+                      ? "Konfirmasi Barang Diterima?"
+                      : "Pesanan Sudah Tiba?"}
+                  </h3>
+                  <p className="text-xs text-gray-500 leading-relaxed mb-6 px-1">
+                    {isStillInTransit
+                      ? "Status kurir menunjukkan paket masih dalam pengiriman. Pastikan Anda sudah benar-benar menerima fisik paket sebelum mengonfirmasi."
+                      : "Pastikan pesanan sudah diterima dengan baik agar dana diteruskan ke penjual."}
+                  </p>
+                  <div className="w-full flex gap-2.5">
+                    <button
+                      onClick={() => setConfirmModalOrder(null)}
+                      className="flex-1 py-2.5 rounded-xl bg-gray-100 text-gray-700 font-medium text-xs hover:bg-gray-200 transition-colors"
+                    >
+                      Belum Terima
+                    </button>
+                    <button
+                      onClick={() => {
+                        if (confirmModalOrder) {
+                          const id = confirmModalOrder;
+                          setConfirmModalOrder(null);
+                          handleConfirmReceivedAction(id);
+                        }
+                      }}
+                      disabled={!!confirmingId}
+                      className="flex-1 py-2.5 rounded-xl bg-primary-600 text-white font-medium text-xs hover:bg-primary-700 transition-colors shadow-sm shadow-primary-600/20 flex items-center justify-center gap-1.5 disabled:opacity-70"
+                    >
+                      {confirmingId ? (
+                        <Loader2 size={14} className="animate-spin" />
+                      ) : (
+                        "Ya, Diterima"
+                      )}
+                    </button>
+                  </div>
+                </div>
               </div>
-            </div>
-          </div>
-        )}
+            );
+          })()}
 
         {/* Payment Success Modal */}
         <Modal

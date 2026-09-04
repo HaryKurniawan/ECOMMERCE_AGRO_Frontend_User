@@ -98,6 +98,12 @@ export default function BeliGrosirPage() {
   const [metodeBayar, setMetodeBayar] = useState<string>("TRANSFER");
   const [isStateLoaded, setIsStateLoaded] = useState(false);
 
+  const defaultDate = new Date();
+  defaultDate.setDate(defaultDate.getDate() + 2);
+  const [tanggalPengiriman, setTanggalPengiriman] = useState<string>(
+    defaultDate.toISOString().split("T")[0],
+  );
+
   const STORAGE_KEY = `bulk-order-${id}`;
 
   // Read state from localStorage on mount
@@ -112,6 +118,8 @@ export default function BeliGrosirPage() {
           if (parsed.currentStep) setCurrentStep(parsed.currentStep);
           if (parsed.packagingSpecs) setPackagingSpecs(parsed.packagingSpecs);
           if (parsed.metodeBayar) setMetodeBayar(parsed.metodeBayar);
+          if (parsed.tanggalPengiriman)
+            setTanggalPengiriman(parsed.tanggalPengiriman);
         }
       } catch (e) {
         // ignore
@@ -141,6 +149,7 @@ export default function BeliGrosirPage() {
           currentStep,
           packagingSpecs,
           metodeBayar,
+          tanggalPengiriman,
         }),
       );
     }
@@ -150,6 +159,7 @@ export default function BeliGrosirPage() {
     currentStep,
     packagingSpecs,
     metodeBayar,
+    tanggalPengiriman,
     id,
     isStateLoaded,
   ]);
@@ -242,6 +252,7 @@ export default function BeliGrosirPage() {
       packagingSpecs: packagingSpecs.length > 0 ? packagingSpecs : undefined,
       diskonGrosirPersen:
         diskonGrosirPersen > 0 ? diskonGrosirPersen : undefined,
+      tanggalPermintaanKirim: new Date(tanggalPengiriman).toISOString(),
     });
   };
 
@@ -273,6 +284,8 @@ export default function BeliGrosirPage() {
                 product={product}
                 jumlah={jumlah}
                 onJumlahChange={setJumlah}
+                tanggalPengiriman={tanggalPengiriman}
+                onTanggalPengirimanChange={setTanggalPengiriman}
               />
             )}
 

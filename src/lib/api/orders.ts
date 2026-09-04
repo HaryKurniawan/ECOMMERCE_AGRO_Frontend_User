@@ -73,6 +73,7 @@ export const ordersApi = {
     metodeBayar?: string;
     packagingSpecs?: any[];
     diskonGrosirPersen?: number;
+    tanggalPermintaanKirim?: string;
   }) =>
     apiClient.post("/ecom-pesanan/grosir", {
       item: [
@@ -88,5 +89,7 @@ export const ordersApi = {
       metodeBayar: data.metodeBayar || "MANUAL",
       packagingSpecs: data.packagingSpecs,
       diskonGrosirPersen: data.diskonGrosirPersen,
+      tanggalPermintaanKirim: data.tanggalPermintaanKirim,
+      tipePengiriman: "CUSTOM",
     }),
 };

@@ -1,7 +1,7 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { Store, ChevronRight } from "lucide-react";
+import { Store, ChevronRight, Package } from "lucide-react";
 
 import { formatRupiah } from "@/lib/ecommerce-api";
 import type { ApiOrderData } from "@/types";
@@ -102,6 +102,54 @@ export default function GroupedOrderCard({
           );
         })}
       </div>
+
+      {/* Estimasi Pengiriman */}
+      {(() => {
+        const hideEstimate = orders.some((order) => {
+          const isGrosir =
+            order.isGrosir ||
+            (order as any).isB2B ||
+            (order as any).tipePesanan === "GROSIR";
+          const isPaid = ["DIPROSES", "DIKIRIM", "SELESAI", "DITUTUP"].includes(
+            order.status?.toUpperCase() || "",
+          );
+          const isUnconfirmedGrosir = isGrosir && !isPaid;
+          const isPendingSellerConfirm =
+            order.status?.toUpperCase() === "MENUNGGU_KONFIRMASI_SELLER";
+          return isUnconfirmedGrosir || isPendingSellerConfirm;
+        });
+
+        if (hideEstimate) return null;
+
+        return (
+          <div className="px-4 py-2.5 bg-emerald-50/30 border-t border-dashed border-gray-200 flex items-center justify-between">
+            <div className="flex items-center gap-1.5">
+              <Package size={13} className="text-emerald-600" />
+              <span className="text-[11px] text-gray-500 font-medium">
+                Estimasi Barang Sampai
+              </span>
+            </div>
+            <span className="text-xs font-semibold text-emerald-700">
+              {(() => {
+                const firstOrder = orders[0];
+                const date = firstOrder?.createdAt
+                  ? new Date(firstOrder.createdAt)
+                  : new Date();
+                const hour = date.getHours();
+                if (hour >= 15) {
+                  date.setDate(date.getDate() + 1);
+                }
+                return date.toLocaleDateString("id-ID", {
+                  weekday: "long",
+                  day: "numeric",
+                  month: "short",
+                  year: "numeric",
+                });
+              })()}
+            </span>
+          </div>
+        );
+      })()}
 
       {/* Footer: total + pay button */}
       <div className="flex items-center justify-between px-4 py-3 mt-1 border-t border-gray-100 bg-gray-50/70">
